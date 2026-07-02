@@ -7,28 +7,20 @@ namespace DeviGames.Atlas.Core.Events
     /// </summary>
     public static class EventBus
     {
-        private static readonly IEventBus _bus = new DefaultEventBus();
         public static void Subscribe<T>(Action<T> listener)
         {
-            _bus.Subscribe(listener);
+            EventBusProvider.Current.Subscribe(listener);
         }
 
         public static void Unsubscribe<T>(Action<T> listener)
         {
-            _bus.Unsubscribe(listener);
+            EventBusProvider.Current.Unsubscribe(listener);
         }
 
         public static void Publish<T>(T eventData)
         {
-            _bus.Publish(eventData);
+            EventBusProvider.Current.Publish(eventData);
         }
 
-        public static void Clear()
-        {
-            if (_bus is DefaultEventBus defaultBus)
-            {
-                defaultBus.Clear();
-            }
-        }
     }
 }
