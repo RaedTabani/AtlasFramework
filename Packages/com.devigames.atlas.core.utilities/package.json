@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "displayName": "Atlas Core Utilities",
   "description": "Foundational, context-free utilities and extension methods for the Atlas Framework.",
-  "unity": "2022.3",
+  "unity": "6000.0",
   "author": {
     "name": "DeviGames",
     "email": "support@devigames.com"

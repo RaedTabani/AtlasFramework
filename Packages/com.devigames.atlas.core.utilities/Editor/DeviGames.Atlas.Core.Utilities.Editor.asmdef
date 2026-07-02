@@ -1,0 +1,16 @@
+{
+    "name": "DeviGames.Atlas.Core.Utilities.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:58c4e9678aceb8da696d35024edd226b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
