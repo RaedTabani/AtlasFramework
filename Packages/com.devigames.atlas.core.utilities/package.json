@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.core.utilities",
+  "version": "1.0.0",
+  "displayName": "Atlas Core Utilities",
+  "description": "Foundational, context-free utilities and extension methods for the Atlas Framework.",
+  "unity": "2022.3",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}
