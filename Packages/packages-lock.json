@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.devigames.atlas.core.events": {
+      "version": "file:com.devigames.atlas.core.events",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.utilities": {
       "version": "file:com.devigames.atlas.core.utilities",
       "depth": 0,
