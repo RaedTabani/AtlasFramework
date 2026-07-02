@@ -2,7 +2,7 @@
   "name": "com.devigames.atlas.core.events",
   "version": "1.0.0",
   "displayName": "Atlas Core Events",
-  "description": "Foundational, Core.Events methods for the Atlas Framework.",
+  "description": "FTyped event bus used throughout Atlas Framework.",
   "unity": "6000.0",
   "author": {
     "name": "DeviGames",
