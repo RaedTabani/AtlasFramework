@@ -1,3 +1,16 @@
 {
-	"name": "DeviGames.Atlas.Bootstrap"
+    "name": "DeviGames.Atlas.Bootstrap",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
