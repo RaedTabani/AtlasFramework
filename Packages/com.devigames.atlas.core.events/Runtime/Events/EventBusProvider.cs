@@ -1,7 +1,4 @@
 using System;
-using System.Runtime.CompilerServices; 
-
-[assembly: InternalsVisibleTo("DeviGames.Atlas.Core.Events.EditorTests")]
 
 namespace DeviGames.Atlas.Core.Events
 {

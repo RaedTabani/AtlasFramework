@@ -1,112 +1,77 @@
 using NUnit.Framework;
+using System;
 
 namespace DeviGames.Atlas.Core.Events.Tests
 {
     public class EventBusTests
     {
+        private int _callCount;
+
+        private void OnTestEvent(TestEvent e)
+        {
+            _callCount++;
+        }
+
         [SetUp]
-        public void SetUp()
+        public void Setup()
         {
-            EventBusProvider.Reset();
-        }
-
-        // This runs automatically AFTER every single individual [Test]
-        [TearDown]
-        public void TearDown()
-        {
-            EventBusProvider.Reset();
+            _callCount = 0;
+            EventBusTestUtility.Reset();
         }
 
         [Test]
-        public void Subscribe_ThenPublish_ListenerCalledOnce()
+        public void Publish_Should_Invoke_Subscribed_Listener()
         {
-            // Arrange
+            EventBus.Subscribe<TestEvent>(OnTestEvent);
 
-            int callCount = 0;
+            EventBus.Publish(new TestEvent(1));
 
-            void Listener(TestEvent e)
-            {
-                callCount++;
-            }
+            Assert.AreEqual(1, _callCount);
 
-            EventBus.Subscribe<TestEvent>(Listener);
-
-            // Act
-
-            EventBus.Publish(new TestEvent(5));
-
-            // Assert
-
-            Assert.AreEqual(1, callCount);
-
-            EventBus.Unsubscribe<TestEvent>(Listener);
+            EventBus.Unsubscribe<TestEvent>(OnTestEvent);
         }
 
-        // Test 2: Nobody subscribed -> Publish event -> Nothing happens, No exception.
         [Test]
-        public void Publish_WithNoSubscribers_DoesNotThrowException()
+        public void Publish_Should_Not_Invoke_When_No_Subscribers()
         {
-            // Arrange & Act & Assert
-            // We just call Publish directly. If it crashes, the test fails.
-            Assert.DoesNotThrow(() => EventBus.Publish(new TestEvent(5)));
+            EventBus.Publish(new TestEvent(1));
+
+            Assert.AreEqual(0, _callCount);
         }
 
-        // Test 3: Listener subscribed -> Listener unsubscribed -> Publish -> Listener NOT called
         [Test]
-        public void Unsubscribe_ThenPublish_ListenerNotCalled()
+        public void Unsubscribe_Should_Stop_Invocation()
         {
-            // Arrange
-            int callCount = 0;
-            void Listener(TestEvent e) => callCount++;
+            EventBus.Subscribe<TestEvent>(OnTestEvent);
+            EventBus.Unsubscribe<TestEvent>(OnTestEvent);
 
-            EventBus.Subscribe<TestEvent>(Listener);
-            EventBus.Unsubscribe<TestEvent>(Listener);
+            EventBus.Publish(new TestEvent(1));
 
-            // Act
-            EventBus.Publish(new TestEvent(5));
-
-            // Assert
-            Assert.AreEqual(0, callCount);
+            Assert.AreEqual(0, _callCount);
         }
 
-        // Test 4: Duplicate subscription -> Subscribe, Subscribe again, Publish -> One callback.
         [Test]
-        public void Subscribe_TwiceWithSameListener_OnlyCalledOnce()
+        public void Duplicate_Subscribe_Should_Not_Invoke_Twice()
         {
-            // Arrange
-            int callCount = 0;
-            void Listener(TestEvent e) => callCount++;
+            EventBus.Subscribe<TestEvent>(OnTestEvent);
+            EventBus.Subscribe<TestEvent>(OnTestEvent);
 
-            EventBus.Subscribe<TestEvent>(Listener);
-            EventBus.Subscribe<TestEvent>(Listener); // Duplicate
+            EventBus.Publish(new TestEvent(1));
 
-            // Act
-            EventBus.Publish(new TestEvent(5));
-
-            // Assert
-            Assert.AreEqual(1, callCount);
+            Assert.AreEqual(1, _callCount);
         }
 
-        // Test 5: Two listeners -> Listener A, Listener B, Publish -> Both called
         [Test]
-        public void Publish_WithMultipleSubscribers_InvokesAllListeners()
+        public void Multiple_Subscribers_Should_All_Be_Invoked()
         {
-            // Arrange
-            bool listenerACalled = false;
-            bool listenerBCalled = false;
+            EventBus.Subscribe<TestEvent>(OnTestEvent);
 
-            void ListenerA(TestEvent e) => listenerACalled = true;
-            void ListenerB(TestEvent e) => listenerBCalled = true;
+            EventBus.Subscribe<TestEvent>((e) => _callCount++);
+            EventBus.Subscribe<TestEvent>((e) => _callCount++);
 
-            EventBus.Subscribe<TestEvent>(ListenerA);
-            EventBus.Subscribe<TestEvent>(ListenerB);
+            EventBus.Publish(new TestEvent(1));
 
-            // Act
-            EventBus.Publish(new TestEvent(5));
-
-            // Assert
-            Assert.IsTrue(listenerACalled, "Listener A should have been called.");
-            Assert.IsTrue(listenerBCalled, "Listener B should have been called.");
+            Assert.AreEqual(3, _callCount);
         }
     }
 }
