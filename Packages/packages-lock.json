@@ -6,6 +6,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.missions": {
+      "version": "file:com.devigames.atlas.core.missions",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.utilities": {
       "version": "file:com.devigames.atlas.core.utilities",
       "depth": 0,

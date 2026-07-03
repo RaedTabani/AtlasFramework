@@ -1,0 +1,17 @@
+{
+    "name": "DeviGames.Atlas.Core.Missions.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6868988f9aa6b6986bb42474f4838c02",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
