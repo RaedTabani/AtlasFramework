@@ -20,10 +20,19 @@ namespace DeviGames.Atlas.Core.Missions.Services
 
         public void CompleteMission()
         {
+            if (!HasActiveMission) return;
+
+            string completedId = CurrentMission.MissionId;
+            CurrentMission = null; // Clean up runtime status
+
+            EventBus.Publish(new MissionCompletedEvent(completedId));
         }
 
         public void AbortMission()
         {
+            if (!HasActiveMission) return;
+
+            CurrentMission = null; // Clean up runtime status
         }
     }
 }
