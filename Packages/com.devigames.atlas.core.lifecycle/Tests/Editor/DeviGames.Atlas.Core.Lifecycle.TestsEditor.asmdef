@@ -1,9 +1,7 @@
 {
-    "name": "DeviGames.Atlas.Core.Progress",
+    "name": "DeviGames.Atlas.Core.Lifecycle.Tests.Editor",
     "rootNamespace": "",
     "references": [
-        "DeviGames.Atlas.Core.Events",
-        "DeviGames.Atlas.Core.Missions",
         "DeviGames.Atlas.Core.Lifecycle"
     ],
     "includePlatforms": [],

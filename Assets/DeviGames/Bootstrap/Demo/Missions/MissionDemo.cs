@@ -8,7 +8,7 @@ public sealed class MissionDemo : MonoBehaviour
 {
     [SerializeField] private MissionDefinition _mission;
 
-    private readonly MissionService _missionManager = new();
+    private readonly MissionService _missionService = new();
 
     private void OnEnable()
     {
@@ -26,17 +26,17 @@ public sealed class MissionDemo : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            _missionManager.StartMission(_mission);
+            _missionService.StartMission(_mission);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            _missionManager.CompleteMission();
+            _missionService.CompleteMission();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            _missionManager.AbortMission();
+            _missionService.AbortMission();
         }
     }
 

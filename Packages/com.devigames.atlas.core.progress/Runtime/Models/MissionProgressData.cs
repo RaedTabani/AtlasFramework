@@ -4,6 +4,6 @@ namespace DeviGames.Atlas.Core.Progress.Models
 {
     public sealed class MissionProgressData
     {
-        public HashSet<string> CompletedMissionIds { get; } = new();
+        public HashSet<string> CompletedMissionIds { get; set; } = new();
     }
 }

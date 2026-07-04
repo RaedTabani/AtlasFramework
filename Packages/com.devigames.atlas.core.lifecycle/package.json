@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.core.lifecycle",
+  "version": "1.0.0",
+  "displayName": "Atlas Core Lifecycle",
+  "description": "Core lifecycle management for Atlas",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}
