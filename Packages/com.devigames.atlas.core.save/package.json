@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.core.save",
+  "version": "1.0.0",
+  "displayName": "Atlas Core Save",
+  "description": "Save service for Atlas core",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}

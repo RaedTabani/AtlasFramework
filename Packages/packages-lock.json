@@ -30,6 +30,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.save": {
+      "version": "file:com.devigames.atlas.core.save",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.utilities": {
       "version": "file:com.devigames.atlas.core.utilities",
       "depth": 0,
