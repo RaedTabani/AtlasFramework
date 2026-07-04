@@ -12,6 +12,8 @@ namespace DeviGames.Atlas.Core.Missions.Services
 
         public void StartMission(MissionDefinition mission)
         {
+            if(mission == null) return;
+
             CurrentMission = mission;
 
             EventBus.Publish(
@@ -20,7 +22,8 @@ namespace DeviGames.Atlas.Core.Missions.Services
 
         public void CompleteMission()
         {
-            if (!HasActiveMission) return;
+            if (!HasActiveMission || CurrentMission == null) return;
+            
 
             string completedId = CurrentMission.MissionId;
             CurrentMission = null; // Clean up runtime status

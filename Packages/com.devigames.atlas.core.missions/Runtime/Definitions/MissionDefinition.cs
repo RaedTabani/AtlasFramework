@@ -5,6 +5,29 @@ namespace DeviGames.Atlas.Core.Missions.Definitions
     [CreateAssetMenu(fileName = "MissionDefinition", menuName = "DeviGames/Atlas/Missions/Mission Definition")]
     public sealed class MissionDefinition : ScriptableObject
     {
+
+        #if UNITY_EDITOR
+        public void Editor_InitializeForTests(
+            string missionId,
+            string displayName,
+            string description,
+            string sceneName,
+            int unlockOrder,
+            int difficulty,
+            int version,
+            bool downloadable)
+        {
+            _missionId = missionId;
+            _displayName = displayName;
+            _description = description;
+            _sceneName = sceneName;
+            _unlockOrder = unlockOrder;
+            _difficulty = difficulty;
+            _version = version;
+            _downloadable = downloadable;
+        }
+        #endif
+        
         [Header("Identity")]
         [SerializeField] private string _missionId;
         [SerializeField] private string _displayName;

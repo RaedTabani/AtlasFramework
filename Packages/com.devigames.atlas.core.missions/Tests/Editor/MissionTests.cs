@@ -16,6 +16,7 @@ namespace DeviGames.Atlas.Core.Missions.Tests
         private int _completedCount;
         private string _lastProcessedMissionId;
 
+        
         [SetUp]
         public void Setup()
         {
@@ -28,6 +29,15 @@ namespace DeviGames.Atlas.Core.Missions.Tests
             
             // 2. Generate a clean Runtime-only scriptable object instance
             _mockMission = ScriptableObject.CreateInstance<MissionDefinition>();
+            _mockMission.Editor_InitializeForTests(
+                "test_mission_001",
+                "Test Mission",
+                "Test Description",
+                "TestScene",
+                0,
+                1,
+                1,
+                false);
             
             // Using a bit of reflection hack or an initialization method if fields are fully protected, 
             // but for testing standard properties we look for matching events.
