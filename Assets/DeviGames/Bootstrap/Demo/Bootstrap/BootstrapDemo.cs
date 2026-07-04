@@ -32,6 +32,7 @@ public sealed class BootstrapDemo : MonoBehaviour
         _bootstrapper.AddStep(new DelayBootstrapStep("Load Settings", 500));
         _bootstrapper.AddStep(new DelayBootstrapStep("Load Save Data", 500));
         _bootstrapper.AddStep(new DelayBootstrapStep("Check Content", 500));
+        _bootstrapper.AddStep(new DelayBootstrapStep("Check Content", 500));
 
         await RunBootstrapAsync();
     }

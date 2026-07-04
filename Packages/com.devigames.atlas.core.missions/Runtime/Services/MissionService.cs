@@ -4,7 +4,7 @@ using DeviGames.Atlas.Core.Events;
 
 namespace DeviGames.Atlas.Core.Missions.Services
 {
-    public sealed class MissionManager
+    public sealed class MissionService
     {
         public MissionDefinition CurrentMission { get; private set; }
 

@@ -1,0 +1,17 @@
+{
+    "name": "DeviGames.Atlas.Core.Progress",
+    "rootNamespace": "",
+    "references": [
+        "DeviGames.Atlas.Core.Events",
+        "DeviGames.Atlas.Core.Missions"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

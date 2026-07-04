@@ -9,7 +9,7 @@ namespace DeviGames.Atlas.Core.Missions.Tests
 {
     public class MissionTests
     {
-        private MissionManager _missionManager;
+        private MissionService _missionService;
         private MissionDefinition _mockMission;
         
         private int _startedCount;
@@ -25,7 +25,7 @@ namespace DeviGames.Atlas.Core.Missions.Tests
             _lastProcessedMissionId = string.Empty;
 
             // 1. Initialize your State Architecture objects
-            _missionManager = new MissionManager();
+            _missionService = new MissionService();
             
             // 2. Generate a clean Runtime-only scriptable object instance
             _mockMission = ScriptableObject.CreateInstance<MissionDefinition>();
@@ -63,11 +63,11 @@ namespace DeviGames.Atlas.Core.Missions.Tests
             EventBus.Subscribe<MissionStartedEvent>(OnMissionStarted);
 
             // Act
-            _missionManager.StartMission(_mockMission);
+            _missionService.StartMission(_mockMission);
 
             // Assert
-            Assert.IsTrue(_missionManager.HasActiveMission);
-            Assert.AreEqual(_mockMission, _missionManager.CurrentMission);
+            Assert.IsTrue(_missionService.HasActiveMission);
+            Assert.AreEqual(_mockMission, _missionService.CurrentMission);
             Assert.AreEqual(1, _startedCount);
 
             EventBus.Unsubscribe<MissionStartedEvent>(OnMissionStarted);
@@ -77,15 +77,15 @@ namespace DeviGames.Atlas.Core.Missions.Tests
         public void CompleteMission_Should_ClearActiveMission_And_Publish_MissionCompletedEvent()
         {
             // Arrange
-            _missionManager.StartMission(_mockMission);
+            _missionService.StartMission(_mockMission);
             EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
 
             // Act
-            _missionManager.CompleteMission();
+            _missionService.CompleteMission();
 
             // Assert
-            Assert.IsFalse(_missionManager.HasActiveMission);
-            Assert.IsNull(_missionManager.CurrentMission);
+            Assert.IsFalse(_missionService.HasActiveMission);
+            Assert.IsNull(_missionService.CurrentMission);
             Assert.AreEqual(1, _completedCount);
 
             EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
@@ -98,7 +98,7 @@ namespace DeviGames.Atlas.Core.Missions.Tests
             EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
 
             // Act
-            _missionManager.CompleteMission();
+            _missionService.CompleteMission();
 
             // Assert
             Assert.AreEqual(0, _completedCount);
@@ -110,14 +110,14 @@ namespace DeviGames.Atlas.Core.Missions.Tests
         public void AbortMission_Should_ClearActiveMission_Without_Publishing_CompletionEvent()
         {
             // Arrange
-            _missionManager.StartMission(_mockMission);
+            _missionService.StartMission(_mockMission);
             EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
 
             // Act
-            _missionManager.AbortMission();
+            _missionService.AbortMission();
 
             // Assert
-            Assert.IsFalse(_missionManager.HasActiveMission);
+            Assert.IsFalse(_missionService.HasActiveMission);
             Assert.AreEqual(0, _completedCount);
 
             EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);

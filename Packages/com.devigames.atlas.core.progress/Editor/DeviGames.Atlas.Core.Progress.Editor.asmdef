@@ -1,0 +1,16 @@
+{
+    "name": "DeviGames.Atlas.Core.Progress.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:6d95bc62d0b9e397fa4c6d18ae093693"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

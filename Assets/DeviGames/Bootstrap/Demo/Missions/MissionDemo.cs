@@ -8,7 +8,7 @@ public sealed class MissionDemo : MonoBehaviour
 {
     [SerializeField] private MissionDefinition _mission;
 
-    private readonly MissionManager _missionManager = new();
+    private readonly MissionService _missionManager = new();
 
     private void OnEnable()
     {
