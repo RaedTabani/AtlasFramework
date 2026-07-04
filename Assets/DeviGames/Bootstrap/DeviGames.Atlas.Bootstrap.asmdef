@@ -2,7 +2,8 @@
     "name": "DeviGames.Atlas.Bootstrap",
     "rootNamespace": "",
     "references": [
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
+        "GUID:6868988f9aa6b6986bb42474f4838c02"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
