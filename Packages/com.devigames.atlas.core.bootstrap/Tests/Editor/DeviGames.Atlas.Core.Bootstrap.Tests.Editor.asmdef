@@ -1,12 +1,13 @@
 {
-    "name": "DeviGames.Atlas.Bootstrap",
+    "name": "DeviGames.Atlas.Core.Bootstrap.Tests.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:6868988f9aa6b6986bb42474f4838c02",
-        "GUID:1c82f38aa09917e0899894338837c616"
+        "GUID:1c82f38aa09917e0899894338837c616",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

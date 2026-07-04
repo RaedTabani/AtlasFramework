@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.core.bootstrap",
+  "version": "1.0.0",
+  "displayName": "Atlas Core Bootstrap",
+  "description": "Framework for bootstrapping the Atlas core systems",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}
