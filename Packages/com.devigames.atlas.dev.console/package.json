@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.dev.console",
+  "version": "1.0.0",
+  "displayName": "Atlas Dev Console",
+  "description": "Developer-only tools for testing Atlas systems quickly. allowing developers to test and debug their games in real-time.",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}
