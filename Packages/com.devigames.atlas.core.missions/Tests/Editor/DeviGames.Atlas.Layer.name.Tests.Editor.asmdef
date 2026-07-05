@@ -1,5 +1,5 @@
 {
-    "name": "DeviGames.Atlas.Layer.name.Tests.Editor",
+    "name": "DeviGames.Atlas.Core.Missions.Tests.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:6868988f9aa6b6986bb42474f4838c02",

@@ -1,18 +1,22 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DeviGames.Atlas.Core.Bootstrap.Context;
 using DeviGames.Atlas.Core.Bootstrap.Events;
 using DeviGames.Atlas.Core.Bootstrap.Steps;
 using DeviGames.Atlas.Core.Events;
+using DeviGames.Atlas.Core.Services;
 
 namespace DeviGames.Atlas.Core.Bootstrap.Services
 {
-    public sealed class Bootstrapper
+    public sealed class BootstrapService
     {
         private readonly List<IBootstrapStep> _steps = new();
 
         public bool IsRunning { get; private set; }
         public bool IsCompleted { get; private set; }
+
+        public ServiceRegistry ServiceRegistry { get; private set; }
 
         public void AddStep(IBootstrapStep step)
         {
@@ -22,11 +26,10 @@ namespace DeviGames.Atlas.Core.Bootstrap.Services
             _steps.Add(step);
         }
 
-        public Bootstrapper AddStep<T>() where T : IBootstrapStep, new()
+        public BootstrapService AddStep<T>() where T : IBootstrapStep, new()
         {
-            var step = new T();
-            _steps.Add(step);
-            return this; // Enables chaining
+            _steps.Add(new T());
+            return this;
         }
 
         public async Task RunAsync()
@@ -37,13 +40,16 @@ namespace DeviGames.Atlas.Core.Bootstrap.Services
             IsRunning = true;
             IsCompleted = false;
 
+            ServiceRegistry = new ServiceRegistry();
+            BootstrapContext context = new BootstrapContext(ServiceRegistry);
+
             EventBus.Publish(new BootstrapStartedEvent());
 
             try
             {
                 foreach (IBootstrapStep step in _steps)
                 {
-                    await step.ExecuteAsync();
+                    await step.ExecuteAsync(context);
                 }
 
                 IsCompleted = true;

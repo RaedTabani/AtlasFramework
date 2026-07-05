@@ -9,7 +9,7 @@ using UnityEngine;
 
 public sealed class BootstrapDemo : MonoBehaviour
 {
-    private Bootstrapper _bootstrapper;
+    private BootstrapService _bootstrapService;
 
     private void OnEnable()
     {
@@ -27,12 +27,12 @@ public sealed class BootstrapDemo : MonoBehaviour
 
     private async void Start()
     {
-        _bootstrapper = new Bootstrapper();
+        _bootstrapService = new BootstrapService();
 
-        _bootstrapper.AddStep(new DelayBootstrapStep("Load Settings", 500));
-        _bootstrapper.AddStep(new DelayBootstrapStep("Load Save Data", 500));
-        _bootstrapper.AddStep(new DelayBootstrapStep("Check Content", 500));
-        _bootstrapper.AddStep(new DelayBootstrapStep("Check Content", 500));
+        _bootstrapService.AddStep(new DelayBootstrapStep("Load Settings", 500));
+        _bootstrapService.AddStep(new DelayBootstrapStep("Load Save Data", 500));
+        _bootstrapService.AddStep(new DelayBootstrapStep("Check Content", 500));
+        _bootstrapService.AddStep(new DelayBootstrapStep("Check Content", 500));
 
         await RunBootstrapAsync();
     }
@@ -41,7 +41,7 @@ public sealed class BootstrapDemo : MonoBehaviour
     {
         try
         {
-            await _bootstrapper.RunAsync();
+            await _bootstrapService.RunAsync();
         }
         catch (Exception exception)
         {

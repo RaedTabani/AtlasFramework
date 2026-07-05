@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-
+using DeviGames.Atlas.Core.Bootstrap.Context;
 namespace DeviGames.Atlas.Core.Bootstrap.Steps
 {
     public sealed class DelayBootstrapStep : IBootstrapStep
@@ -15,7 +15,7 @@ namespace DeviGames.Atlas.Core.Bootstrap.Steps
             _milliseconds = milliseconds;
         }
 
-        public async Task ExecuteAsync()
+        public async Task ExecuteAsync(BootstrapContext context)
         {
             await Task.Delay(_milliseconds);
         }
