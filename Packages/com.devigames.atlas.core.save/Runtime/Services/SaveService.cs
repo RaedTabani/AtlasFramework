@@ -1,5 +1,7 @@
 using System;
 using System.Threading.Tasks;
+using DeviGames.Atlas.Core.Events;
+using DeviGames.Atlas.Core.Save.Events;
 using DeviGames.Atlas.Core.Save.Interfaces;
 
 namespace DeviGames.Atlas.Core.Save.Services
@@ -13,16 +15,37 @@ namespace DeviGames.Atlas.Core.Save.Services
             _storage = storage ?? throw new ArgumentNullException(nameof(storage));
         }
 
-        public Task SaveAsync<T>(string key, T data)
+        public async Task SaveAsync<T>(string key, T data)
         {
             ValidateKey(key);
-            return _storage.SaveAsync(key, data);
+
+            try
+            {
+                await _storage.SaveAsync(key, data);
+                EventBus.Publish(new SaveCompletedEvent(key));
+            }
+            catch (Exception ex)
+            {
+                EventBus.Publish(new SaveFailedEvent(key, ex));
+                throw;
+            }
         }
 
-        public Task<T> LoadAsync<T>(string key)
+        public async Task<T> LoadAsync<T>(string key)
         {
             ValidateKey(key);
-            return _storage.LoadAsync<T>(key);
+
+            try
+            {
+                T result = await _storage.LoadAsync<T>(key);
+                EventBus.Publish(new LoadCompletedEvent(key));
+                return result;
+            }
+            catch (Exception ex)
+            {
+                EventBus.Publish(new LoadFailedEvent(key, ex));
+                throw;
+            }
         }
 
         public Task<bool> ExistsAsync(string key)
