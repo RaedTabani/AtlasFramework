@@ -6,6 +6,11 @@ namespace DeviGames.Atlas.Core.Services
 
         public static ServiceRegistry Current => _current;
 
+        internal static void Set(ServiceRegistry registry)
+        {
+            _current = registry;
+        }
+
         internal static void Reset()
         {
             _current = new ServiceRegistry();

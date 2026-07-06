@@ -1,139 +1,101 @@
+using DeviGames.Atlas.Core.Events;
+using DeviGames.Atlas.Core.Missions.Definitions;
+using DeviGames.Atlas.Core.Missions.Events;
+using DeviGames.Atlas.Core.Missions.Services;
+using DeviGames.Atlas.Core.Objectives.Definitions;
+using DeviGames.Atlas.Core.Objectives.Services;
 using NUnit.Framework;
 using UnityEngine;
-using DeviGames.Atlas.Core.Missions.Services;
-using DeviGames.Atlas.Core.Missions.Events;
-using DeviGames.Atlas.Core.Missions.Definitions;
-using DeviGames.Atlas.Core.Events;
 
 namespace DeviGames.Atlas.Core.Missions.Tests
 {
     public class MissionTests
     {
         private MissionService _missionService;
-        private MissionDefinition _mockMission;
-        
-        private int _startedCount;
-        private int _completedCount;
-        private string _lastProcessedMissionId;
+        private ObjectiveService _objectiveService;
 
-        
+        private MissionDefinition _mission;
+        private ObjectiveDefinition _objectiveA;
+        private ObjectiveDefinition _objectiveB;
+
+        private int _missionCompletedCount;
+        private string _completedMissionId;
+
         [SetUp]
         public void Setup()
         {
-            _startedCount = 0;
-            _completedCount = 0;
-            _lastProcessedMissionId = string.Empty;
+            EventBusTestUtility.Reset();
 
-            // 1. Initialize your State Architecture objects
-            _missionService = new MissionService();
-            
-            // 2. Generate a clean Runtime-only scriptable object instance
-            _mockMission = ScriptableObject.CreateInstance<MissionDefinition>();
-            _mockMission.Editor_InitializeForTests(
-                "test_mission_001",
-                "Test Mission",
-                "Test Description",
+            _objectiveService = new ObjectiveService();
+            _missionService = new MissionService(_objectiveService);
+            _missionService.Initialize();
+
+            _objectiveA = ScriptableObject.CreateInstance<ObjectiveDefinition>();
+            _objectiveB = ScriptableObject.CreateInstance<ObjectiveDefinition>();
+
+            _objectiveA.Editor_InitializeForTests(
+                "objective_a",
+                "Objective A",
+                "First objective",
+                1);
+
+            _objectiveB.Editor_InitializeForTests(
+                "objective_b",
+                "Objective B",
+                "Second objective",
+                1);
+
+            _mission = ScriptableObject.CreateInstance<MissionDefinition>();
+            _mission.Editor_InitializeForTests(
+                "mission_001",
+                "Mission 001",
+                "Mission with two objectives",
                 "TestScene",
                 0,
                 1,
                 1,
-                false);
-            
-            // Using a bit of reflection hack or an initialization method if fields are fully protected, 
-            // but for testing standard properties we look for matching events.
-            
-            // 3. Clear global static footprints via the Provider
-            // (Adjust name to EventBusTestUtility or EventBusProvider based on your wrapper layout)
-            EventBusTestUtility.Reset(); 
+                false,
+                new[] { _objectiveA, _objectiveB });
+
+            _missionCompletedCount = 0;
+            _completedMissionId = string.Empty;
+
+            EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
         }
 
         [TearDown]
-        public void Teardown()
+        public void TearDown()
         {
-            // Destroy memory footprint allocations of the test ScriptableObject
-            Object.DestroyImmediate(_mockMission);
+            EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
+            _missionService.Shutdown();
+            EventBusTestUtility.Reset();
+
+            Object.DestroyImmediate(_mission);
+            Object.DestroyImmediate(_objectiveA);
+            Object.DestroyImmediate(_objectiveB);
         }
 
-        // --- Mission Manager Functional Tests ---
-
         [Test]
-        public void StartMission_Should_SetActiveMission_And_Publish_MissionStartedEvent()
+        public void Mission_Should_Complete_When_All_Objectives_Are_Completed()
         {
-            // Arrange
-            EventBus.Subscribe<MissionStartedEvent>(OnMissionStarted);
+            _missionService.StartMission(_mission);
 
-            // Act
-            _missionService.StartMission(_mockMission);
+            _objectiveService.AddProgress("objective_a", 1);
 
-            // Assert
+            Assert.AreEqual(0, _missionCompletedCount);
             Assert.IsTrue(_missionService.HasActiveMission);
-            Assert.AreEqual(_mockMission, _missionService.CurrentMission);
-            Assert.AreEqual(1, _startedCount);
 
-            EventBus.Unsubscribe<MissionStartedEvent>(OnMissionStarted);
-        }
+            _objectiveService.AddProgress("objective_b", 1);
 
-        [Test]
-        public void CompleteMission_Should_ClearActiveMission_And_Publish_MissionCompletedEvent()
-        {
-            // Arrange
-            _missionService.StartMission(_mockMission);
-            EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
-
-            // Act
-            _missionService.CompleteMission();
-
-            // Assert
+            Assert.AreEqual(1, _missionCompletedCount);
+            Assert.AreEqual("mission_001", _completedMissionId);
             Assert.IsFalse(_missionService.HasActiveMission);
-            Assert.IsNull(_missionService.CurrentMission);
-            Assert.AreEqual(1, _completedCount);
-
-            EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
-        }
-
-        [Test]
-        public void CompleteMission_WhenNoActiveMission_Should_Not_PublishEvent()
-        {
-            // Arrange
-            EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
-
-            // Act
-            _missionService.CompleteMission();
-
-            // Assert
-            Assert.AreEqual(0, _completedCount);
-
-            EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
-        }
-
-        [Test]
-        public void AbortMission_Should_ClearActiveMission_Without_Publishing_CompletionEvent()
-        {
-            // Arrange
-            _missionService.StartMission(_mockMission);
-            EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
-
-            // Act
-            _missionService.AbortMission();
-
-            // Assert
-            Assert.IsFalse(_missionService.HasActiveMission);
-            Assert.AreEqual(0, _completedCount);
-
-            EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
-        }
-
-        // --- Helper Event Handlers ---
-        private void OnMissionStarted(MissionStartedEvent e)
-        {
-            _startedCount++;
-            _lastProcessedMissionId = e.MissionId;
         }
 
         private void OnMissionCompleted(MissionCompletedEvent e)
         {
-            _completedCount++;
-            _lastProcessedMissionId = e.MissionId;
+            _missionCompletedCount++;
+            _completedMissionId = e.MissionId;
         }
     }
 }

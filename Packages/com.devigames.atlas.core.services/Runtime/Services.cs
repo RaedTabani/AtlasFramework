@@ -2,6 +2,10 @@ namespace DeviGames.Atlas.Core.Services
 {
     public static class Services
     {
+        public static void SetRegistry(ServiceRegistry registry)
+        {
+            ServiceProvider.Set(registry);
+        }
         public static void Register<T>(T service)
         {
             ServiceProvider.Current.Register(service);

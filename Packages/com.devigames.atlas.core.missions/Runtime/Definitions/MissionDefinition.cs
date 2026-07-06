@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections.Generic;
+using DeviGames.Atlas.Core.Objectives.Definitions;
 
 namespace DeviGames.Atlas.Core.Missions.Definitions
 {
@@ -15,7 +17,8 @@ namespace DeviGames.Atlas.Core.Missions.Definitions
             int unlockOrder,
             int difficulty,
             int version,
-            bool downloadable)
+            bool downloadable,
+            ObjectiveDefinition[] objectives = null)
         {
             _missionId = missionId;
             _displayName = displayName;
@@ -25,6 +28,7 @@ namespace DeviGames.Atlas.Core.Missions.Definitions
             _difficulty = difficulty;
             _version = version;
             _downloadable = downloadable;
+            _objectives = objectives ?? new ObjectiveDefinition[0];
         }
         #endif
         
@@ -36,6 +40,8 @@ namespace DeviGames.Atlas.Core.Missions.Definitions
         [Header("Setup")]
         [SerializeField] private string _sceneName;
         [SerializeField] private Sprite _thumbnail;
+        [Header("Objectives")]
+        [SerializeField] private ObjectiveDefinition[] _objectives;
 
         [Header("Progression & Balancing")]
         [SerializeField] private int _unlockOrder;
@@ -51,6 +57,7 @@ namespace DeviGames.Atlas.Core.Missions.Definitions
         public string Description => _description;
         public string SceneName => _sceneName;
         public Sprite Thumbnail => _thumbnail;
+        public IReadOnlyList<ObjectiveDefinition> Objectives => _objectives;
         public int UnlockOrder => _unlockOrder;
         public int Difficulty => _difficulty;
         public int Version => _version;

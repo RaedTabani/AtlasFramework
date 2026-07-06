@@ -1,12 +1,9 @@
 {
-    "name": "DeviGames.Atlas.Core.Missions.Tests.Editor",
+    "name": "DeviGames.Atlas.Core.Objectives.Editor.Tests",
     "rootNamespace": "",
     "references": [
-        "GUID:6868988f9aa6b6986bb42474f4838c02",
-        "GUID:27619889b8ba8c24980f49ee34dbb44a",
-        "GUID:0acc523941302664db1f4e527237feb3",
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:a11b5857b7e6ef5d497a6147a99de3e6"
+        "GUID:a11b5857b7e6ef5d497a6147a99de3e6",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
     ],
     "includePlatforms": [
         "Editor"

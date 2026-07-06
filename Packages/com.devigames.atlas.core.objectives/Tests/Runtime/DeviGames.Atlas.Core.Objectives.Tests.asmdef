@@ -1,12 +1,7 @@
 {
-    "name": "DeviGames.Atlas.Bootstrap",
+    "name": "DeviGames.Atlas.Core.Objectives.Test",
     "rootNamespace": "",
-    "references": [
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:6868988f9aa6b6986bb42474f4838c02",
-        "GUID:1c82f38aa09917e0899894338837c616",
-        "GUID:a11b5857b7e6ef5d497a6147a99de3e6"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

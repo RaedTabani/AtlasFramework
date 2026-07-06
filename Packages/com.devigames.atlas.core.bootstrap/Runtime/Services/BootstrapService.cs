@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Bootstrap.Context;
 using DeviGames.Atlas.Core.Bootstrap.Events;
 using DeviGames.Atlas.Core.Bootstrap.Steps;
 using DeviGames.Atlas.Core.Events;
-using DeviGames.Atlas.Core.Services;
+
 
 namespace DeviGames.Atlas.Core.Bootstrap.Services
 {
@@ -53,6 +54,7 @@ namespace DeviGames.Atlas.Core.Bootstrap.Services
                 }
 
                 IsCompleted = true;
+                DeviGames.Atlas.Core.Services.Services.SetRegistry(ServiceRegistry);
                 EventBus.Publish(new BootstrapCompletedEvent());
             }
             catch (Exception exception)
