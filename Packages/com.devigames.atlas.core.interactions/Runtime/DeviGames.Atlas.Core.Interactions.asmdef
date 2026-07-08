@@ -1,0 +1,17 @@
+{
+    "name": "eviGames.Atlas.Core.Interaction",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
+        "GUID:c37819aeefe99d001a07a2588f570558"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

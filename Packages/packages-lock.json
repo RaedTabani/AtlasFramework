@@ -12,6 +12,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.interactions": {
+      "version": "file:com.devigames.atlas.core.interactions",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.lifecycle": {
       "version": "file:com.devigames.atlas.core.lifecycle",
       "depth": 0,

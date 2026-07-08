@@ -17,7 +17,9 @@ MonoBehaviour:
   _description: 
   _sceneName: 
   _thumbnail: {fileID: 0}
-  _objectives: []
+  _objectives:
+  - {fileID: 11400000, guid: 43e50d1687243ad85b142e46483b1e59, type: 2}
+  - {fileID: 11400000, guid: db099f35dd21b7d779dbf1c7bc3fc847, type: 2}
   _unlockOrder: 0
   _difficulty: 0
   _version: 1

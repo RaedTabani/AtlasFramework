@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.core.interactions",
+  "version": "1.0.0",
+  "displayName": "Atlas Core Interactions",
+  "description": "Core interaction systems for the Atlas framework",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}
