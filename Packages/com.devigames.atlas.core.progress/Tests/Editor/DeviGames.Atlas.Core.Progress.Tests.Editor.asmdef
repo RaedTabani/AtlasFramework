@@ -1,15 +1,16 @@
 {
-    "name": "DeviGames.Atlas.Bootstrap",
+    "name": "DeviGames.Atlas.Core.Progress.Tests.Editor",
     "rootNamespace": "",
     "references": [
         "GUID:c8c9655e15b092598b064cbd4e7df6e0",
+        "GUID:0a8b033f4e611861cb787db97ad22003",
         "GUID:6868988f9aa6b6986bb42474f4838c02",
-        "GUID:1c82f38aa09917e0899894338837c616",
-        "GUID:a11b5857b7e6ef5d497a6147a99de3e6",
-        "GUID:aac2f19c5490642e2bd3e005432299d4",
-        "GUID:6d95bc62d0b9e397fa4c6d18ae093693"
+        "GUID:6d95bc62d0b9e397fa4c6d18ae093693",
+        "GUID:aac2f19c5490642e2bd3e005432299d4"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -4,6 +4,7 @@ using DeviGames.Atlas.Core.Missions.Events;
 using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Objectives.Definitions;
 using DeviGames.Atlas.Core.Objectives.Services;
+using DeviGames.Atlas.Core.Progress.Services;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -13,12 +14,14 @@ namespace DeviGames.Atlas.Core.Missions.Tests
     {
         private MissionService _missionService;
         private ObjectiveService _objectiveService;
+        private MissionProgressService _missionProgressService;
 
         private MissionDefinition _mission;
         private ObjectiveDefinition _objectiveA;
         private ObjectiveDefinition _objectiveB;
 
         private int _missionCompletedCount;
+        private int _progressChangedCount;
         private string _completedMissionId;
 
         [SetUp]
@@ -29,6 +32,8 @@ namespace DeviGames.Atlas.Core.Missions.Tests
             _objectiveService = new ObjectiveService();
             _missionService = new MissionService(_objectiveService);
             _missionService.Initialize();
+            _missionProgressService = new MissionProgressService();
+            _missionProgressService.Initialize();
 
             _objectiveA = ScriptableObject.CreateInstance<ObjectiveDefinition>();
             _objectiveB = ScriptableObject.CreateInstance<ObjectiveDefinition>();
@@ -61,13 +66,16 @@ namespace DeviGames.Atlas.Core.Missions.Tests
             _completedMissionId = string.Empty;
 
             EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
+            EventBus.Subscribe<MissionProgressChangedEvent>(OnProgressChanged);
         }
 
         [TearDown]
         public void TearDown()
         {
             EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
+            EventBus.Unsubscribe<MissionProgressChangedEvent>(OnProgressChanged);
             _missionService.Shutdown();
+            _missionProgressService.Shutdown();
             EventBusTestUtility.Reset();
 
             Object.DestroyImmediate(_mission);
@@ -91,11 +99,35 @@ namespace DeviGames.Atlas.Core.Missions.Tests
             Assert.AreEqual("mission_001", _completedMissionId);
             Assert.IsFalse(_missionService.HasActiveMission);
         }
+        [Test]
+        public void Completing_Mission_Should_Publish_ProgressChanged()
+        {
+            EventBus.Publish(
+                new MissionCompletedEvent("mission_001"));
+
+            Assert.AreEqual(1, _progressChangedCount);
+        }
+
+        [Test]
+        public void Completing_Same_Mission_Twice_Should_Publish_Once()
+        {
+            EventBus.Publish(
+                new MissionCompletedEvent("mission_001"));
+
+            EventBus.Publish(
+                new MissionCompletedEvent("mission_001"));
+
+            Assert.AreEqual(1, _progressChangedCount);
+        }
 
         private void OnMissionCompleted(MissionCompletedEvent e)
         {
             _missionCompletedCount++;
             _completedMissionId = e.MissionId;
+        }
+        private void OnProgressChanged(MissionProgressChangedEvent e)
+        {
+            _progressChangedCount++;
         }
     }
 }

@@ -4,7 +4,8 @@
     "references": [
         "DeviGames.Atlas.Core.Events",
         "DeviGames.Atlas.Core.Missions",
-        "DeviGames.Atlas.Core.Lifecycle"
+        "DeviGames.Atlas.Core.Lifecycle",
+        "DeviGames.Atlas.Core.Save"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

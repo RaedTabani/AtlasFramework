@@ -30,7 +30,7 @@ namespace DeviGames.Atlas.Core.Progress.Services
             if (string.IsNullOrWhiteSpace(missionId))
                 return false;
 
-            return _data.CompletedMissionIds.Contains(missionId);
+            return _data.IsCompleted(missionId);
         }
 
         public void LoadProgress(MissionProgressData data)
@@ -40,10 +40,7 @@ namespace DeviGames.Atlas.Core.Progress.Services
 
         public MissionProgressData CreateSnapshot()
         {
-            return new MissionProgressData
-            {
-                CompletedMissionIds = new HashSet<string>(_data.CompletedMissionIds)
-            };
+            return new MissionProgressData(_data.CompletedMissionIds);
         }
 
         private void OnMissionCompleted(MissionCompletedEvent e)
@@ -51,7 +48,12 @@ namespace DeviGames.Atlas.Core.Progress.Services
             if (string.IsNullOrWhiteSpace(e.MissionId))
                 return;
 
-            _data.CompletedMissionIds.Add(e.MissionId);
+            if (_data.MarkCompleted(e.MissionId))
+            {
+                EventBus.Publish(
+                    new MissionProgressChangedEvent(
+                        e.MissionId));
+            }
         }
     }
 }
