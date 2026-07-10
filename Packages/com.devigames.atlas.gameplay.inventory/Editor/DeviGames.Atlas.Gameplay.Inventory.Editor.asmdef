@@ -1,11 +1,7 @@
 {
-    "name": "DeviGames.Playground",
+    "name": "DeviGames.Atlas.Gameplay.Inventory.Editor",
     "rootNamespace": "",
-    "references": [
-        "GUID:b090d76514e3cf9c5bce11a5bd5bd66c",
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:9378dde39a22b8d66b5d0055f3869254"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

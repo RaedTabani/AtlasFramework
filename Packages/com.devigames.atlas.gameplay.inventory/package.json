@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.gameplay.inventory",
+  "version": "1.0.0",
+  "displayName": "Atlas Gameplay Inventory",
+  "description": "Inventory management for Atlas gameplay",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}

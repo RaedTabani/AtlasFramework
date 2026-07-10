@@ -1,6 +1,8 @@
 using DeviGames.Atlas.Core.Interaction.Interfaces;
 using DeviGames.Atlas.Core.Interaction.Requests;
 using DeviGames.Atlas.Core.Interaction.Results;
+using DeviGames.Atlas.Core.Events;
+using DeviGames.Atlas.Gameplay.Events;
 using UnityEngine;
 
 namespace DeviGames.Playground.Interaction
@@ -18,6 +20,7 @@ namespace DeviGames.Playground.Interaction
                 $"{name} received a {request.Type} interaction from " +
                 $"{request.Source.GetType().Name}.");
 
+            EventBus.Publish(new ItemCollectedEvent("GoldenKey Found!"));
             return _succeeds
                 ? InteractionResult.Successful(_resultMessage)
                 : InteractionResult.Failed(_resultMessage);
