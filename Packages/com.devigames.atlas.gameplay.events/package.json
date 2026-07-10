@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.gameplay.events",
+  "version": "1.0.0",
+  "displayName": "Atlas Gameplay Events",
+  "description": "Gameplay events package for game specific interactions and events.",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}
