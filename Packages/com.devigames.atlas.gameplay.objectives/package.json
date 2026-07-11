@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.gameplay.objectives",
+  "version": "1.0.0",
+  "displayName": "Atlas Gameplay Objectives",
+  "description": "Objectives system for Atlas gameplay, Glue layer for Atlas Core Objectives package.",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}

@@ -1,5 +1,5 @@
 {
-    "name": "eviGames.Atlas.Core.Interaction",
+    "name": "DeviGames.Atlas.Core.Interaction",
     "rootNamespace": "",
     "references": [
         "GUID:c8c9655e15b092598b064cbd4e7df6e0",

@@ -1,5 +1,5 @@
 {
-    "name": "DeviGames.Atlas.Core.Interaction.Editor",
+    "name": "DeviGames.Atlas.Gameplay.Objectives.Editor",
     "rootNamespace": "",
     "references": [],
     "includePlatforms": [],

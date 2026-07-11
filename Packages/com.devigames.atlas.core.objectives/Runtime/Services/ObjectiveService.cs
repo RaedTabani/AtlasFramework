@@ -5,11 +5,13 @@ using DeviGames.Atlas.Core.Objectives.Definitions;
 using DeviGames.Atlas.Core.Objectives.Events;
 using DeviGames.Atlas.Core.Objectives.Models;
 
+
 namespace DeviGames.Atlas.Core.Objectives.Services
 {
     public sealed class ObjectiveService
     {
         private readonly Dictionary<string, ObjectiveState> _states = new();
+        private readonly Dictionary<string, ObjectiveDefinition> _definitions = new();
 
         public IReadOnlyDictionary<string, ObjectiveState> States => _states;
 
@@ -28,6 +30,7 @@ namespace DeviGames.Atlas.Core.Objectives.Services
             state.Start();
 
             _states.Add(definition.Id, state);
+            _definitions.Add(definition.Id, definition);
 
             EventBus.Publish(new ObjectiveStartedEvent(definition.Id));
         }
@@ -60,6 +63,34 @@ namespace DeviGames.Atlas.Core.Objectives.Services
             }
         }
 
+        public void ProcessSignal(ObjectiveSignal signal)
+        {
+            if (string.IsNullOrWhiteSpace(signal.Type))
+                return;
+
+            if (signal.Amount <= 0)
+                return;
+
+            foreach (KeyValuePair<string, ObjectiveState> pair in _states)
+            {
+                ObjectiveState state = pair.Value;
+
+                if (state.IsCompleted)
+                    continue;
+
+                if (!_definitions.TryGetValue(pair.Key, out ObjectiveDefinition definition))
+                    continue;
+
+                if (definition.TriggerType != signal.Type)
+                    continue;
+
+                if (definition.TriggerTargetId != signal.TargetId)
+                    continue;
+
+                AddProgress(definition.Id, signal.Amount);
+            }
+        }
+
         public bool IsCompleted(string objectiveId)
         {
             return _states.TryGetValue(objectiveId, out ObjectiveState state)
@@ -69,6 +100,7 @@ namespace DeviGames.Atlas.Core.Objectives.Services
         public void Reset()
         {
             _states.Clear();
+            _definitions.Clear();
         }
     }
 }
