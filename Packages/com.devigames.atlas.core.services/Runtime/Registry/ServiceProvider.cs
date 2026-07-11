@@ -13,7 +13,7 @@ namespace DeviGames.Atlas.Core.Services
 
         internal static void Reset()
         {
-            _current = new ServiceRegistry();
+            _current.Reset();
         }
     }
 }

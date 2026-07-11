@@ -1,12 +1,8 @@
 {
-    "name": "DeviGames.Atlas.Core.Services.Editor",
+    "name": "DeviGames.Atlas.Dev.Hub.Tests",
     "rootNamespace": "",
-    "references": [
-        "GUID:0a8b033f4e611861cb787db97ad22003"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "references": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -30,5 +30,10 @@ namespace DeviGames.Atlas.Core.Services
         {
             ServiceProvider.Current.Unregister<T>();
         }
+
+        public static void Reset()
+        {
+            ServiceProvider.Current.Reset();
+        }
     }
 }

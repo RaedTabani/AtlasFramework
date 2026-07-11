@@ -1,0 +1,24 @@
+{
+    "name": "DeviGames.Atlas.Dev.Hub.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4e8743b774f2467058a6c40fb1b08f8a",
+        "GUID:aac2f19c5490642e2bd3e005432299d4",
+        "GUID:0a8b033f4e611861cb787db97ad22003",
+        "GUID:6868988f9aa6b6986bb42474f4838c02",
+        "GUID:a11b5857b7e6ef5d497a6147a99de3e6",
+        "GUID:6d95bc62d0b9e397fa4c6d18ae093693",
+        "GUID:81f08a9a16448ff45a96ecd29e616275"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

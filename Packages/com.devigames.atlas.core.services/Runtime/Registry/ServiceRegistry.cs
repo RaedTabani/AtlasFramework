@@ -54,7 +54,7 @@ namespace DeviGames.Atlas.Core.Services
             _services.Remove(typeof(TService));
         }
 
-        public void Clear()
+        public void Reset()
         {
             _services.Clear();
         }

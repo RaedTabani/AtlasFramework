@@ -13,9 +13,11 @@ using DeviGames.Atlas.Core.Progress.Models;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Save.Storage;
+using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Events;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
+using DeviGames.Atlas.Dev.Hub.Services;
 using DeviGames.Playground.Interaction;
 using UnityEngine;
 
@@ -49,6 +51,8 @@ namespace DeviGames.Playground.Application
             CreateServices();
             InitializeServices();
             InitializeSceneComponents();
+            RegisterService();
+            
         }
 
         private async void Start()
@@ -115,6 +119,29 @@ namespace DeviGames.Playground.Application
                 new ProgressSaveCoordinator(
                     _progressService,
                     _saveService);
+
+
+            
+        }
+
+        private void RegisterService()
+        {
+            Services.Reset();
+
+            DeviGames.Atlas.Core.Services.Services.Register(_interactionService);
+            DeviGames.Atlas.Core.Services.Services.Register(_inventoryService);
+            DeviGames.Atlas.Core.Services.Services.Register(_objectiveService);
+            DeviGames.Atlas.Core.Services.Services.Register(_missionService);
+            DeviGames.Atlas.Core.Services.Services.Register(_progressService);
+            DeviGames.Atlas.Core.Services.Services.Register(_saveService);
+            DeviGames.Atlas.Core.Services.Services.Register(_progressSaveCoordinator);
+
+            DeviGames.Atlas.Core.Services.Services.Register(
+                new DevHubSnapshotService(
+                    _missionService,
+                    _objectiveService,
+                    _progressService,
+                    _inventoryService));
         }
 
         private void InitializeServices()

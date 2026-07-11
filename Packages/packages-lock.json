@@ -66,6 +66,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.dev.hub": {
+      "version": "file:com.devigames.atlas.dev.hub",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.gameplay.events": {
       "version": "file:com.devigames.atlas.gameplay.events",
       "depth": 0,
