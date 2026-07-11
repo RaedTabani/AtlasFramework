@@ -1,6 +1,4 @@
-using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Interaction;
-using DeviGames.Atlas.Core.Interaction.Events;
 using DeviGames.Atlas.Core.Interaction.Interfaces;
 using DeviGames.Atlas.Core.Interaction.Requests;
 using DeviGames.Atlas.Core.Interaction.Results;
@@ -11,28 +9,23 @@ namespace DeviGames.Playground.Interaction
 {
     public sealed class InteractionPlaygroundController : MonoBehaviour
     {
-        [Header("Interactor")]
-        [SerializeField] private PlaygroundInteractor _interactor;
+        [Header("Interaction Source")]
+        [SerializeField]
+        private PlaygroundInteractor _interactor;
 
         [Header("Targets")]
-        [SerializeField] private DemoInteractable[] _targets;
+        [Tooltip("Each assigned component must implement IInteractable.")]
+        [SerializeField]
+        private MonoBehaviour[] _targetBehaviours;
 
-        private readonly InteractionService _interactionService = new();
+        private InteractionService _interactionService;
+        private int _selectedTargetIndex;
+        private bool _isInitialized;
 
-        private int _selectedIndex;
-
-        private void OnEnable()
+        public void Initialize(InteractionService interactionService)
         {
-            EventBus.Subscribe<InteractionStartedEvent>(OnInteractionStarted);
-            EventBus.Subscribe<InteractionCompletedEvent>(OnInteractionCompleted);
-            EventBus.Subscribe<InteractionFailedEvent>(OnInteractionFailed);
-        }
-
-        private void OnDisable()
-        {
-            EventBus.Unsubscribe<InteractionStartedEvent>(OnInteractionStarted);
-            EventBus.Unsubscribe<InteractionCompletedEvent>(OnInteractionCompleted);
-            EventBus.Unsubscribe<InteractionFailedEvent>(OnInteractionFailed);
+            _interactionService = interactionService;
+            _isInitialized = _interactionService != null;
         }
 
         private void Start()
@@ -40,11 +33,14 @@ namespace DeviGames.Playground.Interaction
             SelectTarget(0);
 
             Debug.Log("Press 1, 2, or 3 to select a target.");
-            Debug.Log("Press E to interact with the selected target.");
+            Debug.Log("Press E to interact.");
         }
 
         private void Update()
         {
+            if (!_isInitialized)
+                return;
+
             if (Input.GetKeyDown(KeyCode.Alpha1))
                 SelectTarget(0);
 
@@ -60,49 +56,67 @@ namespace DeviGames.Playground.Interaction
 
         private void SelectTarget(int index)
         {
-            if (_targets == null || index < 0 || index >= _targets.Length)
+            if (_targetBehaviours == null ||
+                index < 0 ||
+                index >= _targetBehaviours.Length)
+            {
                 return;
+            }
 
-            _selectedIndex = index;
+            _selectedTargetIndex = index;
 
-            Debug.Log($"Selected target: {_targets[_selectedIndex].name}");
+            MonoBehaviour targetBehaviour =
+                _targetBehaviours[_selectedTargetIndex];
+
+            Debug.Log(
+                targetBehaviour != null
+                    ? $"Selected target: {targetBehaviour.name}"
+                    : $"Target slot {index} is empty.");
         }
 
         private void InteractWithSelectedTarget()
         {
-            if (_interactor == null || _targets == null || _targets.Length == 0)
+            if (_interactor == null)
             {
-                Debug.LogError("Playground interaction references are missing.");
+                Debug.LogError("Playground interactor is not assigned.");
                 return;
             }
 
-            IInteractable target = _targets[_selectedIndex];
+            if (_targetBehaviours == null ||
+                _targetBehaviours.Length == 0)
+            {
+                Debug.LogError("No interaction targets are assigned.");
+                return;
+            }
+
+            MonoBehaviour targetBehaviour =
+                _targetBehaviours[_selectedTargetIndex];
+
+            if (targetBehaviour == null)
+            {
+                Debug.LogWarning("Selected target is missing.");
+                return;
+            }
+
+            if (targetBehaviour is not IInteractable target)
+            {
+                Debug.LogError(
+                    $"{targetBehaviour.name} does not implement IInteractable.");
+
+                return;
+            }
 
             var request = new InteractionRequest(
                 _interactor,
                 target,
                 InteractionType.Primary);
 
-            InteractionResult result = _interactionService.Process(request);
+            InteractionResult result =
+                _interactionService.Process(request);
 
             Debug.Log(
                 $"Interaction result — Success: {result.Success}, " +
                 $"Message: {result.Message}");
-        }
-
-        private void OnInteractionStarted(InteractionStartedEvent e)
-        {
-            Debug.Log("Interaction started.");
-        }
-
-        private void OnInteractionCompleted(InteractionCompletedEvent e)
-        {
-            Debug.Log($"Interaction completed: {e.Result.Message}");
-        }
-
-        private void OnInteractionFailed(InteractionFailedEvent e)
-        {
-            Debug.LogWarning($"Interaction failed: {e.Result.Message}");
         }
     }
 }

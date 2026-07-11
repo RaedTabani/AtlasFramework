@@ -12,15 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a82dba41b2931aca89b5e142b2270f8, type: 3}
   m_Name: Mission_p_1
   m_EditorClassIdentifier: DeviGames.Atlas.Core.Missions::DeviGames.Atlas.Core.Missions.Definitions.MissionDefinition
-  _missionId: Mission_p_1
+  _missionId: escape_room
   _displayName: Escape the Room
   _description: 
   _sceneName: 
   _thumbnail: {fileID: 0}
   _objectives:
   - {fileID: 11400000, guid: 280b32196b30256929b0a98e3b76c2fb, type: 2}
-  - {fileID: 11400000, guid: 147e8bdb42112335aab015b8041b1806, type: 2}
-  - {fileID: 11400000, guid: 53522c8eec7f2c856bd18255ce6808d0, type: 2}
   _unlockOrder: 0
   _difficulty: 0
   _version: 1

@@ -20,7 +20,7 @@ namespace DeviGames.Playground.Interaction
                 $"{name} received a {request.Type} interaction from " +
                 $"{request.Source.GetType().Name}.");
 
-            EventBus.Publish(new ItemCollectedEvent("GoldenKey Found!"));
+            EventBus.Publish(new ItemCollectedEvent("golden_key"));
             return _succeeds
                 ? InteractionResult.Successful(_resultMessage)
                 : InteractionResult.Failed(_resultMessage);

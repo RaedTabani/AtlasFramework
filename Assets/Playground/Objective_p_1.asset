@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cac3a469017d671beabde4d6bbbcde4a, type: 3}
   m_Name: Objective_p_1
   m_EditorClassIdentifier: DeviGames.Atlas.Core.Objectives::DeviGames.Atlas.Core.Objectives.Definitions.ObjectiveDefinition
-  _id: Objective_p_1
-  _title: 
-  _description: Collect Key
+  _id: collect_golden_key
+  _title: Collect the Golden Key
+  _description: Find and collect the golden key.
   _targetValue: 1
+  _triggerType: item_collected
+  _triggerTargetId: golden_key

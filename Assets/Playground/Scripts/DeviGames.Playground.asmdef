@@ -2,9 +2,15 @@
     "name": "DeviGames.Playground",
     "rootNamespace": "",
     "references": [
-        "GUID:b090d76514e3cf9c5bce11a5bd5bd66c",
         "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:9378dde39a22b8d66b5d0055f3869254"
+        "GUID:b090d76514e3cf9c5bce11a5bd5bd66c",
+        "GUID:a11b5857b7e6ef5d497a6147a99de3e6",
+        "GUID:6868988f9aa6b6986bb42474f4838c02",
+        "GUID:6d95bc62d0b9e397fa4c6d18ae093693",
+        "GUID:aac2f19c5490642e2bd3e005432299d4",
+        "GUID:9378dde39a22b8d66b5d0055f3869254",
+        "GUID:9cb53f4d0eef6c218bd2057a29854679",
+        "GUID:81f08a9a16448ff45a96ecd29e616275"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

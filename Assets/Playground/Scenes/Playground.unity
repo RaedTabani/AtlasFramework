@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 138720726}
   - component: {fileID: 138720725}
   - component: {fileID: 138720724}
+  - component: {fileID: 138720727}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -211,6 +212,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &138720727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 138720723}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_AllowHDROutput: 1
+  m_UseScreenCoordOverride: 0
+  m_ScreenSizeOverride: {x: 0, y: 0, z: 0, w: 0}
+  m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_TaaSettings:
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
+  m_Version: 2
 --- !u!1 &224011591
 GameObject:
   m_ObjectHideFlags: 0
@@ -333,11 +378,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 224011591}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 322a2590b66cdc079b92aeac8fe594d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 611fb68cbebc4ddea96e231e6d0e90cf, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.DemoInteractable
-  _succeeds: 1
-  _resultMessage: Success Cube Activated
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.SuccessInteractable
+  _message: Interaction succeeded.
 --- !u!1 &396704163
 GameObject:
   m_ObjectHideFlags: 0
@@ -460,11 +504,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 396704163}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 322a2590b66cdc079b92aeac8fe594d8, type: 3}
+  m_Script: {fileID: 11500000, guid: bfb6d77f94b84342c801f10e04a84183, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.DemoInteractable
-  _succeeds: 0
-  _resultMessage: Door Is Locked
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.LockedInteractable
+  _failureReason: The object is locked.
 --- !u!1 &722558665
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,11 +630,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 722558665}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 322a2590b66cdc079b92aeac8fe594d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 1bc9904923aff8e75beb77e5cc3bd545, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.DemoInteractable
-  _succeeds: 1
-  _resultMessage: You Found The Key!
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.KeyPickupInteractable
+  _itemId: golden_key
+  _successMessage: You collected the golden key.
+  _disableAfterCollection: 1
 --- !u!1 &1688955800
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,10 +772,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1909732487}
-  - component: {fileID: 1909732489}
+  - component: {fileID: 1909732490}
   - component: {fileID: 1909732488}
+  - component: {fileID: 1909732489}
   m_Layer: 0
-  m_Name: Interaction System
+  m_Name: Playground Systems
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -765,7 +810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: DeviGames.Playground::InteractionPlaygroundController
   _interactor: {fileID: 1909732489}
-  _targets:
+  _targetBehaviours:
   - {fileID: 224011596}
   - {fileID: 396704168}
   - {fileID: 722558670}
@@ -781,6 +826,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d960b5d3ff4b9dc085f11c014db8d02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.PlaygroundInteractor
+--- !u!114 &1909732490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909732486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a53707cad51e93e0d95c7b33f66030a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Application.PlaygroundApplication
+  _mission: {fileID: 11400000, guid: ab5f11a4494e1e383a09448182bd3cf3, type: 2}
+  _interactionController: {fileID: 1909732488}
 --- !u!1 &2115585246
 GameObject:
   m_ObjectHideFlags: 0
