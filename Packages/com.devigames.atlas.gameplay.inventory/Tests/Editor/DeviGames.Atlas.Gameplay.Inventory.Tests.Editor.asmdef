@@ -1,0 +1,21 @@
+{
+    "name": "DeviGames.Atlas.Gameplay.Inventory.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:81f08a9a16448ff45a96ecd29e616275",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
+        "GUID:9378dde39a22b8d66b5d0055f3869254",
+        ""
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
