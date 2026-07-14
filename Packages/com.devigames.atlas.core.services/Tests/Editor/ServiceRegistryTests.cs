@@ -83,7 +83,7 @@ namespace DeviGames.Atlas.Core.Services.Tests
             _registry.Register(new TestService());
             _registry.Register<ITestInterface>(new InterfaceTestService());
 
-            _registry.Reset();
+            _registry.Clear();
 
             Assert.IsFalse(_registry.IsRegistered<TestService>());
             Assert.IsFalse(_registry.IsRegistered<ITestInterface>());

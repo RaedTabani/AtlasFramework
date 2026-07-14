@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.core.diagnostics",
+  "version": "1.0.0",
+  "displayName": "Atlas Core Diagnostics",
+  "description": "Diagnostic tools for Atlas core functionality",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}

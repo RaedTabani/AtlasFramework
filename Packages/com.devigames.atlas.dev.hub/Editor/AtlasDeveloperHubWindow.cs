@@ -3,6 +3,7 @@ using DeviGames.Atlas.Dev.Hub.Models;
 using DeviGames.Atlas.Dev.Hub.Services;
 using UnityEditor;
 using UnityEngine;
+using System;
 
 namespace DeviGames.Atlas.Dev.Hub.Editor
 {
@@ -34,6 +35,23 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
                 return;
             }
 
+            #region Added
+
+            EditorGUILayout.LabelField(
+            "Registered Services",
+            EditorStyles.boldLabel);
+
+            foreach (Type serviceType in DeviGames.Atlas.Core.Services.Services.RegisteredTypes)
+            {
+                EditorGUILayout.LabelField(serviceType.Name);
+            }
+
+            EditorGUILayout.LabelField(
+            "Container Initialized",
+            DeviGames.Atlas.Core.Services.Services.IsInitialized.ToString());
+            
+            #endregion
+            
             if (!DeviGames.Atlas.Core.Services.Services.TryResolve(
                     out DevHubSnapshotService snapshotService))
             {

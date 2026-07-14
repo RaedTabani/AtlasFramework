@@ -22,5 +22,15 @@ namespace DeviGames.Atlas.Core.Events
             EventBusProvider.Current.Publish(eventData);
         }
 
+        public static void AddObserver(IEventObserver observer)
+        {
+            EventBusProvider.Current.AddObserver(observer);
+        }
+
+        public static void RemoveObserver(IEventObserver observer)
+        {
+            EventBusProvider.Current.RemoveObserver(observer);
+        }
+
     }
 }

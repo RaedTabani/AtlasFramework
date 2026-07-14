@@ -2,7 +2,8 @@
     "name": "DeviGames.Atlas.Core.Services.Tests.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:0a8b033f4e611861cb787db97ad22003"
+        "GUID:0a8b033f4e611861cb787db97ad22003",
+        "GUID:c37819aeefe99d001a07a2588f570558"
     ],
     "includePlatforms": [
         "Editor"

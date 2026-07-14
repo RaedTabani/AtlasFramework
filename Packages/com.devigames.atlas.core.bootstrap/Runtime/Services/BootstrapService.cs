@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Bootstrap.Context;
 using DeviGames.Atlas.Core.Bootstrap.Events;
 using DeviGames.Atlas.Core.Bootstrap.Steps;
 using DeviGames.Atlas.Core.Events;
-
+using DeviGames.Atlas.Core.Services;
 
 namespace DeviGames.Atlas.Core.Bootstrap.Services
 {
@@ -17,17 +16,17 @@ namespace DeviGames.Atlas.Core.Bootstrap.Services
         public bool IsRunning { get; private set; }
         public bool IsCompleted { get; private set; }
 
-        public ServiceRegistry ServiceRegistry { get; private set; }
-
-        public void AddStep(IBootstrapStep step)
+        public BootstrapService AddStep(IBootstrapStep step)
         {
             if (step == null)
                 throw new ArgumentNullException(nameof(step));
 
             _steps.Add(step);
+            return this;
         }
 
-        public BootstrapService AddStep<T>() where T : IBootstrapStep, new()
+        public BootstrapService AddStep<T>()
+            where T : IBootstrapStep, new()
         {
             _steps.Add(new T());
             return this;
@@ -41,8 +40,8 @@ namespace DeviGames.Atlas.Core.Bootstrap.Services
             IsRunning = true;
             IsCompleted = false;
 
-            ServiceRegistry = new ServiceRegistry();
-            BootstrapContext context = new BootstrapContext(ServiceRegistry);
+            var registry = new ServiceRegistry();
+            var context = new BootstrapContext(registry);
 
             EventBus.Publish(new BootstrapStartedEvent());
 
@@ -53,13 +52,21 @@ namespace DeviGames.Atlas.Core.Bootstrap.Services
                     await step.ExecuteAsync(context);
                 }
 
+                await registry.InitializeAsync();
+
+                DeviGames.Atlas.Core.Services.Services.SetRegistry(registry);
+
                 IsCompleted = true;
-                DeviGames.Atlas.Core.Services.Services.SetRegistry(ServiceRegistry);
+
                 EventBus.Publish(new BootstrapCompletedEvent());
             }
             catch (Exception exception)
             {
-                EventBus.Publish(new BootstrapFailedEvent(exception));
+                registry.Shutdown();
+
+                EventBus.Publish(
+                    new BootstrapFailedEvent(exception));
+
                 throw;
             }
             finally

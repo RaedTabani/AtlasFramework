@@ -1,10 +1,13 @@
 {
-    "name": "DeviGames.Atlas.Core.Services",
+    "name": "DeviGames.Atlas.Core.Diagnostics.Tests.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:c37819aeefe99d001a07a2588f570558"
+        "GUID:31fd206ca85ed289d8771b14787b12c9",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

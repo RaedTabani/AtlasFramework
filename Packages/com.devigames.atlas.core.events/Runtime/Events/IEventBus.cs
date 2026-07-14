@@ -9,5 +9,7 @@ namespace DeviGames.Atlas.Core.Events
         void Unsubscribe<T>(Action<T> listener);
 
         void Publish<T>(T eventData);
+        void AddObserver(IEventObserver observer);
+        void RemoveObserver(IEventObserver observer);
     }
 }

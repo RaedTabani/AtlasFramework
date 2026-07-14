@@ -8,12 +8,21 @@ namespace DeviGames.Atlas.Core.Services
 
         internal static void Set(ServiceRegistry registry)
         {
+            if (registry == null)
+                throw new System.ArgumentNullException(nameof(registry));
+
+            if (!ReferenceEquals(_current, registry))
+            {
+                _current.Shutdown();
+            }
+
             _current = registry;
         }
 
         internal static void Reset()
         {
-            _current.Reset();
+            _current.Shutdown();
+            _current = new ServiceRegistry();
         }
     }
 }

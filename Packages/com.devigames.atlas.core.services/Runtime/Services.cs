@@ -1,11 +1,17 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+
 namespace DeviGames.Atlas.Core.Services
 {
     public static class Services
     {
-        public static void SetRegistry(ServiceRegistry registry)
-        {
-            ServiceProvider.Set(registry);
-        }
+        public static IReadOnlyCollection<Type> RegisteredTypes =>
+            ServiceProvider.Current.RegisteredTypes;
+
+        public static bool IsInitialized =>
+            ServiceProvider.Current.IsInitialized;
+
         public static void Register<T>(T service)
         {
             ServiceProvider.Current.Register(service);
@@ -31,9 +37,22 @@ namespace DeviGames.Atlas.Core.Services
             ServiceProvider.Current.Unregister<T>();
         }
 
-        public static void Reset()
+        public static Task InitializeAsync()
         {
-            ServiceProvider.Current.Reset();
+            return ServiceProvider.Current.InitializeAsync();
+        }
+
+        public static void Shutdown()
+        {
+            ServiceProvider.Current.Shutdown();
+        }
+
+        public static void SetRegistry(ServiceRegistry registry)
+        {
+            if (registry == null)
+                throw new ArgumentNullException(nameof(registry));
+
+            ServiceProvider.Set(registry);
         }
     }
 }

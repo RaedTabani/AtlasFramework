@@ -1,9 +1,7 @@
 {
-    "name": "DeviGames.Atlas.Core.Services",
+    "name": "DeviGames.Atlas.Core.Diagnostics.Tests",
     "rootNamespace": "",
-    "references": [
-        "GUID:c37819aeefe99d001a07a2588f570558"
-    ],
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

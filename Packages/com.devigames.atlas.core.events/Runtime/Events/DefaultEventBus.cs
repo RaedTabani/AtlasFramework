@@ -6,6 +6,7 @@ namespace DeviGames.Atlas.Core.Events
     internal sealed class DefaultEventBus : IEventBus
     {
         private readonly Dictionary<Type, List<Delegate>> _subscriptions = new();
+        private readonly List<IEventObserver> _observers = new();
 
         public void Subscribe<T>(Action<T> listener)
         {
@@ -42,23 +43,56 @@ namespace DeviGames.Atlas.Core.Events
         }
         public void Publish<T>(T eventData)
         {
-            var eventType = typeof(T);
+            NotifyObservers(eventData);
 
-            // 1. If nobody is listening to this event, just exit safely.
-            if (!_subscriptions.TryGetValue(eventType, out var listeners))
+            Type eventType = typeof(T);
+
+            if (!_subscriptions.TryGetValue(
+                    eventType,
+                    out List<Delegate> listeners))
             {
                 return;
             }
 
-            // 2. Take a snapshot of the current listeners. 
-            // Creating a new list prevents the "Collection was modified" crash if a listener unsubscribes during the loop.
-            var listenersCopy = new List<Delegate>(listeners);
+            var snapshot = new List<Delegate>(listeners);
 
-            // 3. Loop through the safe copy and invoke the methods
-            foreach (var listener in listenersCopy)
+            foreach (Delegate listener in snapshot)
             {
-                // Cast the generic Delegate back to the specific Action<T> and execute it
                 ((Action<T>)listener)(eventData);
+            }
+        }
+        public void AddObserver(IEventObserver observer)
+        {
+            if (observer == null)
+                throw new ArgumentNullException(nameof(observer));
+
+            if (!_observers.Contains(observer))
+            {
+                _observers.Add(observer);
+            }
+        }
+
+        public void RemoveObserver(IEventObserver observer)
+        {
+            if (observer == null)
+                return;
+
+            _observers.Remove(observer);
+        }
+
+        private void NotifyObservers<T>(T eventData)
+        {
+            if (_observers.Count == 0)
+                return;
+
+            var snapshot =
+                new List<IEventObserver>(_observers);
+
+            foreach (IEventObserver observer in snapshot)
+            {
+                observer.OnEventPublished(
+                    typeof(T),
+                    eventData);
             }
         }
 
