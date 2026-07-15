@@ -15,7 +15,9 @@ namespace DeviGames.Atlas.Core.Services
 
         public IReadOnlyCollection<Type> RegisteredTypes =>
             _services.Keys;
-
+        
+        public IReadOnlyCollection<object> InitializedServices =>
+            _initializedServices;
         public void Register<TService>(TService service)
         {
             if (service == null)

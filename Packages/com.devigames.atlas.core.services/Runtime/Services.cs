@@ -9,6 +9,9 @@ namespace DeviGames.Atlas.Core.Services
         public static IReadOnlyCollection<Type> RegisteredTypes =>
             ServiceProvider.Current.RegisteredTypes;
 
+        public static IReadOnlyCollection<object> InitializedServices =>
+            ServiceProvider.Current.InitializedServices;
+
         public static bool IsInitialized =>
             ServiceProvider.Current.IsInitialized;
 

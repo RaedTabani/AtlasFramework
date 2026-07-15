@@ -35,22 +35,9 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
                 return;
             }
 
-            #region Added
+            DrawRegisteredServices();
 
-            EditorGUILayout.LabelField(
-            "Registered Services",
-            EditorStyles.boldLabel);
-
-            foreach (Type serviceType in DeviGames.Atlas.Core.Services.Services.RegisteredTypes)
-            {
-                EditorGUILayout.LabelField(serviceType.Name);
-            }
-
-            EditorGUILayout.LabelField(
-            "Container Initialized",
-            DeviGames.Atlas.Core.Services.Services.IsInitialized.ToString());
-            
-            #endregion
+            DrawInitializedServices();
             
             if (!DeviGames.Atlas.Core.Services.Services.TryResolve(
                     out DevHubSnapshotService snapshotService))
@@ -78,6 +65,33 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
             Repaint();
         }
 
+        private static void DrawRegisteredServices()
+        {
+            EditorGUILayout.LabelField(
+                "Registered Services",
+                EditorStyles.boldLabel);
+
+            foreach (Type serviceType in DeviGames.Atlas.Core.Services.Services.RegisteredTypes)
+            {
+                EditorGUILayout.LabelField(serviceType.Name);
+            }
+
+            EditorGUILayout.LabelField(
+                "Container Initialized",
+                DeviGames.Atlas.Core.Services.Services.IsInitialized.ToString());
+        }
+
+        private static void DrawInitializedServices()
+        {
+            EditorGUILayout.LabelField(
+                "Initialized Services",
+                EditorStyles.boldLabel);
+
+            foreach (object service in DeviGames.Atlas.Core.Services.Services.InitializedServices)
+            {
+                EditorGUILayout.LabelField(service.GetType().Name);
+            }
+        }
         private static void DrawMission(
             DevHubSnapshot snapshot)
         {

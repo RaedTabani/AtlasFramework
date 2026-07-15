@@ -13,6 +13,7 @@ namespace DeviGames.Atlas.Core.Diagnostics.Services
     {
         private readonly List<EventRecord> _records = new();
         private readonly int _capacity;
+        private long _nextSequenceNumber;
 
         public IReadOnlyList<EventRecord> Records => _records;
         public int Count => _records.Count;
@@ -51,6 +52,7 @@ namespace DeviGames.Atlas.Core.Diagnostics.Services
 
             _records.Add(
                 new EventRecord(
+                    ++_nextSequenceNumber,
                     DateTime.UtcNow,
                     eventType,
                     eventData));

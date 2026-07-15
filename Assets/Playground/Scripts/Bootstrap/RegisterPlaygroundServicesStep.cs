@@ -11,6 +11,7 @@ using DeviGames.Atlas.Core.Save.Storage;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
 using DeviGames.Atlas.Core.Diagnostics.Services;
+using DeviGames.Atlas.Dev.Hub.Services;
 using UnityEngine;
 
 namespace DeviGames.Playground.Bootstrap
@@ -47,6 +48,12 @@ namespace DeviGames.Playground.Bootstrap
                     progressService,
                     saveService);
 
+            var DevHubSnapshotService = new DevHubSnapshotService(
+                missionService,
+                objectiveService,
+                progressService,
+                inventoryService);
+
 
             context.Services.Register(eventHistoryService);
             context.Services.Register(interactionService);
@@ -57,6 +64,7 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(objectiveAdapter);
             context.Services.Register(missionService);
             context.Services.Register(progressSaveCoordinator);
+            context.Services.Register(DevHubSnapshotService);
 
             return Task.CompletedTask;
         }
