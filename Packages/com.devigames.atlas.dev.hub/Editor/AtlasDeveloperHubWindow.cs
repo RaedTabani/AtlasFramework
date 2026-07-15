@@ -6,13 +6,16 @@ using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Dev.Hub.Models;
 using DeviGames.Atlas.Dev.Hub.Services;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
+using DeviGames.Atlas.Dev.Hub.Editor.Diagnostics;
 using UnityEditor;
 using UnityEngine;
 
 namespace DeviGames.Atlas.Dev.Hub.Editor
 {
+    
     public sealed class AtlasDeveloperHubWindow : EditorWindow
     {
+        private readonly HashSet<long> _expandedEventRecords = new();
         private enum HubTab
         {
             Runtime,
@@ -390,6 +393,7 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
                     GUILayout.Width(70f)))
             {
                 historyService.Clear();
+                _expandedEventRecords.Clear();
             }
 
             EditorGUILayout.EndHorizontal();
@@ -458,34 +462,53 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
 
             EditorGUILayout.BeginHorizontal();
 
-            EditorGUILayout.LabelField(
-                $"#{record.SequenceNumber}",
-                EditorStyles.boldLabel,
-                GUILayout.Width(65f));
+            bool isExpanded =
+                _expandedEventRecords.Contains(
+                    record.SequenceNumber);
 
-            EditorGUILayout.LabelField(
-                record.EventName,
-                EditorStyles.boldLabel);
+            bool newExpandedState =
+                EditorGUILayout.Foldout(
+                    isExpanded,
+                    $"#{record.SequenceNumber}  {record.EventName}",
+                    true);
+
+            if (newExpandedState != isExpanded)
+            {
+                if (newExpandedState)
+                {
+                    _expandedEventRecords.Add(
+                        record.SequenceNumber);
+                }
+                else
+                {
+                    _expandedEventRecords.Remove(
+                        record.SequenceNumber);
+                }
+            }
 
             GUILayout.FlexibleSpace();
 
             EditorGUILayout.LabelField(
-                record.TimestampUtc.ToLocalTime()
+                record.TimestampUtc
+                    .ToLocalTime()
                     .ToString("HH:mm:ss.fff"),
                 EditorStyles.miniLabel,
                 GUILayout.Width(90f));
 
             EditorGUILayout.EndHorizontal();
 
-            EditorGUILayout.LabelField(
-                record.EventType?.FullName ?? "Unknown type",
-                EditorStyles.miniLabel);
+            if (newExpandedState)
+            {
+                EditorGUILayout.LabelField(
+                    "Event Type",
+                    record.EventType?.FullName ?? "Unknown type");
 
-            DrawKnownPayload(record.EventData);
+                EventPayloadDrawer.Draw(
+                    record.EventData);
+            }
 
             EditorGUILayout.EndVertical();
         }
-
         private bool MatchesFilter(
             EventRecord record)
         {
@@ -497,28 +520,7 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
                 StringComparison.OrdinalIgnoreCase);
         }
 
-        private static void DrawKnownPayload(
-            object eventData)
-        {
-            if (eventData == null)
-            {
-                EditorGUILayout.LabelField(
-                    "Payload",
-                    "Null");
-
-                return;
-            }
-
-            Type eventType = eventData.GetType();
-
-            EditorGUILayout.LabelField(
-                "Payload Type",
-                eventType.Name);
-
-            EditorGUILayout.LabelField(
-                "Payload",
-                eventData.ToString());
-        }
+       
 
         private static void DrawSectionHeader(
             string title)
