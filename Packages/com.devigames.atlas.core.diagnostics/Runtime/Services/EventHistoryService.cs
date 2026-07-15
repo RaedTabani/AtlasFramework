@@ -13,11 +13,19 @@ namespace DeviGames.Atlas.Core.Diagnostics.Services
     {
         private readonly List<EventRecord> _records = new();
         private readonly int _capacity;
+
         private long _nextSequenceNumber;
+        private bool _isPaused;
 
         public IReadOnlyList<EventRecord> Records => _records;
         public int Count => _records.Count;
         public int Capacity => _capacity;
+
+        public bool IsPaused
+        {
+            get => _isPaused;
+            set => _isPaused = value;
+        }
 
         public EventHistoryService(int capacity = 250)
         {
@@ -45,6 +53,9 @@ namespace DeviGames.Atlas.Core.Diagnostics.Services
             Type eventType,
             object eventData)
         {
+            if (_isPaused)
+                return;
+
             if (_records.Count >= _capacity)
             {
                 _records.RemoveAt(0);
