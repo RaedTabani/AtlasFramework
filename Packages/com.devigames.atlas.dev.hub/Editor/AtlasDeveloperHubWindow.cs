@@ -1,45 +1,19 @@
 using System;
-using System.Collections.Generic;
-using DeviGames.Atlas.Core.Diagnostics.Models;
-using DeviGames.Atlas.Core.Diagnostics.Services;
-using DeviGames.Atlas.Core.Services;
-using DeviGames.Atlas.Dev.Hub.Models;
-using DeviGames.Atlas.Dev.Hub.Services;
-using DeviGames.Atlas.Core.Lifecycle.Interfaces;
-using DeviGames.Atlas.Dev.Hub.Editor.Diagnostics;
+using DeviGames.Atlas.Dev.Hub.Context;
+using DeviGames.Atlas.Dev.Hub.Editor.Bootstrap;
+using DeviGames.Atlas.Dev.Hub.Modules;
 using UnityEditor;
 using UnityEngine;
 
 namespace DeviGames.Atlas.Dev.Hub.Editor
 {
-    
-    public sealed class AtlasDeveloperHubWindow : EditorWindow
+    public sealed class AtlasDeveloperHubWindow :
+        EditorWindow
     {
-        private readonly HashSet<long> _expandedEventRecords = new();
-        private bool _freezeEventView;
-        private List<EventRecord> _frozenEventRecords;
-        private enum HubTab
-        {
-            Runtime,
-            Gameplay,
-            Events
-        }
+        private DevModuleRegistry _registry;
+        private DevHubContext _context;
 
-        private static readonly string[] TabLabels =
-        {
-            "Runtime",
-            "Gameplay",
-            "Events"
-        };
-
-        private HubTab _selectedTab;
-
-        private Vector2 _runtimeScroll;
-        private Vector2 _gameplayScroll;
-        private Vector2 _eventsScroll;
-
-        private string _eventFilter = string.Empty;
-        private bool _newestEventsFirst = true;
+        private int _selectedModuleIndex;
 
         [MenuItem("DeviGames/Atlas/Developer Hub")]
         public static void Open()
@@ -48,55 +22,89 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
                 GetWindow<AtlasDeveloperHubWindow>(
                     "Atlas Developer Hub");
 
-            window.minSize = new Vector2(440f, 320f);
+            window.minSize =
+                new Vector2(440f, 320f);
         }
 
         private void OnEnable()
         {
+            RebuildModules();
+
             EditorApplication.playModeStateChanged +=
                 OnPlayModeStateChanged;
+
+            ActivateSelectedModule();
         }
 
         private void OnDisable()
         {
             EditorApplication.playModeStateChanged -=
                 OnPlayModeStateChanged;
-        }
 
+            DeactivateSelectedModule();
+        }
+        private void RebuildModules()
+        {
+            _registry = new DevModuleRegistry();
+            _context = new DevHubContext();
+
+            DeveloperHubBootstrap.RegisterModules(
+                _registry);
+
+            EnsureSelectedIndexIsValid();
+        }
         private void OnGUI()
         {
+            EnsureModulesExist();
+
             DrawHeader();
 
             if (!EditorApplication.isPlaying)
             {
-                DrawNotPlayingMessage();
+                EditorGUILayout.HelpBox(
+                    "Enter Play Mode to inspect the Atlas runtime.",
+                    MessageType.Info);
+
                 return;
             }
 
-            DrawToolbar();
+            if (_registry == null || _registry.Count == 0)
+            {
+                EditorGUILayout.HelpBox(
+                    "No Developer Hub modules are registered.",
+                    MessageType.Warning);
+
+                if (GUILayout.Button("Rebuild Modules"))
+                {
+                    RebuildModules();
+                }
+
+                return;
+            }
+
+            EnsureSelectedIndexIsValid();
+            DrawModuleToolbar();
 
             EditorGUILayout.Space(6f);
 
-            switch (_selectedTab)
-            {
-                case HubTab.Runtime:
-                    DrawRuntimeTab();
-                    break;
+            IDevModule selectedModule =
+                _registry.Modules[_selectedModuleIndex];
 
-                case HubTab.Gameplay:
-                    DrawGameplayTab();
-                    break;
-
-                case HubTab.Events:
-                    DrawEventsTab();
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+            selectedModule.Draw(_context);
 
             Repaint();
         }
+
+        private void EnsureModulesExist()
+        {
+            if (_registry == null ||
+                _context == null ||
+                _registry.Count == 0)
+            {
+                RebuildModules();
+            }
+        }
+
 
         private static void DrawHeader()
         {
@@ -113,489 +121,90 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
             EditorGUILayout.Space(4f);
         }
 
-        private static void DrawNotPlayingMessage()
+        private void DrawModuleToolbar()
         {
-            EditorGUILayout.HelpBox(
-                "Enter Play Mode to inspect the Atlas runtime.",
-                MessageType.Info);
-        }
+            string[] labels =
+                new string[_registry.Count];
 
-        private void DrawToolbar()
-        {
-            _selectedTab = (HubTab)GUILayout.Toolbar(
-                (int)_selectedTab,
-                TabLabels);
-        }
-
-        private void DrawRuntimeTab()
-        {
-            _runtimeScroll =
-                EditorGUILayout.BeginScrollView(_runtimeScroll);
-
-            DrawRuntimeStatus();
-            EditorGUILayout.Space(8f);
-            DrawRegisteredServices();
-
-            EditorGUILayout.EndScrollView();
-        }
-
-        private static void DrawRuntimeStatus()
-        {
-            DrawSectionHeader("Runtime Status");
-
-            EditorGUILayout.BeginVertical("box");
-
-            EditorGUILayout.LabelField(
-                "Container Initialized",
-                DeviGames.Atlas.Core.Services.Services.IsInitialized ? "Yes" : "No");
-
-            EditorGUILayout.LabelField(
-                "Registered Service Count",
-                DeviGames.Atlas.Core.Services.Services.RegisteredTypes.Count.ToString());
-
-            EditorGUILayout.EndVertical();
-        }
-
-        private static void DrawRegisteredServices()
-        {
-            DrawSectionHeader("Registered Services");
-
-            IReadOnlyCollection<Type> registeredTypes =
-                DeviGames.Atlas.Core.Services.Services.RegisteredTypes;
-
-            if (registeredTypes.Count == 0)
+            for (int index = 0;
+                 index < _registry.Count;
+                 index++)
             {
-                EditorGUILayout.HelpBox(
-                    "No services are currently registered.",
-                    MessageType.Info);
+                labels[index] =
+                    _registry.Modules[index]
+                        .DisplayName;
+            }
 
+            int newIndex = GUILayout.Toolbar(
+                _selectedModuleIndex,
+                labels);
+
+            if (newIndex == _selectedModuleIndex)
+                return;
+
+            IDevModule oldModule =
+                _registry.Modules[
+                    _selectedModuleIndex];
+
+            oldModule.OnDeactivate(_context);
+
+            _selectedModuleIndex = newIndex;
+
+            IDevModule newModule =
+                _registry.Modules[
+                    _selectedModuleIndex];
+
+            newModule.OnActivate(_context);
+        }
+
+        private void ActivateSelectedModule()
+        {
+            if (_registry.Count == 0)
+                return;
+
+            EnsureSelectedIndexIsValid();
+
+            _registry.Modules[
+                    _selectedModuleIndex]
+                .OnActivate(_context);
+        }
+
+        private void DeactivateSelectedModule()
+        {
+            if (_registry.Count == 0)
+                return;
+
+            EnsureSelectedIndexIsValid();
+
+            _registry.Modules[
+                    _selectedModuleIndex]
+                .OnDeactivate(_context);
+        }
+
+        private void EnsureSelectedIndexIsValid()
+        {
+            if (_registry.Count == 0)
+            {
+                _selectedModuleIndex = 0;
                 return;
             }
 
-            foreach (Type serviceType in registeredTypes)
-            {
-                EditorGUILayout.BeginVertical("box");
-
-                EditorGUILayout.LabelField(
-                    serviceType.Name,
-                    EditorStyles.boldLabel);
-
-                EditorGUILayout.LabelField(
-                    serviceType.FullName,
-                    EditorStyles.miniLabel);
-
-                EditorGUILayout.EndVertical();
-            }
-        }
-
-        private void DrawGameplayTab()
-        {
-            _gameplayScroll =
-                EditorGUILayout.BeginScrollView(_gameplayScroll);
-
-            if (!DeviGames.Atlas.Core.Services.Services.TryResolve(
-                    out DevHubSnapshotService snapshotService))
-            {
-                EditorGUILayout.HelpBox(
-                    "DevHubSnapshotService is not registered.",
-                    MessageType.Warning);
-
-                EditorGUILayout.EndScrollView();
-                return;
-            }
-
-            DevHubSnapshot snapshot =
-                snapshotService.CreateSnapshot();
-
-            DrawMission(snapshot);
-            DrawObjectives(snapshot);
-            DrawInventory(snapshot);
-            DrawProgress(snapshot);
-
-            EditorGUILayout.EndScrollView();
-        }
-
-        private static void DrawMission(
-            DevHubSnapshot snapshot)
-        {
-            DrawSectionHeader("Mission");
-
-            EditorGUILayout.BeginVertical("box");
-
-            EditorGUILayout.LabelField(
-                "Active",
-                snapshot.HasActiveMission ? "Yes" : "No");
-
-            EditorGUILayout.LabelField(
-                "Current Mission",
-                string.IsNullOrWhiteSpace(snapshot.CurrentMissionId)
-                    ? "None"
-                    : snapshot.CurrentMissionId);
-
-            EditorGUILayout.EndVertical();
-
-            EditorGUILayout.Space(8f);
-        }
-
-        private static void DrawObjectives(
-            DevHubSnapshot snapshot)
-        {
-            DrawSectionHeader("Objectives");
-
-            if (snapshot.Objectives.Count == 0)
-            {
-                EditorGUILayout.HelpBox(
-                    "No objective state is available.",
-                    MessageType.Info);
-            }
-
-            foreach (ObjectiveSnapshot objective in snapshot.Objectives)
-            {
-                EditorGUILayout.BeginVertical("box");
-
-                EditorGUILayout.LabelField(
-                    objective.ObjectiveId,
-                    EditorStyles.boldLabel);
-
-                EditorGUILayout.LabelField(
-                    "Progress",
-                    $"{objective.CurrentValue}/{objective.TargetValue}");
-
-                EditorGUILayout.LabelField(
-                    "Completed",
-                    objective.IsCompleted ? "Yes" : "No");
-
-                float progress =
-                    objective.TargetValue <= 0
-                        ? 0f
-                        : Mathf.Clamp01(
-                            (float)objective.CurrentValue /
-                            objective.TargetValue);
-
-                Rect progressRect =
-                    GUILayoutUtility.GetRect(
-                        18f,
-                        18f,
-                        "TextField");
-
-                EditorGUI.ProgressBar(
-                    progressRect,
-                    progress,
-                    $"{objective.CurrentValue}/{objective.TargetValue}");
-
-                EditorGUILayout.EndVertical();
-            }
-
-            EditorGUILayout.Space(8f);
-        }
-
-        private static void DrawInventory(
-            DevHubSnapshot snapshot)
-        {
-            DrawSectionHeader("Inventory");
-
-            EditorGUILayout.BeginVertical("box");
-
-            EditorGUILayout.LabelField(
-                "Item Count",
-                snapshot.InventoryItemIds.Count.ToString());
-
-            if (snapshot.InventoryItemIds.Count == 0)
-            {
-                EditorGUILayout.LabelField(
-                    "Inventory is empty.",
-                    EditorStyles.miniLabel);
-            }
-            else
-            {
-                foreach (string itemId in snapshot.InventoryItemIds)
-                {
-                    EditorGUILayout.LabelField(
-                        "• " + itemId);
-                }
-            }
-
-            EditorGUILayout.EndVertical();
-
-            EditorGUILayout.Space(8f);
-        }
-
-        private static void DrawProgress(
-            DevHubSnapshot snapshot)
-        {
-            DrawSectionHeader("Completed Missions");
-
-            EditorGUILayout.BeginVertical("box");
-
-            if (snapshot.CompletedMissionIds.Count == 0)
-            {
-                EditorGUILayout.LabelField(
-                    "No completed missions.",
-                    EditorStyles.miniLabel);
-            }
-            else
-            {
-                foreach (string missionId in snapshot.CompletedMissionIds)
-                {
-                    EditorGUILayout.LabelField(
-                        "✓ " + missionId);
-                }
-            }
-
-            EditorGUILayout.EndVertical();
-        }
-
-        private void DrawEventsTab()
-        {
-            if (!DeviGames.Atlas.Core.Services.Services.TryResolve(
-                    out EventHistoryService historyService))
-            {
-                EditorGUILayout.HelpBox(
-                    "EventHistoryService is not registered.",
-                    MessageType.Warning);
-
-                return;
-            }
-
-            DrawEventControls(historyService);
-
-            EditorGUILayout.Space(6f);
-
-            _eventsScroll =
-                EditorGUILayout.BeginScrollView(_eventsScroll);
-
-            DrawEventRecords(
-                GetVisibleEventRecords(historyService),
-                historyService.IsPaused);
-
-            EditorGUILayout.EndScrollView();
-        }
-
-        private void DrawEventControls(
-            EventHistoryService historyService)
-        {
-            DrawSectionHeader("Event History");
-
-            EditorGUILayout.BeginVertical("box");
-
-            EditorGUILayout.BeginHorizontal();
-
-            bool paused = EditorGUILayout.ToggleLeft(
-                "Pause Capture",
-                historyService.IsPaused,
-                GUILayout.Width(110f));
-
-            if (paused != historyService.IsPaused)
-            {
-                historyService.IsPaused = paused;
-            }
-
-            bool freezeView = EditorGUILayout.ToggleLeft(
-                "Freeze View",
-                _freezeEventView,
-                GUILayout.Width(100f));
-
-            SetFreezeEventView(
-                freezeView,
-                historyService);
-
-            GUILayout.FlexibleSpace();
-
-            if (GUILayout.Button(
-                    "Clear",
-                    GUILayout.Width(70f)))
-            {
-                historyService.Clear();
-                _expandedEventRecords.Clear();
-
-                if (_freezeEventView)
-                {
-                    _frozenEventRecords =
-                        new List<EventRecord>();
-                }
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            EditorGUILayout.Space(4f);
-
-            _eventFilter = EditorGUILayout.TextField(
-                "Filter",
-                _eventFilter);
-
-            _newestEventsFirst = EditorGUILayout.Toggle(
-                "Newest First",
-                _newestEventsFirst);
-
-            EditorGUILayout.LabelField(
-                "Recorded Events",
-                $"{historyService.Count}/{historyService.Capacity}");
-
-            EditorGUILayout.EndVertical();
-        }
-        private void DrawEventRecords(
-            IReadOnlyList<EventRecord> records,
-            bool capturePaused)
-        {
-            if (records.Count == 0)
-            {
-                EditorGUILayout.HelpBox(
-                    capturePaused
-                        ? "Capture is paused and no events are recorded."
-                        : "No events have been recorded yet.",
-                    MessageType.Info);
-
-                return;
-            }
-
-            if (_newestEventsFirst)
-            {
-                for (int index = records.Count - 1;
-                    index >= 0;
-                    index--)
-                {
-                    DrawEventRecord(records[index]);
-                }
-            }
-            else
-            {
-                for (int index = 0;
-                    index < records.Count;
-                    index++)
-                {
-                    DrawEventRecord(records[index]);
-                }
-            }
-        }
-
-        private void DrawEventRecord(
-            EventRecord record)
-        {
-            if (!MatchesFilter(record))
-                return;
-
-            EditorGUILayout.BeginVertical("box");
-
-            EditorGUILayout.BeginHorizontal();
-
-            bool isExpanded =
-                _expandedEventRecords.Contains(
-                    record.SequenceNumber);
-
-            bool newExpandedState =
-                EditorGUILayout.Foldout(
-                    isExpanded,
-                    $"#{record.SequenceNumber}  {record.EventName}",
-                    true);
-
-            if (newExpandedState != isExpanded)
-            {
-                if (newExpandedState)
-                {
-                    _expandedEventRecords.Add(
-                        record.SequenceNumber);
-                }
-                else
-                {
-                    _expandedEventRecords.Remove(
-                        record.SequenceNumber);
-                }
-            }
-
-            GUILayout.FlexibleSpace();
-
-            EditorGUILayout.LabelField(
-                record.TimestampUtc
-                    .ToLocalTime()
-                    .ToString("HH:mm:ss.fff"),
-                EditorStyles.miniLabel,
-                GUILayout.Width(90f));
-
-            if (GUILayout.Button(
-                    "Copy",
-                    EditorStyles.miniButton,
-                    GUILayout.Width(45f)))
-            {
-                EditorGUIUtility.systemCopyBuffer =
-                    CreateEventSummary(record);
-            }
-
-            EditorGUILayout.EndHorizontal();
-
-            if (newExpandedState)
-            {
-                EditorGUILayout.LabelField(
-                    "Event Type",
-                    record.EventType?.FullName ?? "Unknown type");
-
-                EventPayloadDrawer.Draw(
-                    record.EventData);
-            }
-
-            EditorGUILayout.EndVertical();
-        }
-        private static string CreateEventSummary(
-            EventRecord record)
-        {
-            string payload =
-                record.EventData?.ToString() ?? "Null";
-
-            return
-                $"#{record.SequenceNumber} " +
-                $"{record.TimestampUtc:O} " +
-                $"{record.EventName}\n" +
-                $"Type: {record.EventType?.FullName}\n" +
-                $"Payload: {payload}";
-        }
-        private IReadOnlyList<EventRecord> GetVisibleEventRecords(
-            EventHistoryService historyService)
-        {
-            if (!_freezeEventView)
-                return historyService.Records;
-
-            _frozenEventRecords ??=
-                new List<EventRecord>(historyService.Records);
-
-            return _frozenEventRecords;
-        }
-
-        private void SetFreezeEventView(
-            bool freeze,
-            EventHistoryService historyService)
-        {
-            if (freeze == _freezeEventView)
-                return;
-
-            _freezeEventView = freeze;
-
-            _frozenEventRecords = freeze
-                ? new List<EventRecord>(historyService.Records)
-                : null;
-        }
-        private bool MatchesFilter(
-            EventRecord record)
-        {
-            if (string.IsNullOrWhiteSpace(_eventFilter))
-                return true;
-
-            return record.EventName.Contains(
-                _eventFilter,
-                StringComparison.OrdinalIgnoreCase);
-        }
-
-       
-
-        private static void DrawSectionHeader(
-            string title)
-        {
-            EditorGUILayout.LabelField(
-                title,
-                EditorStyles.boldLabel);
+            _selectedModuleIndex =
+                Mathf.Clamp(
+                    _selectedModuleIndex,
+                    0,
+                    _registry.Count - 1);
         }
 
         private void OnPlayModeStateChanged(
             PlayModeStateChange state)
         {
+            if (state == PlayModeStateChange.EnteredPlayMode ||
+                state == PlayModeStateChange.EnteredEditMode)
+            {
+                RebuildModules();
+            }
+
             Repaint();
         }
     }
