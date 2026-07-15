@@ -16,6 +16,8 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
     public sealed class AtlasDeveloperHubWindow : EditorWindow
     {
         private readonly HashSet<long> _expandedEventRecords = new();
+        private bool _freezeEventView;
+        private List<EventRecord> _frozenEventRecords;
         private enum HubTab
         {
             Runtime,
@@ -362,7 +364,9 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
             _eventsScroll =
                 EditorGUILayout.BeginScrollView(_eventsScroll);
 
-            DrawEventRecords(historyService);
+            DrawEventRecords(
+                GetVisibleEventRecords(historyService),
+                historyService.IsPaused);
 
             EditorGUILayout.EndScrollView();
         }
@@ -386,6 +390,15 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
                 historyService.IsPaused = paused;
             }
 
+            bool freezeView = EditorGUILayout.ToggleLeft(
+                "Freeze View",
+                _freezeEventView,
+                GUILayout.Width(100f));
+
+            SetFreezeEventView(
+                freezeView,
+                historyService);
+
             GUILayout.FlexibleSpace();
 
             if (GUILayout.Button(
@@ -394,6 +407,12 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
             {
                 historyService.Clear();
                 _expandedEventRecords.Clear();
+
+                if (_freezeEventView)
+                {
+                    _frozenEventRecords =
+                        new List<EventRecord>();
+                }
             }
 
             EditorGUILayout.EndHorizontal();
@@ -414,17 +433,14 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
 
             EditorGUILayout.EndVertical();
         }
-
         private void DrawEventRecords(
-            EventHistoryService historyService)
+            IReadOnlyList<EventRecord> records,
+            bool capturePaused)
         {
-            IReadOnlyList<EventRecord> records =
-                historyService.Records;
-
             if (records.Count == 0)
             {
                 EditorGUILayout.HelpBox(
-                    historyService.IsPaused
+                    capturePaused
                         ? "Capture is paused and no events are recorded."
                         : "No events have been recorded yet.",
                     MessageType.Info);
@@ -435,8 +451,8 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
             if (_newestEventsFirst)
             {
                 for (int index = records.Count - 1;
-                     index >= 0;
-                     index--)
+                    index >= 0;
+                    index--)
                 {
                     DrawEventRecord(records[index]);
                 }
@@ -444,8 +460,8 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
             else
             {
                 for (int index = 0;
-                     index < records.Count;
-                     index++)
+                    index < records.Count;
+                    index++)
                 {
                     DrawEventRecord(records[index]);
                 }
@@ -495,6 +511,15 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
                 EditorStyles.miniLabel,
                 GUILayout.Width(90f));
 
+            if (GUILayout.Button(
+                    "Copy",
+                    EditorStyles.miniButton,
+                    GUILayout.Width(45f)))
+            {
+                EditorGUIUtility.systemCopyBuffer =
+                    CreateEventSummary(record);
+            }
+
             EditorGUILayout.EndHorizontal();
 
             if (newExpandedState)
@@ -508,6 +533,44 @@ namespace DeviGames.Atlas.Dev.Hub.Editor
             }
 
             EditorGUILayout.EndVertical();
+        }
+        private static string CreateEventSummary(
+            EventRecord record)
+        {
+            string payload =
+                record.EventData?.ToString() ?? "Null";
+
+            return
+                $"#{record.SequenceNumber} " +
+                $"{record.TimestampUtc:O} " +
+                $"{record.EventName}\n" +
+                $"Type: {record.EventType?.FullName}\n" +
+                $"Payload: {payload}";
+        }
+        private IReadOnlyList<EventRecord> GetVisibleEventRecords(
+            EventHistoryService historyService)
+        {
+            if (!_freezeEventView)
+                return historyService.Records;
+
+            _frozenEventRecords ??=
+                new List<EventRecord>(historyService.Records);
+
+            return _frozenEventRecords;
+        }
+
+        private void SetFreezeEventView(
+            bool freeze,
+            EventHistoryService historyService)
+        {
+            if (freeze == _freezeEventView)
+                return;
+
+            _freezeEventView = freeze;
+
+            _frozenEventRecords = freeze
+                ? new List<EventRecord>(historyService.Records)
+                : null;
         }
         private bool MatchesFilter(
             EventRecord record)
