@@ -16,6 +16,9 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Bootstrap
 
             registry.Register(
                 new EventsModule());
+
+            registry.Register(
+                new SaveModule());
         }
     }
 }
