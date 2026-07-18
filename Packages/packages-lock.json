@@ -18,6 +18,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.execution": {
+      "version": "file:com.devigames.atlas.core.execution",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.interactions": {
       "version": "file:com.devigames.atlas.core.interactions",
       "depth": 0,
@@ -56,6 +62,12 @@
     },
     "com.devigames.atlas.core.services": {
       "version": "file:com.devigames.atlas.core.services",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.devigames.atlas.core.triggers": {
+      "version": "file:com.devigames.atlas.core.triggers",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}

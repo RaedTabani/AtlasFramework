@@ -13,6 +13,9 @@ using DeviGames.Atlas.Gameplay.Objectives.Services;
 using DeviGames.Atlas.Core.Diagnostics.Services;
 using DeviGames.Atlas.Dev.Hub.Services;
 using DeviGames.Atlas.Core.Diagnostics.Save;
+using DeviGames.Atlas.Core.Execution.Services;
+using DeviGames.Atlas.Core.Execution.Interfaces;
+using DeviGames.Atlas.Core.Execution.Systems;
 using UnityEngine;
 
 namespace DeviGames.Playground.Bootstrap
@@ -35,6 +38,10 @@ namespace DeviGames.Playground.Bootstrap
             var objectiveService = new ObjectiveService();
             var progressService = new MissionProgressService();
             var diagnostics = new SaveDiagnosticsService(savePath);
+            var systemCollection = new SystemCollection();
+            var executionService = new ExecutionService(systemCollection);
+
+
 
             var saveService = new SaveService(
                 new JsonFileSaveStorage(savePath));
@@ -68,6 +75,8 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(progressSaveCoordinator);
             context.Services.Register(DevHubSnapshotService);
             context.Services.Register<ISaveDiagnosticsService>(diagnostics);
+            context.Services.Register<ISystemCollection>(systemCollection);
+            context.Services.Register<IExecutionService>(executionService);
 
             return Task.CompletedTask;
         }
