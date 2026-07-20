@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DeviGames.Atlas.Core.Services.Interfaces;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
 
 namespace DeviGames.Atlas.Core.Services
 {
-    public sealed class ServiceRegistry
+    public sealed class ServiceRegistry :IServiceResolver
     {
         private readonly Dictionary<Type, object> _services = new();
         private readonly List<object> _registrationOrder = new();

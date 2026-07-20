@@ -1,12 +1,12 @@
 {
-    "name": "DeviGames.Atlas.Core.Triggers",
+    "name": "DeviGames.Atlas.Core.Execution.Tests.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:0a8b033f4e611861cb787db97ad22003",
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
         "GUID:9782862fce3719de6ad807bd3b29032e"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

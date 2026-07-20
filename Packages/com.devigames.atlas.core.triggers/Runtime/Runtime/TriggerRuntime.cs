@@ -1,7 +1,8 @@
+using System;
 using DeviGames.Atlas.Core.Triggers.Conditions;
-using DeviGames.Atlas.Core.Triggers.Context;
-using DeviGames.Atlas.Core.Triggers.Definition;
+using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Models;
+
 
 namespace DeviGames.Atlas.Core.Triggers.Runtime
 {
@@ -9,15 +10,23 @@ namespace DeviGames.Atlas.Core.Triggers.Runtime
     {
         public TriggerDefinition Definition { get; }
 
+        public ITriggerCondition Condition { get; }
+
         public TriggerState State { get; private set; }
 
-        public bool IsActivated =>
-            State == TriggerState.Activated;
-
         public TriggerRuntime(
-            TriggerDefinition definition)
+            TriggerDefinition definition,
+            ITriggerCondition condition)
         {
-            Definition = definition;
+            Definition =
+                definition
+                ?? throw new ArgumentNullException(
+                    nameof(definition));
+
+            Condition =
+                condition
+                ?? throw new ArgumentNullException(
+                    nameof(condition));
 
             State = TriggerState.Waiting;
         }
@@ -25,15 +34,12 @@ namespace DeviGames.Atlas.Core.Triggers.Runtime
         public TriggerUpdateResult Update(
             TriggerContext context)
         {
-            bool satisfied =
-                Definition.Condition.Evaluate(context);
+            bool isSatisfied =
+                Condition.Evaluate(context);
 
-            if (!Definition.Repeatable)
+            if (State == TriggerState.Waiting)
             {
-                if (State == TriggerState.Activated)
-                    return TriggerUpdateResult.None;
-
-                if (!satisfied)
+                if (!isSatisfied)
                     return TriggerUpdateResult.None;
 
                 State = TriggerState.Activated;
@@ -41,20 +47,15 @@ namespace DeviGames.Atlas.Core.Triggers.Runtime
                 return TriggerUpdateResult.Activated;
             }
 
-            if (satisfied)
-            {
-                if (State == TriggerState.Waiting)
-                {
-                    State = TriggerState.Activated;
-                    return TriggerUpdateResult.Activated;
-                }
-            }
-            else
-            {
-                State = TriggerState.Waiting;
-            }
+            if (!Definition.Repeatable)
+                return TriggerUpdateResult.None;
 
-            return TriggerUpdateResult.None;
+            if (isSatisfied)
+                return TriggerUpdateResult.None;
+
+            State = TriggerState.Waiting;
+
+            return TriggerUpdateResult.Reset;
         }
     }
 }

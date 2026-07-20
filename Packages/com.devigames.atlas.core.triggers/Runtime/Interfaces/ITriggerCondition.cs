@@ -1,5 +1,5 @@
-using DeviGames.Atlas.Core.Triggers.Context;
-namespace DeviGames.Atlas.Core.Triggers.Conditions
+using DeviGames.Atlas.Core.Triggers.Models;
+namespace DeviGames.Atlas.Core.Triggers.Interfaces
 {
     public interface ITriggerCondition
     {

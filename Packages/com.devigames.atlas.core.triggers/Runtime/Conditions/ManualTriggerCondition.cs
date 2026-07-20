@@ -1,4 +1,5 @@
-using DeviGames.Atlas.Core.Triggers.Context;
+using DeviGames.Atlas.Core.Triggers.Models;
+using DeviGames.Atlas.Core.Triggers.Interfaces;
 
 namespace DeviGames.Atlas.Core.Triggers.Conditions
 {
