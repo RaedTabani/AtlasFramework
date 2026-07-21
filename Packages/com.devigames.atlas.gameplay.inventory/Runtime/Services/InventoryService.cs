@@ -4,10 +4,10 @@ using DeviGames.Atlas.Core.Lifecycle.Interfaces;
 using DeviGames.Atlas.Gameplay.Events;
 using DeviGames.Atlas.Gameplay.Inventory.Events;
 using DeviGames.Atlas.Gameplay.Inventory.Models;
-
+using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 namespace DeviGames.Atlas.Gameplay.Inventory.Services
 {
-    public sealed class InventoryService : IInitializable, IShutdownable
+    public sealed class InventoryService : IInitializable, IShutdownable,IInventoryService
     {
         private InventoryData _data = new();
 
@@ -27,6 +27,11 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Services
         public bool Contains(string itemId)
         {
             return _data.Contains(itemId);
+        }
+
+        public int GetQuantity(string itemId)
+        {
+            return _data.GetQuantity(itemId);
         }
 
         public bool Remove(string itemId)

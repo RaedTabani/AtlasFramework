@@ -1,6 +1,6 @@
 using DeviGames.Atlas.Core.Triggers.Conditions;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
-
+using System;
 namespace DeviGames.Atlas.Core.Triggers.Models
 {
     public sealed class TriggerDefinition
@@ -9,16 +9,27 @@ namespace DeviGames.Atlas.Core.Triggers.Models
 
         public bool Repeatable { get; }
 
-        public ITriggerCondition Condition { get; }
+        public ITriggerConditionDefinition Condition { get; }
 
         public TriggerDefinition(
             string id,
-            ITriggerCondition condition,
-            bool repeatable = false)
+            bool repeatable ,
+            ITriggerConditionDefinition condition)
         {
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                throw new ArgumentException(
+                    "Trigger ID cannot be empty.",
+                    nameof(id));
+            }
+
             Id = id;
-            Condition = condition;
             Repeatable = repeatable;
+
+            Condition =
+                condition
+                ?? throw new ArgumentNullException(
+                    nameof(condition));
         }
     }
 }

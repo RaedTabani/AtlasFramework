@@ -1,8 +1,6 @@
 using System;
-using DeviGames.Atlas.Core.Triggers.Conditions;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Models;
-
 
 namespace DeviGames.Atlas.Core.Triggers.Runtime
 {
