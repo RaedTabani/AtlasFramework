@@ -1,6 +1,6 @@
 using DeviGames.Atlas.Core.Services;
 
-namespace DeviGames.Atlas.Core.Bootstrap.Context
+namespace DeviGames.Atlas.Core.Bootstrap.Models
 {
     public sealed class BootstrapContext
     {

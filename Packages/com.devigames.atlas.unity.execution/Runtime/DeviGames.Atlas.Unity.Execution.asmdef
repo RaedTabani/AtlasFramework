@@ -1,12 +1,8 @@
 {
-    "name": "DeviGames.Atlas.Gameplay.Inventory",
+    "name": "DeviGames.Atlas.Unity.Execution",
     "rootNamespace": "",
     "references": [
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:9378dde39a22b8d66b5d0055f3869254",
-        "GUID:c37819aeefe99d001a07a2588f570558",
-        "GUID:980ce3e615b81cdb2aa60fec5a32f3d5",
-        "GUID:0a8b033f4e611861cb787db97ad22003"
+        "GUID:9782862fce3719de6ad807bd3b29032e"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

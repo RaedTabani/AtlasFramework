@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DeviGames.Atlas.Core.Bootstrap.Context;
+using DeviGames.Atlas.Core.Bootstrap.Models;
 using DeviGames.Atlas.Core.Bootstrap.Events;
-using DeviGames.Atlas.Core.Bootstrap.Steps;
+using DeviGames.Atlas.Core.Bootstrap.Interfaces;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Services;
 

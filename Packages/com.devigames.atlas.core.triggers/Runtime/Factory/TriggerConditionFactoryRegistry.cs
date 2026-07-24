@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
+
 namespace DeviGames.Atlas.Core.Triggers.Factories
 {
     public sealed class TriggerConditionFactoryRegistry :

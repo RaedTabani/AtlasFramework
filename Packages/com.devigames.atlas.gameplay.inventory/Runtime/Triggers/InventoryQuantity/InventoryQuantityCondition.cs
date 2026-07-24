@@ -13,26 +13,35 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Triggers
         private readonly string _itemId;
         private readonly int _requiredQuantity;
 
-        public InventoryQuantityCondition(
-            IInventoryService inventory,
-            string itemId,
-            int requiredQuantity)
+        public InventoryQuantityCondition(IInventoryService inventory,string itemId,int requiredQuantity)
         {
             _inventory =
                 inventory
                 ?? throw new ArgumentNullException(
                     nameof(inventory));
 
+            if (string.IsNullOrWhiteSpace(itemId))
+            {
+                throw new ArgumentException(
+                    "Item ID cannot be empty.",
+                    nameof(itemId));
+            }
+
+            if (requiredQuantity < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(requiredQuantity));
+            }
+
             _itemId = itemId;
             _requiredQuantity = requiredQuantity;
         }
 
-        public bool Evaluate(
-            TriggerContext context)
+        public bool Evaluate(TriggerContext context)
         {
-            return _inventory.GetQuantity(
-                       _itemId)
-                   >= _requiredQuantity;
+            int quantity = _inventory.GetQuantity(_itemId);
+
+            return quantity >= _requiredQuantity;
         }
     }
 }

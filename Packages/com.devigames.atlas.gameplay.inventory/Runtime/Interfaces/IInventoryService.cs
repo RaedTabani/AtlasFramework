@@ -10,7 +10,9 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Interfaces
 
         bool Contains(string itemId);
         int GetQuantity(string itemId);
-        bool Remove(string itemId);
+
+        bool Add(string itemId,int quantity);
+        bool Remove(string itemId, int quantity);
 
         InventoryData CreateSnapshot();
         void LoadInventory(InventoryData data);

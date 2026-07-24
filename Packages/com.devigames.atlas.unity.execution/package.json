@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.unity.execution",
+  "version": "1.0.0",
+  "displayName": "Atlas Unity Execution",
+  "description": "Bridge Core Execution Pakcage with Monobehaviour",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}

@@ -7,7 +7,7 @@ using DeviGames.Atlas.Gameplay.Inventory.Models;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 namespace DeviGames.Atlas.Gameplay.Inventory.Services
 {
-    public sealed class InventoryService : IInitializable, IShutdownable,IInventoryService
+    public sealed class InventoryService : IInitializable, IShutdownable, IInventoryService
     {
         private InventoryData _data = new();
 
@@ -34,15 +34,25 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Services
             return _data.GetQuantity(itemId);
         }
 
-        public bool Remove(string itemId)
+
+        public bool Remove(string itemId, int quantity = 1)
         {
-            if (!_data.Remove(itemId))
+            if (!_data.Remove(itemId, quantity))
                 return false;
 
             EventBus.Publish(new ItemRemovedFromInventoryEvent(itemId));
             return true;
         }
 
+        public bool Add(string itemId, int quantity = 1)
+        {
+            if (string.IsNullOrWhiteSpace(itemId) || quantity <= 0)
+                return false;
+
+            _data.Add(itemId, quantity);
+            EventBus.Publish(new ItemAddedToInventoryEvent(itemId));
+            return true;
+        }
         public InventoryData CreateSnapshot()
         {
             return new InventoryData

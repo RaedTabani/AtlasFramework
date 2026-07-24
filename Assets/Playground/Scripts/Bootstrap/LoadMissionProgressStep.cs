@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
-using DeviGames.Atlas.Core.Bootstrap.Context;
-using DeviGames.Atlas.Core.Bootstrap.Steps;
+using DeviGames.Atlas.Core.Bootstrap.Models;
+using DeviGames.Atlas.Core.Bootstrap.Interfaces;
 using DeviGames.Atlas.Core.Progress.Models;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Save.Services;

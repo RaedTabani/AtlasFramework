@@ -8,7 +8,9 @@ using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Playground.Bootstrap;
 using DeviGames.Playground.Interaction;
+using DeviGames.Playground.Trigger;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
+using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
 using UnityEngine;
 
@@ -23,6 +25,8 @@ namespace DeviGames.Playground.Application
         [Header("Scene Components")]
         [SerializeField]
         private InteractionPlaygroundController _interactionController;
+        [SerializeField]
+        private TriggerPlaygroundController _triggerController;
 
         private BootstrapService _bootstrapService;
         
@@ -44,7 +48,8 @@ namespace DeviGames.Playground.Application
         {
             _bootstrapService = new BootstrapService();
 
-            _bootstrapService.AddStep(new RegisterPlaygroundServicesStep())
+            _bootstrapService.AddStep(new RegisterExecutionStep())
+            .AddStep(new RegisterPlaygroundServicesStep())
             .AddStep(new LoadMissionProgressStep());
 
             await _bootstrapService.RunAsync();
@@ -61,7 +66,11 @@ namespace DeviGames.Playground.Application
             MissionProgressService progressService =
                 Services.Resolve<MissionProgressService>();
 
+            IInventoryService inventoryService =
+                Services.Resolve<IInventoryService>();
+
             _interactionController.Initialize(interactionService);
+            _triggerController.Initialize(inventoryService);
 
             if (_mission == null)
             {

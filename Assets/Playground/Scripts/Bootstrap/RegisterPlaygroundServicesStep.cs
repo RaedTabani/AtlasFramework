@@ -1,8 +1,8 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using DeviGames.Atlas.Core.Bootstrap.Context;
-using DeviGames.Atlas.Core.Bootstrap.Steps;
+using DeviGames.Atlas.Core.Bootstrap.Models;
+using DeviGames.Atlas.Core.Bootstrap.Interfaces;
 using DeviGames.Atlas.Core.Diagnostics.Save;
 using DeviGames.Atlas.Core.Diagnostics.Services;
 using DeviGames.Atlas.Core.Events;
@@ -17,18 +17,22 @@ using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Save.Storage;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Triggers.Registry;
+using DeviGames.Atlas.Core.Triggers.Factories;
 using DeviGames.Atlas.Core.Triggers.Models;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Systems;
+using DeviGames.Atlas.Core.Triggers.Runtime;
 using DeviGames.Atlas.Dev.Hub.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
+using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
+using DeviGames.Atlas.Gameplay.Inventory.Triggers;
+
 using UnityEngine;
 
 namespace DeviGames.Playground.Bootstrap
 {
-    public sealed class RegisterPlaygroundServicesStep :
-        IBootstrapStep
+    public sealed class RegisterPlaygroundServicesStep : IBootstrapStep
     {
         public string Name =>
             "Register Playground Services";
@@ -70,12 +74,8 @@ namespace DeviGames.Playground.Bootstrap
                 new SaveDiagnosticsService(
                     savePath);
 
-            var systemCollection =
-                new SystemCollection();
+            
 
-            var executionService =
-                new ExecutionService(
-                    systemCollection);
 
             var saveService =
                 new SaveService(
@@ -112,7 +112,7 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(
                 interactionService);
 
-            context.Services.Register(
+            context.Services.Register<IInventoryService>(
                 inventoryService);
 
             context.Services.Register(
@@ -139,15 +139,13 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register<ISaveDiagnosticsService>(
                 diagnostics);
 
-            context.Services.Register<ISystemCollection>(
-                systemCollection);
 
-            context.Services.Register<IExecutionService>(
-                executionService);
+
+
 
             RegisterTriggerRuntime(
                 context,
-                systemCollection);
+                context.Services.Resolve<ISystemCollection>());
 
             return Task.CompletedTask;
         }
@@ -159,23 +157,65 @@ namespace DeviGames.Playground.Bootstrap
             var triggerCollection =
                 new TriggerCollection();
 
-            ServiceRegistry resolver =
-                context.Services;
-
             var triggerContext =
                 new TriggerContext(
-                    resolver);
+                    context.Services);
+
+            var triggerBuildContext =
+                new TriggerBuildContext(
+                    context.Services);
+
+            var conditionFactoryRegistry =
+                new TriggerConditionFactoryRegistry();
+
+            var triggerFactory =
+                new TriggerFactory(
+                    conditionFactoryRegistry,
+                    triggerBuildContext);
 
             var triggerRunner =
                 new TriggerRunner(
                     triggerCollection,
                     triggerContext);
 
+
             context.Services.Register<ITriggerCollection>(
                 triggerCollection);
 
+            context.Services.Register<
+                ITriggerConditionFactoryRegistry>(
+                conditionFactoryRegistry);
+
+            ITriggerConditionFactoryRegistry triggerConditionFactories =
+                context.Services.Resolve<
+                    ITriggerConditionFactoryRegistry>();
+            
+            triggerConditionFactories.Register(
+                new InventoryQuantityConditionFactory());
+
+            context.Services.Register<ITriggerFactory>(
+                triggerFactory);
+
             systemCollection.Add(
                 triggerRunner);
+
+
+
+            var definition =
+                new TriggerDefinition(
+                    id: "playground.inventory.collect-three-keys",
+                    repeatable: false,
+                    condition:
+                        new InventoryQuantityConditionDefinition(
+                            itemId: "key",
+                            requiredQuantity: 3));
+
+            TriggerRuntime runtime =
+                triggerFactory.Create(
+                    definition);
+
+            triggerCollection.Add(
+                runtime);
         }
     }
 }

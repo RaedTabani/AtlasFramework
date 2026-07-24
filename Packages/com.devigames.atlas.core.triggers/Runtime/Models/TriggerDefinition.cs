@@ -1,6 +1,7 @@
 using DeviGames.Atlas.Core.Triggers.Conditions;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using System;
+
 namespace DeviGames.Atlas.Core.Triggers.Models
 {
     public sealed class TriggerDefinition

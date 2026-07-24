@@ -774,6 +774,7 @@ GameObject:
   - component: {fileID: 1909732487}
   - component: {fileID: 1909732490}
   - component: {fileID: 1909732488}
+  - component: {fileID: 1909732491}
   - component: {fileID: 1909732489}
   m_Layer: 0
   m_Name: Playground Systems
@@ -840,6 +841,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Application.PlaygroundApplication
   _mission: {fileID: 11400000, guid: ab5f11a4494e1e383a09448182bd3cf3, type: 2}
   _interactionController: {fileID: 1909732488}
+  _triggerController: {fileID: 1909732491}
+--- !u!114 &1909732491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909732486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed2152d868ec4e590ac63b5629d2075b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DeviGames.Playground::TriggerPlaygroundController
 --- !u!1 &2115585246
 GameObject:
   m_ObjectHideFlags: 0

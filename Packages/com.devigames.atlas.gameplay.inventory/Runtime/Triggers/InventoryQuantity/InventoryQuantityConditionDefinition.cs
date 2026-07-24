@@ -30,7 +30,9 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Triggers
             if (requiredQuantity < 1)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(requiredQuantity));
+                    nameof(requiredQuantity),
+                    requiredQuantity,
+                    "Required quantity must be at least one.");
             }
 
             ItemId = itemId;

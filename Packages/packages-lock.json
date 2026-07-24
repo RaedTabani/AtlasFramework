@@ -108,6 +108,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.unity.execution": {
+      "version": "file:com.devigames.atlas.unity.execution",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation": {
       "version": "2.0.13",
       "depth": 0,
