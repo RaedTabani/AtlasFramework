@@ -2,7 +2,9 @@
     "name": "DeviGames.Atlas.Unity.Execution",
     "rootNamespace": "",
     "references": [
-        "GUID:9782862fce3719de6ad807bd3b29032e"
+        "GUID:9782862fce3719de6ad807bd3b29032e",
+        "GUID:1c82f38aa09917e0899894338837c616",
+        "GUID:0a8b033f4e611861cb787db97ad22003"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

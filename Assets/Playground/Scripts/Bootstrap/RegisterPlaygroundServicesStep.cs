@@ -27,6 +27,7 @@ using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
+using DeviGames.Atlas.Unity.Execution.Installation;
 
 using UnityEngine;
 
@@ -45,6 +46,15 @@ namespace DeviGames.Playground.Bootstrap
                 throw new ArgumentNullException(
                     nameof(context));
             }
+
+            var installationContext =
+                            new AtlasInstallationContext(
+                                context.Services);
+
+                        new ExecutionInstaller().Install(
+                            installationContext);
+
+
 
             string savePath =
                 Path.Combine(
