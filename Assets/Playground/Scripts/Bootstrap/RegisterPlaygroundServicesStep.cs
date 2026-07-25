@@ -163,7 +163,8 @@ namespace DeviGames.Playground.Bootstrap
             BootstrapContext context,
             ISystemCollection systemCollection)
         {
-            var triggerCollection =
+            
+            /*var triggerCollection =
                 new TriggerCollection();
 
             var triggerContext =
@@ -225,6 +226,8 @@ namespace DeviGames.Playground.Bootstrap
 
             triggerCollection.Add(
                 runtime);
+
+            */
         }
     }
 }

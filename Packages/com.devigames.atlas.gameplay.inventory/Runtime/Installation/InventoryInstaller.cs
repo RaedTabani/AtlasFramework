@@ -35,12 +35,16 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Installation
             var inventoryService = new InventoryService();
 
             services.Register<IInventoryService>(inventoryService);
-            InstallTriggers(services);
+
+            var registry = services.Resolve<ITriggerConditionFactoryRegistry>();
+
+            registry.Register(new InventoryQuantityConditionFactory(inventoryService));
+            //InstallTriggers(services);
         }
 
         private static void InstallTriggers(ServiceRegistry services)
         {
-            services.Resolve<ITriggerConditionFactoryRegistry>().Register(new InventoryQuantityConditionFactory());
+            /*services.Resolve<ITriggerConditionFactoryRegistry>().Register(new InventoryQuantityConditionFactory());
             var definition = new TriggerDefinition(
                     id: "playground.inventory.collect-three-keys",
                     repeatable: false,
@@ -53,6 +57,7 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Installation
                     definition);
             
             services.Resolve<ITriggerCollection>().Add(runtime);
+            */
         }
 
         private static void EnsureNotInstalled(

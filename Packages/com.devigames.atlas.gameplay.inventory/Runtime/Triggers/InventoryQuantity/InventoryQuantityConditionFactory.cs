@@ -12,7 +12,14 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Triggers
     {
         public string Type =>
             InventoryQuantityConditionDefinition.ConditionType;
+        private readonly IInventoryService _inventoryService;
 
+        public InventoryQuantityConditionFactory(IInventoryService inventoryService)
+        {
+            _inventoryService = inventoryService ??
+                throw new ArgumentNullException(
+                    nameof(inventoryService));
+        }
         public ITriggerCondition Create(
             ITriggerConditionDefinition definition,
             TriggerBuildContext context)
@@ -34,11 +41,8 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Triggers
                     nameof(context));
             }
 
-            IInventoryService inventory =
-                context.Services.Resolve<IInventoryService>();
-
             return new InventoryQuantityCondition(
-                inventory,
+                _inventoryService,
                 inventoryDefinition.ItemId,
                 inventoryDefinition.RequiredQuantity);
         }
