@@ -64,8 +64,7 @@ namespace DeviGames.Atlas.Core.Triggers.Installation
             services.Register<ITriggerFactory>(
                 triggerFactory);
 
-            systems.Add(
-                triggerRunner);
+            systems.Add(triggerRunner);
 
         }
 

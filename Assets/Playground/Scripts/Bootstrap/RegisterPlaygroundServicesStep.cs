@@ -52,10 +52,9 @@ namespace DeviGames.Playground.Bootstrap
             var installationContext = new AtlasInstallationContext(context.Services);
 
             new ExecutionInstaller().Install(installationContext);
-
             new TriggerInstaller().Install(installationContext);
-
             new InventoryInstaller().Install(installationContext);
+            new PlaygroundInstaller().Install(installationContext);
 
 
             string savePath =
