@@ -7,13 +7,18 @@ namespace DeviGames.Atlas.Core.Bootstrap.Models
     {
         public ServiceRegistry Services { get; }
 
-        public AtlasInstallationContext(
-            ServiceRegistry services)
+        public AtlasInstallationContext(ServiceRegistry services)
         {
-            Services =
-                services
-                ?? throw new ArgumentNullException(
-                    nameof(services));
+            Services = services ?? throw new ArgumentNullException(nameof(services));
+        }
+        public T Resolve<T>()
+        {
+            return Services.Resolve<T>();
+        }
+
+        public void Register<T>(T service)
+        {
+            Services.Register(service);
         }
     }
 }

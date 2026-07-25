@@ -19,6 +19,7 @@ using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Triggers.Registry;
 using DeviGames.Atlas.Core.Triggers.Factories;
 using DeviGames.Atlas.Core.Triggers.Models;
+using DeviGames.Atlas.Core.Triggers.Installation;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Systems;
 using DeviGames.Atlas.Core.Triggers.Runtime;
@@ -47,14 +48,11 @@ namespace DeviGames.Playground.Bootstrap
                     nameof(context));
             }
 
-            var installationContext =
-                            new AtlasInstallationContext(
-                                context.Services);
+            var installationContext = new AtlasInstallationContext(context.Services);
 
-                        new ExecutionInstaller().Install(
-                            installationContext);
+            new ExecutionInstaller().Install(installationContext);
 
-
+            new TriggerInstaller().Install(installationContext);
 
             string savePath =
                 Path.Combine(
@@ -152,10 +150,11 @@ namespace DeviGames.Playground.Bootstrap
 
 
 
-
+            /*
             RegisterTriggerRuntime(
                 context,
                 context.Services.Resolve<ISystemCollection>());
+            */
 
             return Task.CompletedTask;
         }
