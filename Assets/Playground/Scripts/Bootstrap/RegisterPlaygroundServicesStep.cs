@@ -28,6 +28,7 @@ using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
+using DeviGames.Atlas.Gameplay.Inventory.Installation;
 using DeviGames.Atlas.Unity.Execution.Installation;
 
 using UnityEngine;
@@ -54,6 +55,9 @@ namespace DeviGames.Playground.Bootstrap
 
             new TriggerInstaller().Install(installationContext);
 
+            new InventoryInstaller().Install(installationContext);
+
+
             string savePath =
                 Path.Combine(
                     UnityEngine.Application.persistentDataPath,
@@ -69,8 +73,6 @@ namespace DeviGames.Playground.Bootstrap
             var interactionService =
                 new InteractionService();
 
-            var inventoryService =
-                new InventoryService();
 
             var objectiveService =
                 new ObjectiveService();
@@ -102,14 +104,14 @@ namespace DeviGames.Playground.Bootstrap
                 new ProgressSaveCoordinator(
                     progressService,
                     saveService);
-
+            /*
             var devHubSnapshotService =
                 new DevHubSnapshotService(
                     missionService,
                     objectiveService,
                     progressService,
-                    inventoryService);
-
+                    context.Services.Resolve<IInventoryService>());
+            */
             // Core event infrastructure must exist before
             // EventHistoryService is initialized.
 
@@ -120,8 +122,7 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(
                 interactionService);
 
-            context.Services.Register<IInventoryService>(
-                inventoryService);
+
 
             context.Services.Register(
                 objectiveService);
@@ -141,8 +142,7 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(
                 progressSaveCoordinator);
 
-            context.Services.Register(
-                devHubSnapshotService);
+            //context.Services.Register(devHubSnapshotService);
 
             context.Services.Register<ISaveDiagnosticsService>(
                 diagnostics);
