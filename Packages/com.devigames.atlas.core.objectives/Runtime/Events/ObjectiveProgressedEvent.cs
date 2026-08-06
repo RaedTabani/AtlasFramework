@@ -1,19 +1,26 @@
 namespace DeviGames.Atlas.Core.Objectives.Events
 {
-    public readonly struct ObjectiveCompletedEvent
+    public readonly struct ObjectiveProgressedEvent
     {
         public string ObjectiveId { get; }
+
+        public int PreviousValue { get; }
+
         public int CurrentValue { get; }
 
         public int TargetValue { get; }
 
-        public ObjectiveCompletedEvent(
+        public ObjectiveProgressedEvent(
             string objectiveId,
-             int currentValue,
+            int previousValue,
+            int currentValue,
             int targetValue)
         {
             ObjectiveId =
                 objectiveId;
+
+            PreviousValue =
+                previousValue;
 
             CurrentValue =
                 currentValue;

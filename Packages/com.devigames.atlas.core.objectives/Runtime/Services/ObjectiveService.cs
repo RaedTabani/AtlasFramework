@@ -1,106 +1,125 @@
 using System;
-using System.Collections.Generic;
-using DeviGames.Atlas.Core.Events;
-using DeviGames.Atlas.Core.Objectives.Definitions;
-using DeviGames.Atlas.Core.Objectives.Events;
-using DeviGames.Atlas.Core.Objectives.Models;
 
+using DeviGames.Atlas.Core.Objectives.Events;
+using DeviGames.Atlas.Core.Objectives.Interfaces;
+using DeviGames.Atlas.Core.Objectives.Models;
+using DeviGames.Atlas.Core.Objectives.Runtime;
+using DeviGames.Atlas.Core.Events;
 
 namespace DeviGames.Atlas.Core.Objectives.Services
 {
     public sealed class ObjectiveService
     {
-        private readonly Dictionary<string, ObjectiveState> _states = new();
-        private readonly Dictionary<string, ObjectiveDefinition> _definitions = new();
+        private readonly IObjectiveFactory _factory;
 
-        public IReadOnlyDictionary<string, ObjectiveState> States => _states;
+        private readonly IObjectiveCollection _collection;
 
-        public void StartObjective(ObjectiveDefinition definition)
+        public ObjectiveService(
+            IObjectiveFactory factory,
+            IObjectiveCollection collection)
         {
-            if (definition == null)
-                throw new ArgumentNullException(nameof(definition));
+            _factory =
+                factory
+                ?? throw new ArgumentNullException(
+                    nameof(factory));
 
-            if (string.IsNullOrWhiteSpace(definition.Id))
-                throw new ArgumentException("Objective id cannot be empty.", nameof(definition));
-
-            if (_states.ContainsKey(definition.Id))
-                return;
-
-            var state = new ObjectiveState(definition.Id, definition.TargetValue);
-            state.Start();
-
-            _states.Add(definition.Id, state);
-            _definitions.Add(definition.Id, definition);
-
-            EventBus.Publish(new ObjectiveStartedEvent(definition.Id));
+            _collection =
+                collection
+                ?? throw new ArgumentNullException(
+                    nameof(collection));
         }
 
-        public void AddProgress(string objectiveId, int amount)
+        public ObjectiveRuntime Register(
+            ObjectiveDefinition definition)
         {
-            if (string.IsNullOrWhiteSpace(objectiveId))
-                return;
+            ObjectiveRuntime runtime =
+                _factory.Create(
+                    definition);
 
-            if (amount <= 0)
-                return;
+            _collection.Add(
+                runtime);
 
-            if (!_states.TryGetValue(objectiveId, out ObjectiveState state))
-                return;
+            return runtime;
+        }
 
-            if (state.IsCompleted)
-                return;
+        public ObjectiveUpdateResult AddProgress(
+            string objectiveId,
+            int amount)
+        {
+            ObjectiveRuntime runtime =
+                _collection.Get(
+                    objectiveId);
 
-            state.AddProgress(amount);
+            int previousValue =
+                runtime.CurrentValue;
 
-            EventBus.Publish(
-                new ObjectiveProgressChangedEvent(
-                    objectiveId,
-                    state.CurrentValue,
-                    state.TargetValue));
+            ObjectiveUpdateResult result =
+                runtime.AddProgress(
+                    amount);
 
-            if (state.IsCompleted)
+            switch (result)
             {
-                EventBus.Publish(new ObjectiveCompletedEvent(objectiveId));
+                case ObjectiveUpdateResult.Progressed:
+
+                    EventBus.Publish(
+                        new ObjectiveProgressedEvent(
+                            objectiveId,
+                            previousValue,
+                            runtime.CurrentValue,
+                            runtime.TargetValue));
+
+                    break;
+
+                case ObjectiveUpdateResult.Completed:
+
+                    EventBus.Publish(
+                        new ObjectiveProgressedEvent(
+                            objectiveId,
+                            previousValue,
+                            runtime.CurrentValue,
+                            runtime.TargetValue));
+
+                    EventBus.Publish(
+                        new ObjectiveCompletedEvent(
+                            objectiveId,
+                            runtime.CurrentValue,
+                            runtime.TargetValue));
+
+                    break;
             }
+
+            return result;
         }
 
-        public void ProcessSignal(ObjectiveSignal signal)
+        public ObjectiveRuntime Get(
+            string objectiveId)
         {
-            if (string.IsNullOrWhiteSpace(signal.Type))
-                return;
-
-            if (signal.Amount <= 0)
-                return;
-
-            foreach (KeyValuePair<string, ObjectiveState> pair in _states)
-            {
-                ObjectiveState state = pair.Value;
-
-                if (state.IsCompleted)
-                    continue;
-
-                if (!_definitions.TryGetValue(pair.Key, out ObjectiveDefinition definition))
-                    continue;
-
-                if (definition.TriggerType != signal.Type)
-                    continue;
-
-                if (definition.TriggerTargetId != signal.TargetId)
-                    continue;
-
-                AddProgress(definition.Id, signal.Amount);
-            }
+            return _collection.Get(
+                objectiveId);
         }
 
-        public bool IsCompleted(string objectiveId)
+        public bool TryGet(
+            string objectiveId,
+            out ObjectiveRuntime runtime)
         {
-            return _states.TryGetValue(objectiveId, out ObjectiveState state)
-                   && state.IsCompleted;
+            return _collection.TryGet(
+                objectiveId,
+                out runtime);
         }
 
-        public void Reset()
+        public bool IsCompleted(
+            string objectiveId)
         {
-            _states.Clear();
-            _definitions.Clear();
+            ObjectiveRuntime runtime =
+                _collection.Get(
+                    objectiveId);
+
+            return runtime.IsCompleted;
+        }
+
+        public void Clear()
+        {
+            _collection.Clear();
         }
     }
 }

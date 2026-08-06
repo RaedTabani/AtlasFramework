@@ -12,6 +12,7 @@ using DeviGames.Atlas.Core.Execution.Interfaces;
 using DeviGames.Atlas.Core.Interaction.Services;
 using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Objectives.Services;
+using DeviGames.Atlas.Core.Objectives.Installation;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Save.Storage;
@@ -27,11 +28,13 @@ using DeviGames.Atlas.Dev.Hub.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
+using DeviGames.Atlas.Gameplay.Objectives.Bindings;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
 using DeviGames.Atlas.Gameplay.Inventory.Installation;
 using DeviGames.Atlas.Unity.Execution.Installation;
 
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace DeviGames.Playground.Bootstrap
 {
@@ -54,6 +57,7 @@ namespace DeviGames.Playground.Bootstrap
             new ExecutionInstaller().Install(installationContext);
             new TriggerInstaller().Install(installationContext);
             new InventoryInstaller().Install(installationContext);
+            new ObjectiveInstaller().Install(installationContext);
             new PlaygroundInstaller().Install(installationContext);
 
 
@@ -73,9 +77,6 @@ namespace DeviGames.Playground.Bootstrap
                 new InteractionService();
 
 
-            var objectiveService =
-                new ObjectiveService();
-
             var progressService =
                 new MissionProgressService();
 
@@ -84,7 +85,9 @@ namespace DeviGames.Playground.Bootstrap
                     savePath);
 
             
-
+            ObjectiveService objectiveService =
+                context.Services.Resolve<
+                    ObjectiveService>();
 
             var saveService =
                 new SaveService(
@@ -92,7 +95,7 @@ namespace DeviGames.Playground.Bootstrap
                         savePath));
 
             var objectiveAdapter =
-                new GameplayObjectiveAdapter(
+                CreateGameplayObjectiveAdapter(
                     objectiveService);
 
             var missionService =
@@ -121,10 +124,6 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(
                 interactionService);
 
-
-
-            context.Services.Register(
-                objectiveService);
 
             context.Services.Register(
                 progressService);
@@ -227,6 +226,33 @@ namespace DeviGames.Playground.Bootstrap
                 runtime);
 
             */
+        }
+
+         private static GameplayObjectiveAdapter
+            CreateGameplayObjectiveAdapter(
+                ObjectiveService objectiveService)
+        {
+            var itemBindings =
+                new List<ItemCollectedObjectiveBinding>
+                {
+                    new(
+                        objectiveId:
+                            "objective.collect-three-keys",
+                        itemId:
+                            "key")
+                };
+
+            var doorBindings =
+                new List<DoorOpenedObjectiveBinding>();
+
+            var areaBindings =
+                new List<AreaEnteredObjectiveBinding>();
+
+            return new GameplayObjectiveAdapter(
+                objectiveService,
+                itemBindings,
+                doorBindings,
+                areaBindings);
         }
     }
 }

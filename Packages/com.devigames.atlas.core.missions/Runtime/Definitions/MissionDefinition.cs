@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using DeviGames.Atlas.Core.Objectives.Definitions;
+using DeviGames.Atlas.Core.Objectives.Models;
 
 namespace DeviGames.Atlas.Core.Missions.Definitions
 {

@@ -39,7 +39,7 @@ namespace DeviGames.Atlas.Core.Missions.Services
 
             foreach (var objective in mission.Objectives)
             {
-                _objectiveService.StartObjective(objective);
+                _objectiveService.Register(objective);
             }
 
             EventBus.Publish(new MissionStartedEvent(mission.MissionId));

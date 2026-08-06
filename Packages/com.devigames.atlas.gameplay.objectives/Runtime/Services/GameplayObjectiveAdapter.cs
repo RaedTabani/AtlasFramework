@@ -1,8 +1,10 @@
+using System;
+using System.Collections.Generic;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
-using DeviGames.Atlas.Core.Objectives.Models;
 using DeviGames.Atlas.Core.Objectives.Services;
 using DeviGames.Atlas.Gameplay.Events;
+using DeviGames.Atlas.Gameplay.Objectives.Bindings;
 
 namespace DeviGames.Atlas.Gameplay.Objectives.Services
 {
@@ -10,53 +12,160 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
         IInitializable,
         IShutdownable
     {
-        public const string ItemCollectedSignal = "item_collected";
-        public const string DoorOpenedSignal = "door_opened";
-        public const string AreaEnteredSignal = "area_entered";
-
         private readonly ObjectiveService _objectiveService;
 
-        public GameplayObjectiveAdapter(ObjectiveService objectiveService)
+        private readonly IReadOnlyList<
+            ItemCollectedObjectiveBinding>
+            _itemCollectedBindings;
+
+        private readonly IReadOnlyList<
+            DoorOpenedObjectiveBinding>
+            _doorOpenedBindings;
+
+        private readonly IReadOnlyList<
+            AreaEnteredObjectiveBinding>
+            _areaEnteredBindings;
+
+        public GameplayObjectiveAdapter(
+            ObjectiveService objectiveService,
+            IReadOnlyList<ItemCollectedObjectiveBinding>
+                itemCollectedBindings,
+            IReadOnlyList<DoorOpenedObjectiveBinding>
+                doorOpenedBindings,
+            IReadOnlyList<AreaEnteredObjectiveBinding>
+                areaEnteredBindings)
         {
-            _objectiveService = objectiveService;
+            _objectiveService =
+                objectiveService
+                ?? throw new ArgumentNullException(
+                    nameof(objectiveService));
+
+            _itemCollectedBindings =
+                itemCollectedBindings
+                ?? throw new ArgumentNullException(
+                    nameof(itemCollectedBindings));
+
+            _doorOpenedBindings =
+                doorOpenedBindings
+                ?? throw new ArgumentNullException(
+                    nameof(doorOpenedBindings));
+
+            _areaEnteredBindings =
+                areaEnteredBindings
+                ?? throw new ArgumentNullException(
+                    nameof(areaEnteredBindings));
         }
 
         public void Initialize()
         {
-            EventBus.Subscribe<ItemCollectedEvent>(OnItemCollected);
-            EventBus.Subscribe<DoorOpenedEvent>(OnDoorOpened);
-            EventBus.Subscribe<AreaEnteredEvent>(OnAreaEntered);
+            EventBus.Subscribe<ItemCollectedEvent>(
+                OnItemCollected);
+
+            EventBus.Subscribe<DoorOpenedEvent>(
+                OnDoorOpened);
+
+            EventBus.Subscribe<AreaEnteredEvent>(
+                OnAreaEntered);
         }
 
         public void Shutdown()
         {
-            EventBus.Unsubscribe<ItemCollectedEvent>(OnItemCollected);
-            EventBus.Unsubscribe<DoorOpenedEvent>(OnDoorOpened);
-            EventBus.Unsubscribe<AreaEnteredEvent>(OnAreaEntered);
+            EventBus.Unsubscribe<ItemCollectedEvent>(
+                OnItemCollected);
+
+            EventBus.Unsubscribe<DoorOpenedEvent>(
+                OnDoorOpened);
+
+            EventBus.Unsubscribe<AreaEnteredEvent>(
+                OnAreaEntered);
         }
 
-        private void OnItemCollected(ItemCollectedEvent e)
+        private void OnItemCollected(
+            ItemCollectedEvent eventData)
         {
-            _objectiveService.ProcessSignal(
-                new ObjectiveSignal(
-                    ItemCollectedSignal,
-                    e.ItemId));
+            for (int index = 0;
+                 index < _itemCollectedBindings.Count;
+                 index++)
+            {
+                ItemCollectedObjectiveBinding binding =
+                    _itemCollectedBindings[index];
+
+                if (!string.Equals(
+                        binding.ItemId,
+                        eventData.ItemId,
+                        StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                int quantity =
+                    GetCollectedQuantity(
+                        eventData);
+
+                _objectiveService.AddProgress(
+                    binding.ObjectiveId,
+                    binding.ProgressPerItem *
+                    quantity);
+            }
         }
 
-        private void OnDoorOpened(DoorOpenedEvent e)
+        private void OnDoorOpened(
+            DoorOpenedEvent eventData)
         {
-            _objectiveService.ProcessSignal(
-                new ObjectiveSignal(
-                    DoorOpenedSignal,
-                    e.DoorId));
+            for (int index = 0;
+                 index < _doorOpenedBindings.Count;
+                 index++)
+            {
+                DoorOpenedObjectiveBinding binding =
+                    _doorOpenedBindings[index];
+
+                if (!string.Equals(
+                        binding.DoorId,
+                        eventData.DoorId,
+                        StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                _objectiveService.AddProgress(
+                    binding.ObjectiveId,
+                    binding.ProgressAmount);
+            }
         }
 
-        private void OnAreaEntered(AreaEnteredEvent e)
+        private void OnAreaEntered(
+            AreaEnteredEvent eventData)
         {
-            _objectiveService.ProcessSignal(
-                new ObjectiveSignal(
-                    AreaEnteredSignal,
-                    e.AreaId));
+            for (int index = 0;
+                 index < _areaEnteredBindings.Count;
+                 index++)
+            {
+                AreaEnteredObjectiveBinding binding =
+                    _areaEnteredBindings[index];
+
+                if (!string.Equals(
+                        binding.AreaId,
+                        eventData.AreaId,
+                        StringComparison.Ordinal))
+                {
+                    continue;
+                }
+
+                _objectiveService.AddProgress(
+                    binding.ObjectiveId,
+                    binding.ProgressAmount);
+            }
+        }
+
+        private static int GetCollectedQuantity(
+            ItemCollectedEvent eventData)
+        {
+            // If ItemCollectedEvent already exposes Quantity,
+            // replace this with:
+            //
+            // return eventData.Quantity;
+
+            return 1;
         }
     }
 }

@@ -1,8 +1,9 @@
 namespace DeviGames.Atlas.Core.Objectives.Models
 {
-    public enum ObjectiveState
+    public enum ObjectiveUpdateResult
     {
-        Active,
+        None,
+        Progressed,
         Completed
     }
 }
