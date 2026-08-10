@@ -1,6 +1,6 @@
 using System;
 
-namespace DeviGames.Atlas.Gameplay.Objectives.Bindings
+namespace DeviGames.Atlas.Gameplay.Objectives.Models
 {
     public sealed class ItemCollectedObjectiveBinding
     {
@@ -8,12 +8,12 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Bindings
 
         public string ItemId { get; }
 
-        public int ProgressPerItem { get; }
+        public int ProgressAmount { get; }
 
         public ItemCollectedObjectiveBinding(
             string objectiveId,
             string itemId,
-            int progressPerItem = 1)
+            int progressAmount = 1)
         {
             if (string.IsNullOrWhiteSpace(objectiveId))
             {
@@ -29,15 +29,15 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Bindings
                     nameof(itemId));
             }
 
-            if (progressPerItem < 1)
+            if (progressAmount < 1)
             {
                 throw new ArgumentOutOfRangeException(
-                    nameof(progressPerItem));
+                    nameof(progressAmount));
             }
 
             ObjectiveId = objectiveId;
             ItemId = itemId;
-            ProgressPerItem = progressPerItem;
+            ProgressAmount = progressAmount;
         }
     }
 }

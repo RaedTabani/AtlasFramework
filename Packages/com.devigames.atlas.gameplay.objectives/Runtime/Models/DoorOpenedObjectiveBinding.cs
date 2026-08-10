@@ -1,6 +1,6 @@
 using System;
 
-namespace DeviGames.Atlas.Gameplay.Objectives.Bindings
+namespace DeviGames.Atlas.Gameplay.Objectives.Models
 {
     public sealed class DoorOpenedObjectiveBinding
     {

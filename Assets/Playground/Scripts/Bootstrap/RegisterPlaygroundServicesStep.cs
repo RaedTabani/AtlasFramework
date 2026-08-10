@@ -29,7 +29,7 @@ using DeviGames.Atlas.Dev.Hub.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
-using DeviGames.Atlas.Gameplay.Objectives.Bindings;
+using DeviGames.Atlas.Gameplay.Objectives.Models;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
 using DeviGames.Atlas.Gameplay.Inventory.Installation;
 using DeviGames.Atlas.Unity.Execution.Installation;
@@ -60,7 +60,7 @@ namespace DeviGames.Playground.Bootstrap
             new InventoryInstaller().Install(installationContext);
             new ObjectiveInstaller().Install(installationContext);
             new MissionInstaller().Install(installationContext);
-            new PlaygroundInstaller().Install(installationContext);
+           
 
 
             string savePath =
@@ -97,9 +97,13 @@ namespace DeviGames.Playground.Bootstrap
                         savePath));
 
             var objectiveAdapter =
-                CreateGameplayObjectiveAdapter(
+                new GameplayObjectiveAdapter(
                     objectiveService);
 
+            context.Services.Register(
+                objectiveAdapter);
+
+             new PlaygroundInstaller().Install(installationContext);
           
 
             var progressSaveCoordinator =
@@ -120,138 +124,19 @@ namespace DeviGames.Playground.Bootstrap
 
             context.Services.Register(
                 eventHistoryService);
-
             context.Services.Register(
                 interactionService);
-
-
             context.Services.Register(
                 progressService);
-
             context.Services.Register(
                 saveService);
-
-            context.Services.Register(
-                objectiveAdapter);
-
-            
-
             context.Services.Register(
                 progressSaveCoordinator);
-
-            //context.Services.Register(devHubSnapshotService);
-
             context.Services.Register<ISaveDiagnosticsService>(
                 diagnostics);
 
 
-
-
-            /*
-            RegisterTriggerRuntime(
-                context,
-                context.Services.Resolve<ISystemCollection>());
-            */
-
             return Task.CompletedTask;
-        }
-
-        private static void RegisterTriggerRuntime(
-            BootstrapContext context,
-            ISystemCollection systemCollection)
-        {
-            
-            /*var triggerCollection =
-                new TriggerCollection();
-
-            var triggerContext =
-                new TriggerContext(
-                    context.Services);
-
-            var triggerBuildContext =
-                new TriggerBuildContext(
-                    context.Services);
-
-            var conditionFactoryRegistry =
-                new TriggerConditionFactoryRegistry();
-
-            var triggerFactory =
-                new TriggerFactory(
-                    conditionFactoryRegistry,
-                    triggerBuildContext);
-
-            var triggerRunner =
-                new TriggerRunner(
-                    triggerCollection,
-                    triggerContext);
-
-
-            context.Services.Register<ITriggerCollection>(
-                triggerCollection);
-
-            context.Services.Register<
-                ITriggerConditionFactoryRegistry>(
-                conditionFactoryRegistry);
-
-            ITriggerConditionFactoryRegistry triggerConditionFactories =
-                context.Services.Resolve<
-                    ITriggerConditionFactoryRegistry>();
-            
-            triggerConditionFactories.Register(
-                new InventoryQuantityConditionFactory());
-
-            context.Services.Register<ITriggerFactory>(
-                triggerFactory);
-
-            systemCollection.Add(
-                triggerRunner);
-
-
-
-            var definition =
-                new TriggerDefinition(
-                    id: "playground.inventory.collect-three-keys",
-                    repeatable: false,
-                    condition:
-                        new InventoryQuantityConditionDefinition(
-                            itemId: "key",
-                            requiredQuantity: 3));
-
-            TriggerRuntime runtime =
-                triggerFactory.Create(
-                    definition);
-
-            triggerCollection.Add(
-                runtime);
-
-            */
-        }
-
-         private static GameplayObjectiveAdapter
-            CreateGameplayObjectiveAdapter(
-                ObjectiveService objectiveService)
-        {
-            var itemBindings =
-                new List<ItemCollectedObjectiveBinding>
-                {
-                    new(
-                        objectiveId:
-                            "objective.collect-three-keys",
-                        itemId:
-                            "key")
-                };
-
-            var doorBindings =
-                new List<DoorOpenedObjectiveBinding>();
-
-            var areaBindings =
-                new List<AreaEnteredObjectiveBinding>();
-
-            return new GameplayObjectiveAdapter(
-                objectiveService,
-                itemBindings,
-                doorBindings,
-                areaBindings);
         }
     }
 }

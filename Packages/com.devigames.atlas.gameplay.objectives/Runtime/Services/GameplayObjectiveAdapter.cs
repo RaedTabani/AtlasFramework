@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
+
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
 using DeviGames.Atlas.Core.Objectives.Services;
 using DeviGames.Atlas.Gameplay.Events;
-using DeviGames.Atlas.Gameplay.Objectives.Bindings;
+using DeviGames.Atlas.Gameplay.Objectives.Models;
 
 namespace DeviGames.Atlas.Gameplay.Objectives.Services
 {
@@ -12,48 +13,64 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
         IInitializable,
         IShutdownable
     {
-        private readonly ObjectiveService _objectiveService;
+        private readonly ObjectiveService
+            _objectiveService;
 
-        private readonly IReadOnlyList<
-            ItemCollectedObjectiveBinding>
-            _itemCollectedBindings;
+        private readonly List<ItemCollectedObjectiveBinding>
+            _itemBindings = new();
 
-        private readonly IReadOnlyList<
-            DoorOpenedObjectiveBinding>
-            _doorOpenedBindings;
+        private readonly List<DoorOpenedObjectiveBinding>
+            _doorBindings = new();
 
-        private readonly IReadOnlyList<
-            AreaEnteredObjectiveBinding>
-            _areaEnteredBindings;
+        private readonly List<AreaEnteredObjectiveBinding>
+            _areaBindings = new();
 
         public GameplayObjectiveAdapter(
-            ObjectiveService objectiveService,
-            IReadOnlyList<ItemCollectedObjectiveBinding>
-                itemCollectedBindings,
-            IReadOnlyList<DoorOpenedObjectiveBinding>
-                doorOpenedBindings,
-            IReadOnlyList<AreaEnteredObjectiveBinding>
-                areaEnteredBindings)
+            ObjectiveService objectiveService)
         {
             _objectiveService =
                 objectiveService
                 ?? throw new ArgumentNullException(
                     nameof(objectiveService));
+        }
 
-            _itemCollectedBindings =
-                itemCollectedBindings
-                ?? throw new ArgumentNullException(
-                    nameof(itemCollectedBindings));
+        public void AddItemBinding(
+            ItemCollectedObjectiveBinding binding)
+        {
+            if (binding == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(binding));
+            }
 
-            _doorOpenedBindings =
-                doorOpenedBindings
-                ?? throw new ArgumentNullException(
-                    nameof(doorOpenedBindings));
+            _itemBindings.Add(
+                binding);
+        }
 
-            _areaEnteredBindings =
-                areaEnteredBindings
-                ?? throw new ArgumentNullException(
-                    nameof(areaEnteredBindings));
+        public void AddDoorBinding(
+            DoorOpenedObjectiveBinding binding)
+        {
+            if (binding == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(binding));
+            }
+
+            _doorBindings.Add(
+                binding);
+        }
+
+        public void AddAreaBinding(
+            AreaEnteredObjectiveBinding binding)
+        {
+            if (binding == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(binding));
+            }
+
+            _areaBindings.Add(
+                binding);
         }
 
         public void Initialize()
@@ -84,11 +101,11 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
             ItemCollectedEvent eventData)
         {
             for (int index = 0;
-                 index < _itemCollectedBindings.Count;
+                 index < _itemBindings.Count;
                  index++)
             {
                 ItemCollectedObjectiveBinding binding =
-                    _itemCollectedBindings[index];
+                    _itemBindings[index];
 
                 if (!string.Equals(
                         binding.ItemId,
@@ -98,14 +115,9 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
                     continue;
                 }
 
-                int quantity =
-                    GetCollectedQuantity(
-                        eventData);
-
                 _objectiveService.AddProgress(
                     binding.ObjectiveId,
-                    binding.ProgressPerItem *
-                    quantity);
+                    binding.ProgressAmount);
             }
         }
 
@@ -113,11 +125,11 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
             DoorOpenedEvent eventData)
         {
             for (int index = 0;
-                 index < _doorOpenedBindings.Count;
+                 index < _doorBindings.Count;
                  index++)
             {
                 DoorOpenedObjectiveBinding binding =
-                    _doorOpenedBindings[index];
+                    _doorBindings[index];
 
                 if (!string.Equals(
                         binding.DoorId,
@@ -137,11 +149,11 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
             AreaEnteredEvent eventData)
         {
             for (int index = 0;
-                 index < _areaEnteredBindings.Count;
+                 index < _areaBindings.Count;
                  index++)
             {
                 AreaEnteredObjectiveBinding binding =
-                    _areaEnteredBindings[index];
+                    _areaBindings[index];
 
                 if (!string.Equals(
                         binding.AreaId,
@@ -155,17 +167,6 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
                     binding.ObjectiveId,
                     binding.ProgressAmount);
             }
-        }
-
-        private static int GetCollectedQuantity(
-            ItemCollectedEvent eventData)
-        {
-            // If ItemCollectedEvent already exposes Quantity,
-            // replace this with:
-            //
-            // return eventData.Quantity;
-
-            return 1;
         }
     }
 }
