@@ -1,78 +1,140 @@
-using System.Linq;
+using System;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
-using DeviGames.Atlas.Core.Missions.Definitions;
 using DeviGames.Atlas.Core.Missions.Events;
+using DeviGames.Atlas.Core.Missions.Interfaces;
+using DeviGames.Atlas.Core.Missions.Models;
+using DeviGames.Atlas.Core.Missions.Runtime;
 using DeviGames.Atlas.Core.Objectives.Events;
-using DeviGames.Atlas.Core.Objectives.Services;
 
 namespace DeviGames.Atlas.Core.Missions.Services
 {
-    public sealed class MissionService : IInitializable, IShutdownable
+    public sealed class MissionService :
+        IInitializable,
+        IShutdownable
     {
-        private readonly ObjectiveService _objectiveService;
+        private readonly IMissionFactory _factory;
+        private readonly IMissionCollection _collection;
 
-        public MissionDefinition CurrentMission { get; private set; }
-        public bool HasActiveMission => CurrentMission != null;
+        public string CurrentMission ="null"; 
 
-        public MissionService(ObjectiveService objectiveService)
+        public MissionService(
+            IMissionFactory factory,
+            IMissionCollection collection)
         {
-            _objectiveService = objectiveService;
+            _factory =
+                factory
+                ?? throw new ArgumentNullException(
+                    nameof(factory));
+
+            _collection =
+                collection
+                ?? throw new ArgumentNullException(
+                    nameof(collection));
         }
 
         public void Initialize()
         {
-            EventBus.Subscribe<ObjectiveCompletedEvent>(OnObjectiveCompleted);
+            EventBus.Subscribe<ObjectiveCompletedEvent>(
+                OnObjectiveCompleted);
         }
 
         public void Shutdown()
         {
-            EventBus.Unsubscribe<ObjectiveCompletedEvent>(OnObjectiveCompleted);
+            EventBus.Unsubscribe<ObjectiveCompletedEvent>(
+                OnObjectiveCompleted);
         }
 
-        public void StartMission(MissionDefinition mission)
+        public MissionRuntime Register(
+            MissionDefinition definition)
         {
-            if (mission == null)
-                return;
-
-            CurrentMission = mission;
-
-            foreach (var objective in mission.Objectives)
+            if (definition == null)
             {
-                _objectiveService.Register(objective);
+                throw new ArgumentNullException(
+                    nameof(definition));
             }
 
-            EventBus.Publish(new MissionStartedEvent(mission.MissionId));
+            MissionRuntime runtime =
+                _factory.Create(
+                    definition);
+
+            _collection.Add(
+                runtime);
+
+            CurrentMission = runtime.Id;
+
+            return runtime;
         }
 
-        public void CompleteMission()
+        public MissionRuntime Get(
+            string missionId)
         {
-            if (CurrentMission == null)
-                return;
-
-            string missionId = CurrentMission.MissionId;
-
-            CurrentMission = null;
-
-            EventBus.Publish(new MissionCompletedEvent(missionId));
+            return _collection.Get(
+                missionId);
         }
 
-        public void AbortMission()
+        public bool TryGet(
+            string missionId,
+            out MissionRuntime mission)
         {
-            CurrentMission = null;
+            return _collection.TryGet(
+                missionId,
+                out mission);
         }
 
-        private void OnObjectiveCompleted(ObjectiveCompletedEvent e)
+        public void Clear()
         {
-            if (CurrentMission == null)
-                return;
+            _collection.Clear();
+        }
 
-            bool allCompleted = CurrentMission.Objectives.All(
-                objective => _objectiveService.IsCompleted(objective.Id));
+        private void OnObjectiveCompleted(
+            ObjectiveCompletedEvent eventData)
+        {
+            var missions =
+                _collection.Missions;
 
-            if (allCompleted)
+            for (int index = 0;
+                 index < missions.Count;
+                 index++)
             {
-                CompleteMission();
+                MissionRuntime mission =
+                    missions[index];
+
+                MissionUpdateResult result =
+                    mission.NotifyObjectiveCompleted(
+                        eventData.ObjectiveId);
+
+                switch (result)
+                {
+                    case MissionUpdateResult.None:
+                        break;
+
+                    case MissionUpdateResult.ObjectiveCompleted:
+
+                        EventBus.Publish(
+                            new MissionObjectiveCompletedEvent(
+                                mission.Id,
+                                eventData.ObjectiveId,
+                                mission.CompletedObjectiveCount,
+                                mission.ObjectiveCount));
+
+                        break;
+
+                    case MissionUpdateResult.Completed:
+
+                        EventBus.Publish(
+                            new MissionObjectiveCompletedEvent(
+                                mission.Id,
+                                eventData.ObjectiveId,
+                                mission.CompletedObjectiveCount,
+                                mission.ObjectiveCount));
+
+                        EventBus.Publish(
+                            new MissionCompletedEvent(
+                                mission.Id));
+
+                        break;
+                }
             }
         }
     }

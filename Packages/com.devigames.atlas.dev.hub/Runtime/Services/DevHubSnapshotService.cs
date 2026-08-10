@@ -56,13 +56,12 @@ namespace DeviGames.Atlas.Dev.Hub.Services
                 new DevHubSnapshot
                 {
                     HasActiveMission =
-                        _missionService.HasActiveMission,
+                        true,
 
                     CurrentMissionId =
                         _missionService.CurrentMission != null
                             ? _missionService
                                 .CurrentMission
-                                .MissionId
                             : string.Empty
                 };
 
@@ -95,7 +94,7 @@ namespace DeviGames.Atlas.Dev.Hub.Services
                     new ObjectiveSnapshot
                     {
                         ObjectiveId =
-                            runtime.Definition.Id,
+                            runtime.Id,
 
                         CurrentValue =
                             runtime.CurrentValue,

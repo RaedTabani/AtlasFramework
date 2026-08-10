@@ -11,6 +11,7 @@ using DeviGames.Atlas.Core.Execution.Systems;
 using DeviGames.Atlas.Core.Execution.Interfaces;
 using DeviGames.Atlas.Core.Interaction.Services;
 using DeviGames.Atlas.Core.Missions.Services;
+using DeviGames.Atlas.Core.Missions.Installation;
 using DeviGames.Atlas.Core.Objectives.Services;
 using DeviGames.Atlas.Core.Objectives.Installation;
 using DeviGames.Atlas.Core.Progress.Services;
@@ -58,6 +59,7 @@ namespace DeviGames.Playground.Bootstrap
             new TriggerInstaller().Install(installationContext);
             new InventoryInstaller().Install(installationContext);
             new ObjectiveInstaller().Install(installationContext);
+            new MissionInstaller().Install(installationContext);
             new PlaygroundInstaller().Install(installationContext);
 
 
@@ -98,9 +100,7 @@ namespace DeviGames.Playground.Bootstrap
                 CreateGameplayObjectiveAdapter(
                     objectiveService);
 
-            var missionService =
-                new MissionService(
-                    objectiveService);
+          
 
             var progressSaveCoordinator =
                 new ProgressSaveCoordinator(
@@ -134,8 +134,7 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(
                 objectiveAdapter);
 
-            context.Services.Register(
-                missionService);
+            
 
             context.Services.Register(
                 progressSaveCoordinator);

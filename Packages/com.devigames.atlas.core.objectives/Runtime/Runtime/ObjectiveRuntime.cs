@@ -6,23 +6,18 @@ namespace DeviGames.Atlas.Core.Objectives.Runtime
     public sealed class ObjectiveRuntime
     {
         public ObjectiveDefinition Definition { get; }
+        public string Id => Definition.Id;
+        public string DisplayName => Definition.DisplayName;
+        public string Description => Definition.Description;
 
         public int CurrentValue { get; private set; }
-
-        public int TargetValue =>
-            Definition.TargetValue;
-
-        public bool IsCompleted =>
-            State == ObjectiveState.Completed;
-
+        public int TargetValue => Definition.TargetValue;
+        public bool IsCompleted =>  State == ObjectiveState.Completed;
         public ObjectiveState State { get; private set; }
 
-        public float NormalizedProgress =>
-            (float)CurrentValue /
-            TargetValue;
+        public float NormalizedProgress => (float)CurrentValue / TargetValue;
 
-        public ObjectiveRuntime(
-            ObjectiveDefinition definition)
+        public ObjectiveRuntime( ObjectiveDefinition definition)
         {
             Definition =
                 definition

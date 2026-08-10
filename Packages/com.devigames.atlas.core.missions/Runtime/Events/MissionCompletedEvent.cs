@@ -4,7 +4,8 @@ namespace DeviGames.Atlas.Core.Missions.Events
     {
         public string MissionId { get; }
 
-        public MissionCompletedEvent(string missionId)
+        public MissionCompletedEvent(
+            string missionId)
         {
             MissionId = missionId;
         }

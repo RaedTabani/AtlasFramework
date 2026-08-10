@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using DeviGames.Atlas.Core.Bootstrap.Services;
 using DeviGames.Atlas.Core.Interaction.Services;
-using DeviGames.Atlas.Core.Missions.Definitions;
+using DeviGames.Atlas.Core.Missions.Models;
 using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Services;
@@ -77,15 +77,15 @@ namespace DeviGames.Playground.Application
                 return;
             }
 
-            if (progressService.IsCompleted(_mission.MissionId))
+            if (progressService.IsCompleted(_mission.Id))
             {
                 Debug.Log(
-                    $"Mission already completed: {_mission.MissionId}");
+                    $"Mission already completed: {_mission.Id}");
 
                 return;
             }
 
-            missionService.StartMission(_mission);
+            //missionService.StartMission(_mission);
         }
 
         private void OnDestroy()

@@ -1,8 +1,9 @@
 namespace DeviGames.Atlas.Core.Missions.Models
 {
-    public enum MissionState
+    public enum MissionUpdateResult
     {
-        Active,
+        None,
+        ObjectiveCompleted,
         Completed
     }
 }
