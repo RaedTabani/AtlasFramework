@@ -13,29 +13,20 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
         IInitializable,
         IShutdownable
     {
-        private readonly ObjectiveService
-            _objectiveService;
+        private readonly ObjectiveService _objectiveService;
 
-        private readonly List<ItemCollectedObjectiveBinding>
-            _itemBindings = new();
+        private readonly List<ItemCollectedObjectiveBinding> _itemBindings = new();
 
-        private readonly List<DoorOpenedObjectiveBinding>
-            _doorBindings = new();
+        private readonly List<DoorOpenedObjectiveBinding> _doorBindings = new();
 
-        private readonly List<AreaEnteredObjectiveBinding>
-            _areaBindings = new();
+        private readonly List<AreaEnteredObjectiveBinding> _areaBindings = new();
 
-        public GameplayObjectiveAdapter(
-            ObjectiveService objectiveService)
+        public GameplayObjectiveAdapter(ObjectiveService objectiveService)
         {
-            _objectiveService =
-                objectiveService
-                ?? throw new ArgumentNullException(
-                    nameof(objectiveService));
+            _objectiveService = objectiveService?? throw new ArgumentNullException(nameof(objectiveService));
         }
 
-        public void AddItemBinding(
-            ItemCollectedObjectiveBinding binding)
+        public void AddItemCollectedObjectiveBinding(ItemCollectedObjectiveBinding binding)
         {
             if (binding == null)
             {
@@ -47,7 +38,7 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
                 binding);
         }
 
-        public void AddDoorBinding(
+        public void AddDoorOpenedObjectiveBinding(
             DoorOpenedObjectiveBinding binding)
         {
             if (binding == null)
@@ -60,7 +51,7 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
                 binding);
         }
 
-        public void AddAreaBinding(
+        public void AddAreaEnteredObjectiveBinding(
             AreaEnteredObjectiveBinding binding)
         {
             if (binding == null)
@@ -75,26 +66,20 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Services
 
         public void Initialize()
         {
-            EventBus.Subscribe<ItemCollectedEvent>(
-                OnItemCollected);
+            EventBus.Subscribe<ItemCollectedEvent>(OnItemCollected);
 
-            EventBus.Subscribe<DoorOpenedEvent>(
-                OnDoorOpened);
+            EventBus.Subscribe<DoorOpenedEvent>(OnDoorOpened);
 
-            EventBus.Subscribe<AreaEnteredEvent>(
-                OnAreaEntered);
+            EventBus.Subscribe<AreaEnteredEvent>(OnAreaEntered);
         }
 
         public void Shutdown()
         {
-            EventBus.Unsubscribe<ItemCollectedEvent>(
-                OnItemCollected);
+            EventBus.Unsubscribe<ItemCollectedEvent>(OnItemCollected);
 
-            EventBus.Unsubscribe<DoorOpenedEvent>(
-                OnDoorOpened);
+            EventBus.Unsubscribe<DoorOpenedEvent>(OnDoorOpened);
 
-            EventBus.Unsubscribe<AreaEnteredEvent>(
-                OnAreaEntered);
+            EventBus.Unsubscribe<AreaEnteredEvent>(OnAreaEntered);
         }
 
         private void OnItemCollected(

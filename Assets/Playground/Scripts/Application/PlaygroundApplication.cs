@@ -5,6 +5,7 @@ using DeviGames.Atlas.Core.Interaction.Services;
 using DeviGames.Atlas.Core.Missions.Models;
 using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Progress.Services;
+using DeviGames.Atlas.Core.Progress.Bootstrap;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Playground.Bootstrap;
 using DeviGames.Playground.Interaction;
@@ -71,19 +72,6 @@ namespace DeviGames.Playground.Application
             _interactionController.Initialize(interactionService);
             _triggerController.Initialize(inventoryService);
 
-            if (_mission == null)
-            {
-                Debug.LogError("Playground mission is not assigned.");
-                return;
-            }
-
-            if (progressService.IsCompleted(_mission.Id))
-            {
-                Debug.Log(
-                    $"Mission already completed: {_mission.Id}");
-
-                return;
-            }
 
             //missionService.StartMission(_mission);
         }

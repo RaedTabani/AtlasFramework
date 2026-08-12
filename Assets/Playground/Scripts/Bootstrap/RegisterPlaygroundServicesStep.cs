@@ -12,8 +12,10 @@ using DeviGames.Atlas.Core.Execution.Interfaces;
 using DeviGames.Atlas.Core.Interaction.Services;
 using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Missions.Installation;
+using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Core.Objectives.Services;
 using DeviGames.Atlas.Core.Objectives.Installation;
+using DeviGames.Atlas.Core.Objectives.Interfaces;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Save.Storage;
@@ -110,16 +112,27 @@ namespace DeviGames.Playground.Bootstrap
                 new ProgressSaveCoordinator(
                     progressService,
                     saveService);
-            /*
+            
+            IMissionCollection missionCollection =
+            context.Services.Resolve<
+                IMissionCollection>();
+
+            IObjectiveCollection objectiveCollection =
+                context.Services.Resolve<
+                    IObjectiveCollection>();
+
+            IInventoryService inventoryService =
+                context.Services.Resolve<
+                    IInventoryService>();
             var devHubSnapshotService =
-                new DevHubSnapshotService(
-                    missionService,
-                    objectiveService,
-                    progressService,
-                    context.Services.Resolve<IInventoryService>());
-            */
-            // Core event infrastructure must exist before
-            // EventHistoryService is initialized.
+            new DevHubSnapshotService(
+                missionCollection,
+                objectiveCollection,
+                progressService,
+                inventoryService);
+
+            context.Services.Register(
+                devHubSnapshotService);
 
 
             context.Services.Register(

@@ -28,8 +28,7 @@ namespace DeviGames.Playground.Bootstrap
         private const string InventoryTriggerId =
             "playground.inventory.collect-three-keys";
 
-        public void Install(
-            AtlasInstallationContext context)
+        public void Install(AtlasInstallationContext context)
         {
             if (context == null)
             {
@@ -40,24 +39,18 @@ namespace DeviGames.Playground.Bootstrap
             ServiceRegistry services =
                 context.Services;
 
-            EnsureNotInstalled(
-                services);
+            EnsureNotInstalled(services);
 
-            InstallObjectives(
-                services);
+            InstallObjectives(services);
 
-            InstallMissions(
-                services);
+            InstallMissions(services);
 
-            InstallTriggers(
-                services);
+            InstallTriggers(services);
 
-            InstallBindings(
-                services);
+            InstallBindings(services);
         }
 
-        private static void InstallObjectives(
-            ServiceRegistry services)
+        private static void InstallObjectives(ServiceRegistry services)
         {
             ObjectiveService objectiveService =
                 services.Resolve<ObjectiveService>();
@@ -72,9 +65,22 @@ namespace DeviGames.Playground.Bootstrap
                         "Collect three keys.",
                     targetValue:
                         3);
+                        
+            var goldenKeyDefinition =
+                new ObjectiveDefinition(
+                    id:
+                        "CollectGoldenKeyObjectiveId",
+                    displayName:
+                        "Collect Golden Key",
+                    description:
+                        "Collect Golden key.",
+                    targetValue:
+                        1);
 
             objectiveService.Register(
                 definition);
+            objectiveService.Register(
+                goldenKeyDefinition);
         }
 
         private static void InstallMissions(
@@ -94,7 +100,8 @@ namespace DeviGames.Playground.Bootstrap
                     objectiveIds:
                         new[]
                         {
-                            CollectKeysObjectiveId
+                            CollectKeysObjectiveId,
+                            "CollectGoldenKeyObjectiveId"
                         });
 
             missionService.Register(
@@ -138,12 +145,21 @@ namespace DeviGames.Playground.Bootstrap
                 services.Resolve<
                     GameplayObjectiveAdapter>();
 
-            adapter.AddItemBinding(
+            adapter.AddItemCollectedObjectiveBinding(
                 new ItemCollectedObjectiveBinding(
                     objectiveId:
                         CollectKeysObjectiveId,
                     itemId:
                         "key",
+                    progressAmount:
+                        1));
+        
+            adapter.AddItemCollectedObjectiveBinding(
+                new ItemCollectedObjectiveBinding(
+                    objectiveId:
+                        "CollectGoldenKeyObjectiveId",
+                    itemId:
+                        "golden_key",
                     progressAmount:
                         1));
         }

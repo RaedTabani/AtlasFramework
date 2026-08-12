@@ -1,5 +1,6 @@
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Missions.Events;
 using DeviGames.Atlas.Core.Progress.Models;
@@ -61,7 +62,7 @@ namespace DeviGames.Atlas.Core.Progress.Tests
                 await saveService.LoadAsync<MissionProgressData>("missions");
 
             Assert.IsNotNull(loaded);
-            Assert.IsTrue(loaded.IsCompleted("mission_001"));
+            Assert.IsTrue(loaded.CompletedMissionIds.Contains("mission_001"));
 
             coordinator.Shutdown();
             progressService.Shutdown();

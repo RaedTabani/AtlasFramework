@@ -1,48 +1,108 @@
 using System;
-using System.Collections.Generic;
-using UnityEngine;
+using System.Linq;
+using System.Threading.Tasks;
+
 using DeviGames.Atlas.Core.Events;
-using DeviGames.Atlas.Core.Missions.Events;
-using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
+using DeviGames.Atlas.Core.Progress.Events;
+using DeviGames.Atlas.Core.Progress.Models;
+using DeviGames.Atlas.Core.Save.Services;
 
 namespace DeviGames.Atlas.Core.Progress.Services
 {
-    public sealed class ProgressSaveCoordinator: IInitializable, IShutdownable
+    public sealed class ProgressSaveCoordinator :
+        IInitializable,
+        IShutdownable
     {
-        private readonly MissionProgressService _progress;
-        private readonly SaveService _save;
+        private const string SaveKey =
+            "mission-progress";
+
+        private readonly MissionProgressService
+            _progressService;
+
+        private readonly SaveService
+            _saveService;
 
         public ProgressSaveCoordinator(
-            MissionProgressService progress,
-            SaveService save)
+            MissionProgressService progressService,
+            SaveService saveService)
         {
-            _progress = progress ?? throw new ArgumentNullException(nameof(progress));
-            _save = save ?? throw new ArgumentNullException(nameof(save));
+            _progressService =
+                progressService
+                ?? throw new ArgumentNullException(
+                    nameof(progressService));
+
+            _saveService =
+                saveService
+                ?? throw new ArgumentNullException(
+                    nameof(saveService));
         }
 
         public void Initialize()
         {
-            EventBus.Subscribe<MissionProgressChangedEvent>(
-                OnProgressChanged);
+            EventBus.Subscribe<
+                MissionProgressChangedEvent>(
+                    OnMissionProgressChanged);
         }
 
         public void Shutdown()
         {
-            EventBus.Unsubscribe<MissionProgressChangedEvent>(
-                OnProgressChanged);
+            EventBus.Unsubscribe<
+                MissionProgressChangedEvent>(
+                    OnMissionProgressChanged);
         }
 
-        private async void OnProgressChanged(MissionProgressChangedEvent e)
+        public async Task LoadAsync()
         {
-            try
+            bool exists =
+                await _saveService.ExistsAsync(
+                    SaveKey);
+
+            if (!exists)
             {
-                await _save.SaveAsync(SaveKeys.Missions, _progress.CreateSnapshot());
+                _progressService.Restore(
+                    Array.Empty<string>());
+
+                return;
             }
-            catch(Exception exception)
+
+            MissionProgressData data =
+                await _saveService.LoadAsync<
+                    MissionProgressData>(
+                        SaveKey);
+
+            if (data == null)
             {
-                Debug.LogException(exception);
+                _progressService.Restore(
+                    Array.Empty<string>());
+
+                return;
             }
+
+            _progressService.Restore(
+                data.CompletedMissionIds);
+        }
+
+        private void OnMissionProgressChanged(
+            MissionProgressChangedEvent eventData)
+        {
+            _ = SaveAsync();
+        }
+
+        private async Task SaveAsync()
+        {
+            var data =
+                new MissionProgressData
+                {
+                    CompletedMissionIds =
+                        _progressService
+                            .CompletedMissionIds
+                            .ToArray()
+                };
+
+            await _saveService.SaveAsync(
+                SaveKey,
+                data);
         }
     }
 }

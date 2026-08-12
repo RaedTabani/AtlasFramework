@@ -1,59 +1,118 @@
 using System;
 using System.Collections.Generic;
+
 using DeviGames.Atlas.Core.Events;
-using DeviGames.Atlas.Core.Missions.Events;
-using DeviGames.Atlas.Core.Progress.Models;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
+using DeviGames.Atlas.Core.Missions.Events;
+using DeviGames.Atlas.Core.Progress.Events;
 
 namespace DeviGames.Atlas.Core.Progress.Services
 {
-    public sealed class MissionProgressService: IInitializable, IShutdownable
+    public sealed class MissionProgressService :
+        IInitializable,
+        IShutdownable
     {
-        private MissionProgressData _data = new();
+        private readonly HashSet<string>
+            _completedMissionIds =
+                new(StringComparer.Ordinal);
 
-        public int CompletedMissionCount => _data.CompletedMissionIds.Count;
-
-        public IReadOnlyCollection<string> CompletedMissionIds => _data.CompletedMissionIds;
+        public IReadOnlyCollection<string>
+            CompletedMissionIds =>
+                _completedMissionIds;
+        
+        public int CompletedMissionCount =>
+            _completedMissionIds.Count;
 
         public void Initialize()
         {
-            EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
+            EventBus.Subscribe<MissionCompletedEvent>(
+                OnMissionCompleted);
         }
 
         public void Shutdown()
         {
-            EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
+            EventBus.Unsubscribe<MissionCompletedEvent>(
+                OnMissionCompleted);
         }
 
-        public bool IsCompleted(string missionId)
+        public bool IsCompleted(
+            string missionId)
         {
-            if (string.IsNullOrWhiteSpace(missionId))
+            if (string.IsNullOrWhiteSpace(
+                    missionId))
+            {
                 return false;
+            }
 
-            return _data.IsCompleted(missionId);
+            return _completedMissionIds.Contains(
+                missionId);
         }
 
-        public void LoadProgress(MissionProgressData data)
+        public bool MarkCompleted(
+            string missionId)
         {
-            _data = data ?? new MissionProgressData();
+            return MarkCompletedInternal(
+                missionId,
+                publishEvent: true);
         }
 
-        public MissionProgressData CreateSnapshot()
+        public void Restore(
+            IEnumerable<string> completedMissionIds)
         {
-            return new MissionProgressData(_data.CompletedMissionIds);
+            if (completedMissionIds == null)
+            {
+                throw new ArgumentNullException(
+                    nameof(completedMissionIds));
+            }
+
+            _completedMissionIds.Clear();
+
+            foreach (string missionId
+                     in completedMissionIds)
+            {
+                MarkCompletedInternal(
+                    missionId,
+                    publishEvent: false);
+            }
         }
 
-        private void OnMissionCompleted(MissionCompletedEvent e)
+        public void Clear()
         {
-            if (string.IsNullOrWhiteSpace(e.MissionId))
-                return;
+            _completedMissionIds.Clear();
+        }
 
-            if (_data.MarkCompleted(e.MissionId))
+        private bool MarkCompletedInternal(
+            string missionId,
+            bool publishEvent)
+        {
+            if (string.IsNullOrWhiteSpace(
+                    missionId))
+            {
+                return false;
+            }
+
+            if (!_completedMissionIds.Add(
+                    missionId))
+            {
+                return false;
+            }
+
+            if (publishEvent)
             {
                 EventBus.Publish(
                     new MissionProgressChangedEvent(
-                        e.MissionId));
+                        missionId,
+                        completed: true));
             }
+
+            return true;
+        }
+
+        private void OnMissionCompleted(
+            MissionCompletedEvent eventData)
+        {
+            MarkCompleted(
+                eventData.MissionId);
         }
     }
 }

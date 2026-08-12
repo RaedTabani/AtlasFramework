@@ -2,6 +2,7 @@ using UnityEngine;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Triggers.Events;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
+using DeviGames.Atlas.Gameplay.Events;
 
 namespace DeviGames.Playground.Trigger
 {
@@ -37,6 +38,7 @@ namespace DeviGames.Playground.Trigger
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.A))
             {
                 _inventory.Add("key",1);
+                EventBus.Publish(new ItemCollectedEvent("key"));
             }
 
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.B))

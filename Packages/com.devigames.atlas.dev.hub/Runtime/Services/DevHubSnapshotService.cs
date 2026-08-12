@@ -1,9 +1,9 @@
 using System;
 
-using DeviGames.Atlas.Core.Missions.Services;
+using DeviGames.Atlas.Core.Missions.Interfaces;
+using DeviGames.Atlas.Core.Missions.Runtime;
 using DeviGames.Atlas.Core.Objectives.Interfaces;
 using DeviGames.Atlas.Core.Objectives.Runtime;
-using DeviGames.Atlas.Core.Objectives.Services;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Dev.Hub.Models;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
@@ -12,7 +12,8 @@ namespace DeviGames.Atlas.Dev.Hub.Services
 {
     public sealed class DevHubSnapshotService
     {
-        private readonly MissionService _missionService;
+        private readonly IMissionCollection
+            _missionCollection;
 
         private readonly IObjectiveCollection
             _objectiveCollection;
@@ -24,15 +25,15 @@ namespace DeviGames.Atlas.Dev.Hub.Services
             _inventoryService;
 
         public DevHubSnapshotService(
-            MissionService missionService,
+            IMissionCollection missionCollection,
             IObjectiveCollection objectiveCollection,
             MissionProgressService progressService,
             IInventoryService inventoryService)
         {
-            _missionService =
-                missionService
+            _missionCollection =
+                missionCollection
                 ?? throw new ArgumentNullException(
-                    nameof(missionService));
+                    nameof(missionCollection));
 
             _objectiveCollection =
                 objectiveCollection
@@ -53,28 +54,35 @@ namespace DeviGames.Atlas.Dev.Hub.Services
         public DevHubSnapshot CreateSnapshot()
         {
             var snapshot =
-                new DevHubSnapshot
-                {
-                    HasActiveMission =
-                        true,
+                new DevHubSnapshot();
 
-                    CurrentMissionId =
-                        _missionService.CurrentMission != null
-                            ? _missionService
-                                .CurrentMission
-                            : string.Empty
-                };
+            AddInventorySnapshot(
+                snapshot);
 
-            snapshot.InventoryItemIds.AddRange(
-                _inventoryService.ItemIds);
-
-            snapshot.CompletedMissionIds.AddRange(
-                _progressService.CompletedMissionIds);
+            AddProgressSnapshot(
+                snapshot);
 
             AddObjectiveSnapshots(
                 snapshot);
 
+            AddMissionSnapshots(
+                snapshot);
+
             return snapshot;
+        }
+
+        private void AddInventorySnapshot(
+            DevHubSnapshot snapshot)
+        {
+            snapshot.InventoryItemIds.AddRange(
+                _inventoryService.ItemIds);
+        }
+
+        private void AddProgressSnapshot(
+            DevHubSnapshot snapshot)
+        {
+            snapshot.CompletedMissionIds.AddRange(
+                _progressService.CompletedMissionIds);
         }
 
         private void AddObjectiveSnapshots(
@@ -96,11 +104,48 @@ namespace DeviGames.Atlas.Dev.Hub.Services
                         ObjectiveId =
                             runtime.Id,
 
+                        DisplayName =
+                            runtime.DisplayName,
+
                         CurrentValue =
                             runtime.CurrentValue,
 
                         TargetValue =
                             runtime.TargetValue,
+
+                        IsCompleted =
+                            runtime.IsCompleted
+                    });
+            }
+        }
+
+        private void AddMissionSnapshots(
+            DevHubSnapshot snapshot)
+        {
+            var missions =
+                _missionCollection.Missions;
+
+            for (int index = 0;
+                 index < missions.Count;
+                 index++)
+            {
+                MissionRuntime runtime =
+                    missions[index];
+
+                snapshot.Missions.Add(
+                    new MissionSnapshot
+                    {
+                        MissionId =
+                            runtime.Id,
+
+                        DisplayName =
+                            runtime.DisplayName,
+
+                        CompletedObjectiveCount =
+                            runtime.CompletedObjectiveCount,
+
+                        ObjectiveCount =
+                            runtime.ObjectiveCount,
 
                         IsCompleted =
                             runtime.IsCompleted

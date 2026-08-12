@@ -7,23 +7,32 @@ using UnityEngine;
 
 namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
 {
-    public sealed class GameplayModule : IDevModule
+    public sealed class GameplayModule :
+        IDevModule
     {
         private Vector2 _scrollPosition;
 
-        public string Id => "gameplay";
-        public string DisplayName => "Gameplay";
-        public int Order => 100;
+        public string Id =>
+            "gameplay";
 
-        public void OnActivate(DevHubContext context)
+        public string DisplayName =>
+            "Gameplay";
+
+        public int Order =>
+            100;
+
+        public void OnActivate(
+            DevHubContext context)
         {
         }
 
-        public void OnDeactivate(DevHubContext context)
+        public void OnDeactivate(
+            DevHubContext context)
         {
         }
 
-        public void Draw(DevHubContext context)
+        public void Draw(
+            DevHubContext context)
         {
             _scrollPosition =
                 EditorGUILayout.BeginScrollView(
@@ -43,60 +52,127 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
             DevHubSnapshot snapshot =
                 snapshotService.CreateSnapshot();
 
-            DrawMission(snapshot);
-            DrawObjectives(snapshot);
-            DrawInventory(snapshot);
-            DrawProgress(snapshot);
+            DrawMissions(
+                snapshot);
+
+            DrawObjectives(
+                snapshot);
+
+            DrawInventory(
+                snapshot);
+
+            DrawProgress(
+                snapshot);
 
             EditorGUILayout.EndScrollView();
         }
 
-        private static void DrawMission(
+        private static void DrawMissions(
             DevHubSnapshot snapshot)
         {
-            DrawSectionHeader("Mission");
+            DrawSectionHeader(
+                "Missions");
 
-            EditorGUILayout.BeginVertical("box");
+            if (snapshot.Missions.Count == 0)
+            {
+                EditorGUILayout.HelpBox(
+                    "No mission runtime is available.",
+                    MessageType.Info);
 
-            EditorGUILayout.LabelField(
-                "Active",
-                snapshot.HasActiveMission ? "Yes" : "No");
+                EditorGUILayout.Space(8f);
+                return;
+            }
 
-            EditorGUILayout.LabelField(
-                "Current Mission",
-                string.IsNullOrWhiteSpace(
-                    snapshot.CurrentMissionId)
-                    ? "None"
-                    : snapshot.CurrentMissionId);
+            foreach (MissionSnapshot mission
+                     in snapshot.Missions)
+            {
+                EditorGUILayout.BeginVertical(
+                    "box");
 
-            EditorGUILayout.EndVertical();
-            EditorGUILayout.Space(8f);
+                EditorGUILayout.LabelField(
+                    string.IsNullOrWhiteSpace(
+                        mission.DisplayName)
+                        ? mission.MissionId
+                        : mission.DisplayName,
+                    EditorStyles.boldLabel);
+
+                EditorGUILayout.LabelField(
+                    "ID",
+                    mission.MissionId);
+
+                EditorGUILayout.LabelField(
+                    "Completed",
+                    mission.IsCompleted
+                        ? "Yes"
+                        : "No");
+
+                float progress =
+                    mission.ObjectiveCount <= 0
+                        ? 0f
+                        : Mathf.Clamp01(
+                            (float)mission
+                                .CompletedObjectiveCount /
+                            mission.ObjectiveCount);
+
+                Rect progressRect =
+                    GUILayoutUtility.GetRect(
+                        18f,
+                        18f,
+                        "TextField");
+
+                EditorGUI.ProgressBar(
+                    progressRect,
+                    progress,
+                    $"{mission.CompletedObjectiveCount}/" +
+                    $"{mission.ObjectiveCount} objectives");
+
+                EditorGUILayout.EndVertical();
+            }
+
+            EditorGUILayout.Space(
+                8f);
         }
 
         private static void DrawObjectives(
             DevHubSnapshot snapshot)
         {
-            DrawSectionHeader("Objectives");
+            DrawSectionHeader(
+                "Objectives");
 
             if (snapshot.Objectives.Count == 0)
             {
                 EditorGUILayout.HelpBox(
-                    "No objective state is available.",
+                    "No objective runtime is available.",
                     MessageType.Info);
+
+                EditorGUILayout.Space(
+                    8f);
+
+                return;
             }
 
             foreach (ObjectiveSnapshot objective
                      in snapshot.Objectives)
             {
-                EditorGUILayout.BeginVertical("box");
+                EditorGUILayout.BeginVertical(
+                    "box");
 
                 EditorGUILayout.LabelField(
-                    objective.ObjectiveId,
+                    string.IsNullOrWhiteSpace(
+                        objective.DisplayName)
+                        ? objective.ObjectiveId
+                        : objective.DisplayName,
                     EditorStyles.boldLabel);
 
                 EditorGUILayout.LabelField(
+                    "ID",
+                    objective.ObjectiveId);
+
+                EditorGUILayout.LabelField(
                     "Completed",
-                    objective.IsCompleted ? "Yes" : "No");
+                    objective.IsCompleted
+                        ? "Yes"
+                        : "No");
 
                 float progress =
                     objective.TargetValue <= 0
@@ -120,19 +196,23 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
                 EditorGUILayout.EndVertical();
             }
 
-            EditorGUILayout.Space(8f);
+            EditorGUILayout.Space(
+                8f);
         }
 
         private static void DrawInventory(
             DevHubSnapshot snapshot)
         {
-            DrawSectionHeader("Inventory");
+            DrawSectionHeader(
+                "Inventory");
 
-            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.BeginVertical(
+                "box");
 
             EditorGUILayout.LabelField(
                 "Item Count",
-                snapshot.InventoryItemIds.Count.ToString());
+                snapshot.InventoryItemIds.Count
+                    .ToString());
 
             if (snapshot.InventoryItemIds.Count == 0)
             {
@@ -151,20 +231,24 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
             }
 
             EditorGUILayout.EndVertical();
-            EditorGUILayout.Space(8f);
+
+            EditorGUILayout.Space(
+                8f);
         }
 
         private static void DrawProgress(
             DevHubSnapshot snapshot)
         {
-            DrawSectionHeader("Completed Missions");
+            DrawSectionHeader(
+                "Persisted Mission Progress");
 
-            EditorGUILayout.BeginVertical("box");
+            EditorGUILayout.BeginVertical(
+                "box");
 
             if (snapshot.CompletedMissionIds.Count == 0)
             {
                 EditorGUILayout.LabelField(
-                    "No completed missions.",
+                    "No completed missions have been persisted.",
                     EditorStyles.miniLabel);
             }
             else

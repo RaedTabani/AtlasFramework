@@ -5,7 +5,9 @@
         "DeviGames.Atlas.Core.Events",
         "DeviGames.Atlas.Core.Missions",
         "DeviGames.Atlas.Core.Lifecycle",
-        "DeviGames.Atlas.Core.Save"
+        "DeviGames.Atlas.Core.Save",
+        "DeviGames.Atlas.Core.Bootstrap",
+        "DeviGames.Atlas.Core.Services"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
