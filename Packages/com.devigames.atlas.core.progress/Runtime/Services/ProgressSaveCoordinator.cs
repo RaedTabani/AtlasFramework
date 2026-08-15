@@ -73,8 +73,7 @@ namespace DeviGames.Atlas.Core.Progress.Services
 
             if (data == null)
             {
-                _progressService.Restore(
-                    Array.Empty<string>());
+                _progressService.Restore(data.CompletedMissionIds ?? Array.Empty<string>());
 
                 return;
             }
