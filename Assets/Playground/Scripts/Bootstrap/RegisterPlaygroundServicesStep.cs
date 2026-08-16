@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using DeviGames.Atlas.Core.Bootstrap.Models;
 using DeviGames.Atlas.Core.Bootstrap.Interfaces;
+using DeviGames.Atlas.Core.Content.Installation;
 using DeviGames.Atlas.Core.Diagnostics.Save;
 using DeviGames.Atlas.Core.Diagnostics.Services;
 using DeviGames.Atlas.Core.Events;
@@ -62,7 +63,7 @@ namespace DeviGames.Playground.Bootstrap
             new InventoryInstaller().Install(installationContext);
             new ObjectiveInstaller().Install(installationContext);
             new MissionInstaller().Install(installationContext);
-           
+            new ContentInstaller().Install(installationContext);
 
 
             string savePath =

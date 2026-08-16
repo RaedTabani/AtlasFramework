@@ -6,6 +6,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.content": {
+      "version": "file:com.devigames.atlas.core.content",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.diagnostics": {
       "version": "file:com.devigames.atlas.core.diagnostics",
       "depth": 0,

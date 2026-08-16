@@ -1,5 +1,7 @@
 using System;
 
+using DeviGames.Atlas.Core.Content.Installation;
+using DeviGames.Atlas.Core.Content.Serialization;
 using DeviGames.Atlas.Core.Bootstrap.Interfaces;
 using DeviGames.Atlas.Core.Bootstrap.Models;
 using DeviGames.Atlas.Core.Missions.Models;
@@ -40,16 +42,35 @@ namespace DeviGames.Playground.Bootstrap
                 context.Services;
 
             EnsureNotInstalled(services);
+            InstallContent(services);
 
-            InstallObjectives(services);
+            //InstallObjectives(services);
 
-            InstallMissions(services);
+            //InstallMissions(services);
 
             InstallTriggers(services);
 
             InstallBindings(services);
         }
+        private static void InstallContent(
+            ServiceRegistry services)
+        {
+            ContentJsonParser parser =
+                services.Resolve<ContentJsonParser>();
 
+            ContentPackageInstaller installer =
+                services.Resolve<ContentPackageInstaller>();
+
+            string json =
+                GetPlaygroundContentJson();
+
+            var package =
+                parser.Parse(
+                    json);
+
+            installer.Install(
+                package);
+        }
         private static void InstallObjectives(ServiceRegistry services)
         {
             ObjectiveService objectiveService =
@@ -173,6 +194,34 @@ namespace DeviGames.Playground.Bootstrap
              * For now, Playground content itself will already
              * fail on duplicate objective / mission / trigger IDs.
              */
+        }
+        private static string GetPlaygroundContentJson()
+        {
+            return
+                @"{
+                    ""Version"": 1,
+                    ""PackageId"": ""playground.chapter-01"",
+
+                    ""Objectives"": [
+                        {
+                            ""Id"": ""objective.playground.collect-three-keys"",
+                            ""DisplayName"": ""Collect Three Keys"",
+                            ""Description"": ""Collect three keys."",
+                            ""TargetValue"": 3
+                        }
+                    ],
+
+                    ""Missions"": [
+                        {
+                            ""Id"": ""mission.playground.escape"",
+                            ""DisplayName"": ""Escape the Playground"",
+                            ""Description"": ""Collect the keys and escape."",
+                            ""ObjectiveIds"": [
+                                ""objective.playground.collect-three-keys""
+                            ]
+                        }
+                    ]
+                }";
         }
     }
 }
