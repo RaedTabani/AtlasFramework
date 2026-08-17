@@ -227,5 +227,93 @@ namespace DeviGames.Atlas.Core.Content.Validation
                 }
             }
         }
+        private static void ValidateItemCollectedBindings(
+            ContentPackageData package,
+            ContentValidationResult result)
+        {
+            if (package.ItemCollectedObjectiveBindings == null)
+                return;
+
+            var objectiveIds =
+                BuildObjectiveIdSet(
+                    package);
+
+            foreach (ItemCollectedObjectiveBindingData binding
+                    in package.ItemCollectedObjectiveBindings)
+            {
+                if (binding == null)
+                {
+                    result.AddError(
+                        "Item objective binding cannot be null.");
+
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                        binding.ObjectiveId))
+                {
+                    result.AddError(
+                        "Item objective binding must reference an objective.");
+
+                    continue;
+                }
+
+                if (!objectiveIds.Contains(
+                        binding.ObjectiveId))
+                {
+                    result.AddError(
+                        $"Item binding references unknown objective " +
+                        $"'{binding.ObjectiveId}'.");
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                        binding.ItemId))
+                {
+                    result.AddError(
+                        $"Item binding for objective " +
+                        $"'{binding.ObjectiveId}' has no item ID.");
+                }
+
+                if (binding.ProgressAmount < 1)
+                {
+                    result.AddError(
+                        $"Item binding for objective " +
+                        $"'{binding.ObjectiveId}' must have " +
+                        $"a positive progress amount.");
+                }
+            }
+        }
+        private static HashSet<string> BuildObjectiveIdSet(
+            ContentPackageData package)
+        {
+            var objectiveIds =
+                new HashSet<string>(
+                    StringComparer.Ordinal);
+
+            if (package.Objectives == null)
+            {
+                return objectiveIds;
+            }
+
+            foreach (ObjectiveContentData objective
+                    in package.Objectives)
+            {
+                if (objective == null)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(
+                        objective.Id))
+                {
+                    continue;
+                }
+
+                objectiveIds.Add(
+                    objective.Id);
+            }
+
+            return objectiveIds;
+        }
     }
 }

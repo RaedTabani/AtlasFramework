@@ -5,6 +5,7 @@ using DeviGames.Atlas.Core.Bootstrap.Models;
 using DeviGames.Atlas.Core.Triggers.Factories;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Models;
+using DeviGames.Atlas.Core.Triggers.Content;
 using DeviGames.Atlas.Core.Triggers.Registry;
 using DeviGames.Atlas.Core.Triggers.Systems;
 using DeviGames.Atlas.Core.Execution.Interfaces;
@@ -65,6 +66,21 @@ namespace DeviGames.Atlas.Core.Triggers.Installation
                 triggerFactory);
 
             systems.Add(triggerRunner);
+
+            var contentAdapterRegistry =
+                new TriggerContentConditionAdapterRegistry();
+
+            var triggerContentInstaller =
+                new TriggerContentInstaller(
+                    contentAdapterRegistry,
+                    triggerFactory,
+                    triggerCollection);
+
+            context.Services.Register(
+                contentAdapterRegistry);
+
+            context.Services.Register(
+                triggerContentInstaller);
 
         }
 

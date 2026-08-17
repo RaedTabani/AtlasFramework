@@ -37,6 +37,7 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Triggers
 
             ItemId = itemId;
             RequiredQuantity = requiredQuantity;
+
         }
     }
 }

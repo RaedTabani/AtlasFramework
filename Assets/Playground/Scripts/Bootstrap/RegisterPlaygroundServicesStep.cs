@@ -33,6 +33,7 @@ using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
 using DeviGames.Atlas.Gameplay.Objectives.Models;
+using DeviGames.Atlas.Gameplay.Objectives.Content;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
 using DeviGames.Atlas.Gameplay.Inventory.Installation;
 using DeviGames.Atlas.Unity.Execution.Installation;
@@ -106,7 +107,11 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(
                 objectiveAdapter);
 
-             new PlaygroundInstaller().Install(installationContext);
+            new GameplayObjectiveContentIntegrationInstaller()
+                .Install(installationContext);
+            
+
+            new PlaygroundInstaller().Install(installationContext);
           
 
             var progressSaveCoordinator =

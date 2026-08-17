@@ -2,6 +2,7 @@ using System;
 
 using DeviGames.Atlas.Core.Content.Installation;
 using DeviGames.Atlas.Core.Content.Serialization;
+using DeviGames.Atlas.Core.Content.Models;
 using DeviGames.Atlas.Core.Bootstrap.Interfaces;
 using DeviGames.Atlas.Core.Bootstrap.Models;
 using DeviGames.Atlas.Core.Missions.Models;
@@ -11,10 +12,12 @@ using DeviGames.Atlas.Core.Objectives.Services;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Models;
+using DeviGames.Atlas.Core.Triggers.Content;
 using DeviGames.Atlas.Core.Triggers.Runtime;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
 using DeviGames.Atlas.Gameplay.Objectives.Models;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
+using DeviGames.Atlas.Gameplay.Objectives.Content;
 
 namespace DeviGames.Playground.Bootstrap
 {
@@ -44,13 +47,6 @@ namespace DeviGames.Playground.Bootstrap
             EnsureNotInstalled(services);
             InstallContent(services);
 
-            //InstallObjectives(services);
-
-            //InstallMissions(services);
-
-            InstallTriggers(services);
-
-            InstallBindings(services);
         }
         private static void InstallContent(
             ServiceRegistry services)
@@ -58,18 +54,27 @@ namespace DeviGames.Playground.Bootstrap
             ContentJsonParser parser =
                 services.Resolve<ContentJsonParser>();
 
-            ContentPackageInstaller installer =
+            ContentPackageInstaller packageInstaller =
                 services.Resolve<ContentPackageInstaller>();
 
-            string json =
-                GetPlaygroundContentJson();
+            GameplayObjectiveContentInstaller
+                bindingInstaller =
+                    services.Resolve<
+                        GameplayObjectiveContentInstaller>();
 
-            var package =
+            ContentPackageData package =
                 parser.Parse(
-                    json);
+                    GetPlaygroundContentJson());
 
-            installer.Install(
+            packageInstaller.Install(
                 package);
+
+            bindingInstaller.Install(
+                package);
+            
+            
+            services.Resolve<TriggerContentInstaller>().Install(package);
+
         }
         private static void InstallObjectives(ServiceRegistry services)
         {
@@ -219,6 +224,27 @@ namespace DeviGames.Playground.Bootstrap
                             ""ObjectiveIds"": [
                                 ""objective.playground.collect-three-keys""
                             ]
+                        }
+                    ],
+
+                    ""ItemCollectedObjectiveBindings"": [
+                        {
+                        ""ObjectiveId"": ""objective.playground.collect-three-keys"",
+                        ""ItemId"": ""key"",
+                        ""ProgressAmount"": 1
+                        }
+                    ]
+                    ,
+                    ""Triggers"": [
+                        {
+                            ""Id"": ""playground.inventory.collect-three-keys"",
+                            ""Repeatable"": false,
+                            ""ConditionType"": ""inventory.quantity"",
+
+                            ""InventoryQuantity"": {
+                                ""ItemId"": ""key"",
+                                ""RequiredQuantity"": 3
+                            }
                         }
                     ]
                 }";

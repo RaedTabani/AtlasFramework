@@ -14,5 +14,16 @@ namespace DeviGames.Atlas.Core.Content.Models
 
         public MissionContentData[] Missions =
             Array.Empty<MissionContentData>();
+        public ItemCollectedObjectiveBindingData[] ItemCollectedObjectiveBindings =
+            Array.Empty<ItemCollectedObjectiveBindingData>();
+
+        public AreaEnteredObjectiveBindingData[] AreaEnteredObjectiveBindings =
+            Array.Empty<AreaEnteredObjectiveBindingData>();
+
+        public DoorOpenedObjectiveBindingData[] DoorOpenedObjectiveBindings =
+            Array.Empty<DoorOpenedObjectiveBindingData>();
+
+        public TriggerContentData[] Triggers =
+            Array.Empty<TriggerContentData>();
     }
 }

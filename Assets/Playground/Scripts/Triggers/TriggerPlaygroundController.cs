@@ -37,7 +37,7 @@ namespace DeviGames.Playground.Trigger
         {
             if (UnityEngine.Input.GetKeyDown(UnityEngine.KeyCode.A))
             {
-                _inventory.Add("key",1);
+                //_inventory.Add("key",1);
                 EventBus.Publish(new ItemCollectedEvent("key"));
             }
 

@@ -8,10 +8,12 @@ using DeviGames.Atlas.Core.Triggers.Models;
 using DeviGames.Atlas.Core.Triggers.Registry;
 using DeviGames.Atlas.Core.Triggers.Systems;
 using DeviGames.Atlas.Core.Triggers.Runtime;
+using DeviGames.Atlas.Core.Triggers.Content;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Services.Interfaces;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
+using DeviGames.Atlas.Gameplay.Inventory.Content;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
 using DeviGames.Atlas.Gameplay.Inventory.Models;
 
@@ -39,6 +41,8 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Installation
             var registry = services.Resolve<ITriggerConditionFactoryRegistry>();
 
             registry.Register(new InventoryQuantityConditionFactory(inventoryService));
+
+            services.Resolve<TriggerContentConditionAdapterRegistry>().Register(new InventoryQuantityTriggerContentAdapter());
             //InstallTriggers(services);
         }
 

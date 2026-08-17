@@ -40,7 +40,7 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Triggers
         public bool Evaluate(TriggerContext context)
         {
             int quantity = _inventory.GetQuantity(_itemId);
-
+  
             return quantity >= _requiredQuantity;
         }
     }
