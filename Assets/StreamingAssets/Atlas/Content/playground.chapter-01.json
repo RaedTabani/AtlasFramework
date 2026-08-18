@@ -1,0 +1,59 @@
+{
+    "Version": 1,
+    "PackageId": "playground.chapter-01",
+
+    "Objectives": [
+        {
+            "Id": "objective.playground.collect-keys",
+            "DisplayName": "Collect Three Keys",
+            "Description": "Collect three keys.",
+            "TargetValue": 3
+        },
+        {
+            "Id": "objective.playground.escape",
+            "DisplayName": "Escape",
+            "Description": "Reach the exit.",
+            "TargetValue": 1
+        }
+    ],
+
+    "Missions": [
+        {
+            "Id": "mission.playground.escape",
+            "DisplayName": "Escape the Playground",
+            "Description": "Collect the keys and escape.",
+            "ObjectiveIds": [
+                "objective.playground.collect-keys"
+            ]
+        }
+    ],
+
+    "ItemCollectedObjectiveBindings": [
+        {
+            "ObjectiveId": "objective.playground.collect-keys",
+            "ItemId": "key",
+            "ProgressAmount": 1
+        }
+    ],
+
+    "AreaEnteredObjectiveBindings": [
+        {
+            "ObjectiveId": "objective.playground.escape",
+            "AreaId": "exit",
+            "ProgressAmount": 1
+        }
+    ],
+
+    "Triggers": [
+        {
+            "Id": "playground.inventory.collect-three-keys",
+            "Repeatable": false,
+            "ConditionType": "inventory.quantity",
+
+            "InventoryQuantity": {
+                "ItemId": "key",
+                "RequiredQuantity": 3
+            }
+        }
+    ]
+}

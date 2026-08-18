@@ -1,14 +1,17 @@
 using System;
 
 using DeviGames.Atlas.Core.Content.Models;
+using DeviGames.Atlas.Core.Content.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Models;
 using DeviGames.Atlas.Core.Triggers.Runtime;
 
 namespace DeviGames.Atlas.Core.Triggers.Content
 {
-    public sealed class TriggerContentInstaller
+    public sealed class TriggerContentInstaller : IContentPackageConsumer
     {
+        public int Order => 300;
+
         private readonly TriggerContentConditionAdapterRegistry
             _adapterRegistry;
 

@@ -11,6 +11,7 @@ using DeviGames.Atlas.Core.Triggers.Systems;
 using DeviGames.Atlas.Core.Execution.Interfaces;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Services.Interfaces;
+using DeviGames.Atlas.Core.Content.Collections;
 
 namespace DeviGames.Atlas.Core.Triggers.Installation
 {

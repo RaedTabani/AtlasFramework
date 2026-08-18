@@ -1,6 +1,7 @@
 using System;
 using DeviGames.Atlas.Core.Content.Models;
 using DeviGames.Atlas.Core.Content.Validation;
+using DeviGames.Atlas.Core.Content.Interfaces;
 using DeviGames.Atlas.Core.Missions.Models;
 using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Objectives.Models;
@@ -8,8 +9,9 @@ using DeviGames.Atlas.Core.Objectives.Services;
 
 namespace DeviGames.Atlas.Core.Content.Installation
 {
-    public sealed class ContentPackageInstaller
+    public sealed class ContentPackageInstaller : IContentPackageConsumer
     {
+        public int Order => 100;
         private readonly ContentPackageValidator
             _validator;
         private readonly ContentPackagePreflight

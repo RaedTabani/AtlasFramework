@@ -50,7 +50,7 @@ namespace DeviGames.Playground.Application
             _bootstrapService = new BootstrapService();
 
             _bootstrapService.AddStep(new RegisterPlaygroundServicesStep())
-            .AddStep(new LoadMissionProgressStep());
+            .AddStep(new LoadPlaygroundContentStep()).AddStep(new LoadMissionProgressStep());
 
             await _bootstrapService.RunAsync();
         }

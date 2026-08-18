@@ -1,13 +1,15 @@
 using System;
 
 using DeviGames.Atlas.Core.Content.Models;
+using DeviGames.Atlas.Core.Content.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Models;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
 
 namespace DeviGames.Atlas.Gameplay.Objectives.Content
 {
-    public sealed class GameplayObjectiveContentInstaller
+    public sealed class GameplayObjectiveContentInstaller: IContentPackageConsumer
     {
+        public int Order => 200;
         private readonly GameplayObjectiveAdapter
             _adapter;
 

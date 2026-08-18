@@ -4,6 +4,7 @@ using DeviGames.Atlas.Core.Bootstrap.Interfaces;
 using DeviGames.Atlas.Core.Bootstrap.Models;
 using DeviGames.Atlas.Core.Content.Serialization;
 using DeviGames.Atlas.Core.Content.Validation;
+using DeviGames.Atlas.Core.Content.Collections;
 using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Objectives.Interfaces;
@@ -26,12 +27,9 @@ namespace DeviGames.Atlas.Core.Content.Installation
 
             ServiceRegistry services =
                 context.Services;
-
-            var parser =
-                new ContentJsonParser();
-
-            var validator =
-                new ContentPackageValidator();
+            var consumers = new ContentPackageConsumerCollection();
+            var parser = new ContentJsonParser();
+            var validator = new ContentPackageValidator();
 
             var preflight =
                 new ContentPackagePreflight(
@@ -45,6 +43,7 @@ namespace DeviGames.Atlas.Core.Content.Installation
                     services.Resolve<ObjectiveService>(),
                     services.Resolve<MissionService>());
 
+            consumers.Add(packageInstaller);
             services.Register(
                 parser);
 
@@ -53,9 +52,13 @@ namespace DeviGames.Atlas.Core.Content.Installation
 
             services.Register(
                 preflight);
+            services.Register(
+                consumers);
 
             services.Register(
                 packageInstaller);
+
+
         }
     }
 }

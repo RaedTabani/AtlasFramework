@@ -18,6 +18,11 @@ using DeviGames.Atlas.Core.Objectives.Services;
 using DeviGames.Atlas.Core.Objectives.Installation;
 using DeviGames.Atlas.Core.Objectives.Interfaces;
 using DeviGames.Atlas.Core.Progress.Services;
+using DeviGames.Atlas.Core.Content.Interfaces;
+using DeviGames.Atlas.Core.Content.Loading;
+using DeviGames.Atlas.Core.Content.Serialization;
+using DeviGames.Atlas.Core.Content.Collections;
+using DeviGames.Atlas.Core.Content.Sources;
 using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Save.Storage;
 using DeviGames.Atlas.Core.Services;
@@ -107,11 +112,14 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register(
                 objectiveAdapter);
 
+
+            new TriggerContentIntegrationInstaller()
+                .Install(installationContext);
             new GameplayObjectiveContentIntegrationInstaller()
                 .Install(installationContext);
             
 
-            new PlaygroundInstaller().Install(installationContext);
+            //new PlaygroundInstaller().Install(installationContext);
           
 
             var progressSaveCoordinator =
@@ -154,7 +162,30 @@ namespace DeviGames.Playground.Bootstrap
             context.Services.Register<ISaveDiagnosticsService>(
                 diagnostics);
 
+            string rootPath =
+                Path.Combine(
+                    UnityEngine.Application.streamingAssetsPath,
+                    "Atlas",
+                    "Content");
 
+            IContentSource contentSource =
+                new StreamingAssetsContentSource(
+                    rootPath);
+
+            var loader =
+                new ContentPackageLoader(
+                    contentSource,
+                    context.Services.Resolve<
+                        ContentJsonParser>(),
+                    context.Services.Resolve<
+                        ContentPackageConsumerCollection>());
+
+            context.Services.Register<
+                IContentSource>(
+                    contentSource);
+
+            context.Services.Register(
+                loader);
             return Task.CompletedTask;
         }
     }

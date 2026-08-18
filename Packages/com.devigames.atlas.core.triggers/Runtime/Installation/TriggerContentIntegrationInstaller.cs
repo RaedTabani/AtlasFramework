@@ -2,13 +2,13 @@ using System;
 
 using DeviGames.Atlas.Core.Bootstrap.Interfaces;
 using DeviGames.Atlas.Core.Bootstrap.Models;
-using DeviGames.Atlas.Core.Services;
-using DeviGames.Atlas.Gameplay.Objectives.Services;
 using DeviGames.Atlas.Core.Content.Collections;
+using DeviGames.Atlas.Core.Triggers.Content;
+using DeviGames.Atlas.Core.Services;
 
-namespace DeviGames.Atlas.Gameplay.Objectives.Content
+namespace DeviGames.Atlas.Core.Triggers.Installation
 {
-    public sealed class GameplayObjectiveContentIntegrationInstaller :
+    public sealed class TriggerContentIntegrationInstaller :
         IAtlasInstaller
     {
         public void Install(
@@ -23,21 +23,16 @@ namespace DeviGames.Atlas.Gameplay.Objectives.Content
             ServiceRegistry services =
                 context.Services;
 
-            GameplayObjectiveAdapter adapter =
-                services.Resolve<GameplayObjectiveAdapter>();
+            TriggerContentInstaller contentInstaller =
+                services.Resolve<
+                    TriggerContentInstaller>();
 
-            var contentInstaller =
-                new GameplayObjectiveContentInstaller(
-                    adapter);
             ContentPackageConsumerCollection consumers =
                 services.Resolve<
                     ContentPackageConsumerCollection>();
-            consumers.Add(contentInstaller);
 
-            services.Register(
+            consumers.Add(
                 contentInstaller);
-
-
         }
     }
 }
