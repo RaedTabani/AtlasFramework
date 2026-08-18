@@ -28,6 +28,8 @@ namespace DeviGames.Playground.Application
         private InteractionPlaygroundController _interactionController;
         [SerializeField]
         private TriggerPlaygroundController _triggerController;
+        [SerializeField]
+        private PlayerInteractionController _playerInteractionController;
 
         private BootstrapService _bootstrapService;
         
@@ -69,8 +71,9 @@ namespace DeviGames.Playground.Application
             IInventoryService inventoryService =
                 Services.Resolve<IInventoryService>();
 
-            _interactionController.Initialize(interactionService);
-            _triggerController.Initialize(inventoryService);
+            //_interactionController.Initialize(interactionService);
+            //_triggerController.Initialize(inventoryService);
+            _playerInteractionController.Initialize(interactionService);
 
 
             //missionService.StartMission(_mission);

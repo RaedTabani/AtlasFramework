@@ -205,8 +205,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 138720723}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: -0.000007191477, y: 0.99126416, z: -0.13189153, w: -0.000053179996}
+  m_LocalPosition: {x: -1.9894035, y: 2.6970994, z: 6.0632305}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -256,132 +256,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!1 &224011591
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 224011595}
-  - component: {fileID: 224011594}
-  - component: {fileID: 224011593}
-  - component: {fileID: 224011592}
-  - component: {fileID: 224011596}
-  m_Layer: 0
-  m_Name: Success cube
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &224011592
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 224011591}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!23 &224011593
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 224011591}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_MaskInteraction: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &224011594
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 224011591}
-  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!4 &224011595
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 224011591}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 4.18, y: 0.35, z: 0.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &224011596
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 224011591}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 611fb68cbebc4ddea96e231e6d0e90cf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.SuccessInteractable
-  _message: Interaction succeeded.
 --- !u!1 &396704163
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,7 +270,7 @@ GameObject:
   - component: {fileID: 396704164}
   - component: {fileID: 396704168}
   m_Layer: 0
-  m_Name: Locked cube
+  m_Name: Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -504,10 +378,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 396704163}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bfb6d77f94b84342c801f10e04a84183, type: 3}
+  m_Script: {fileID: 11500000, guid: 1778aaea6aa5c2b7f8ad414145e5abad, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.LockedInteractable
-  _failureReason: The object is locked.
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.DoorInteractable
+  _doorId: door.exit
 --- !u!1 &722558665
 GameObject:
   m_ObjectHideFlags: 0
@@ -522,7 +396,7 @@ GameObject:
   - component: {fileID: 722558666}
   - component: {fileID: 722558670}
   m_Layer: 0
-  m_Name: Key cube
+  m_Name: key
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -630,12 +504,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 722558665}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1bc9904923aff8e75beb77e5cc3bd545, type: 3}
+  m_Script: {fileID: 11500000, guid: b70bc433f3578a0fc928f56ebc068ff6, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.KeyPickupInteractable
-  _itemId: golden_key
-  _successMessage: You collected the golden key.
-  _disableAfterCollection: 1
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.PickupInteractable
+  _itemId: key
 --- !u!1 &1688955800
 GameObject:
   m_ObjectHideFlags: 0
@@ -776,6 +648,7 @@ GameObject:
   - component: {fileID: 1909732488}
   - component: {fileID: 1909732491}
   - component: {fileID: 1909732489}
+  - component: {fileID: 1909732492}
   m_Layer: 0
   m_Name: Playground Systems
   m_TagString: Untagged
@@ -810,11 +683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0bda861a8809831cba2a9c7ad635573, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DeviGames.Playground::InteractionPlaygroundController
-  _interactor: {fileID: 1909732489}
-  _targetBehaviours:
-  - {fileID: 224011596}
-  - {fileID: 396704168}
-  - {fileID: 722558670}
+  _targetBehaviour: {fileID: 396704168}
 --- !u!114 &1909732489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -839,7 +708,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a53707cad51e93e0d95c7b33f66030a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Application.PlaygroundApplication
-  _mission: {fileID: 11400000, guid: ab5f11a4494e1e383a09448182bd3cf3, type: 2}
   _interactionController: {fileID: 1909732488}
   _triggerController: {fileID: 1909732491}
 --- !u!114 &1909732491
@@ -854,6 +722,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed2152d868ec4e590ac63b5629d2075b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DeviGames.Playground::TriggerPlaygroundController
+--- !u!114 &1909732492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1909732486}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee71133c938b8d4c2a267c549e232478, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Interaction.PlayerInteractionController
+  _camera: {fileID: 138720725}
+  _interactionDistance: 10
+  _interactionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1 &2115585246
 GameObject:
   m_ObjectHideFlags: 0
@@ -974,7 +859,6 @@ SceneRoots:
   - {fileID: 138720726}
   - {fileID: 1688955803}
   - {fileID: 1909732487}
-  - {fileID: 224011595}
   - {fileID: 396704167}
   - {fileID: 722558669}
   - {fileID: 2115585250}

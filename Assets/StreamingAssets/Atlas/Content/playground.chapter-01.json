@@ -10,9 +10,9 @@
             "TargetValue": 3
         },
         {
-            "Id": "objective.playground.escape",
-            "DisplayName": "Escape",
-            "Description": "Reach the exit.",
+            "Id": "objective.playground.open-exit",
+            "DisplayName": "Open the Exit Door",
+            "Description": "Open the exit door.",
             "TargetValue": 1
         }
     ],
@@ -23,7 +23,8 @@
             "DisplayName": "Escape the Playground",
             "Description": "Collect the keys and escape.",
             "ObjectiveIds": [
-                "objective.playground.collect-keys"
+                "objective.playground.collect-keys",
+                "objective.playground.open-exit"
             ]
         }
     ],
@@ -36,12 +37,13 @@
         }
     ],
 
-    "AreaEnteredObjectiveBindings": [
-        {
-            "ObjectiveId": "objective.playground.escape",
-            "AreaId": "exit",
-            "ProgressAmount": 1
-        }
+    "DoorOpenedObjectiveBindings": [
+    {
+        "ObjectiveId": "objective.playground.open-exit",
+        "DoorId": "door.exit",
+        "ProgressAmount": 1
+    }
+
     ],
 
     "Triggers": [

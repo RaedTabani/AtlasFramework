@@ -114,6 +114,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.gameplay.worldstate": {
+      "version": "file:com.devigames.atlas.gameplay.worldstate",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.unity.execution": {
       "version": "file:com.devigames.atlas.unity.execution",
       "depth": 0,

@@ -1,5 +1,4 @@
-using DeviGames.Atlas.Core.Interaction.Requests;
-using DeviGames.Atlas.Core.Interaction.Results;
+using DeviGames.Atlas.Core.Interaction.Models;
 
 namespace DeviGames.Atlas.Core.Interaction.Events
 {

@@ -1,42 +1,75 @@
 using System;
+
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Interaction.Events;
-using DeviGames.Atlas.Core.Interaction.Requests;
-using DeviGames.Atlas.Core.Interaction.Results;
+using DeviGames.Atlas.Core.Interaction.Models;
 
 namespace DeviGames.Atlas.Core.Interaction.Services
 {
     public sealed class InteractionService
     {
-        public InteractionResult Process(InteractionRequest request)
+        public InteractionResult Process(
+            InteractionRequest request)
         {
-            if (request.Target == null)
+            if (request == null)
             {
-                return InteractionResult.Failed(
-                    "Target is null.");
+                throw new ArgumentNullException(
+                    nameof(request));
             }
 
-            EventBus.Publish(new InteractionStartedEvent(request));
+            var target =
+                request.Target;
+
+            var context =
+                request.Context;
+
+            if (!target.CanInteract(
+                    context))
+            {
+                InteractionResult rejected =
+                    InteractionResult.Failed(
+                        "Interaction is not currently available.");
+
+                EventBus.Publish(
+                    new InteractionFailedEvent(
+                        request,
+                        rejected));
+
+                return rejected;
+            }
+
+            EventBus.Publish(
+                new InteractionStartedEvent(
+                    request));
 
             InteractionResult result;
 
             try
             {
-                result = request.Target.Interact(request);
+                result =
+                    target.Interact(
+                        context);
             }
             catch (Exception exception)
             {
-                result = InteractionResult.Failed(exception.Message);
+                result =
+                    InteractionResult.Failed(
+                        exception.Message);
             }
 
-            if (result.Success)
+            if (result.Succeeded)
             {
-                EventBus.Publish(new InteractionCompletedEvent(request,result));
+                EventBus.Publish(
+                    new InteractionCompletedEvent(
+                        request,
+                        result));
             }
             else
             {
                 EventBus.Publish(
-                    new InteractionFailedEvent(request,result));
+                    new InteractionFailedEvent(
+                        request,
+                        result));
             }
 
             return result;
