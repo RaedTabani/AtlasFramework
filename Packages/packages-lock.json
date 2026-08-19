@@ -60,6 +60,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.rewards": {
+      "version": "file:com.devigames.atlas.core.rewards",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.save": {
       "version": "file:com.devigames.atlas.core.save",
       "depth": 0,

@@ -11,6 +11,8 @@ using DeviGames.Atlas.Core.Triggers.Runtime;
 using DeviGames.Atlas.Core.Triggers.Content;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Services.Interfaces;
+using DeviGames.Atlas.Core.Rewards.Registry;
+using DeviGames.Atlas.Gameplay.Inventory.Rewards;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Content;
@@ -43,25 +45,12 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Installation
             registry.Register(new InventoryQuantityConditionFactory(inventoryService));
 
             services.Resolve<TriggerContentConditionAdapterRegistry>().Register(new InventoryQuantityTriggerContentAdapter());
-            //InstallTriggers(services);
-        }
-
-        private static void InstallTriggers(ServiceRegistry services)
-        {
-            /*services.Resolve<ITriggerConditionFactoryRegistry>().Register(new InventoryQuantityConditionFactory());
-            var definition = new TriggerDefinition(
-                    id: "playground.inventory.collect-three-keys",
-                    repeatable: false,
-                    condition:
-                        new InventoryQuantityConditionDefinition(
-                            itemId: "key",
-                            requiredQuantity: 3));
-
-            TriggerRuntime runtime = services.Resolve<ITriggerFactory>().Create(
-                    definition);
             
-            services.Resolve<ITriggerCollection>().Add(runtime);
-            */
+            RewardHandlerRegistry rewardHandlers = services.Resolve<RewardHandlerRegistry>();
+
+            rewardHandlers.Register(
+                new InventoryRewardHandler(
+                    services.Resolve<IInventoryService>()));
         }
 
         private static void EnsureNotInstalled(

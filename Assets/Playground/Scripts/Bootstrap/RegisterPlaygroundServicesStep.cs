@@ -33,6 +33,7 @@ using DeviGames.Atlas.Core.Triggers.Installation;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Systems;
 using DeviGames.Atlas.Core.Triggers.Runtime;
+using DeviGames.Atlas.Core.Rewards.Installation;
 using DeviGames.Atlas.Dev.Hub.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
@@ -40,6 +41,7 @@ using DeviGames.Atlas.Gameplay.Objectives.Services;
 using DeviGames.Atlas.Gameplay.Objectives.Models;
 using DeviGames.Atlas.Gameplay.Objectives.Content;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
+using DeviGames.Atlas.Gameplay.Inventory.Rewards;
 using DeviGames.Atlas.Gameplay.Inventory.Installation;
 using DeviGames.Atlas.Gameplay.WorldState.Installation;
 using DeviGames.Atlas.Gameplay.WorldState.Interfaces;
@@ -70,6 +72,7 @@ namespace DeviGames.Playground.Bootstrap
             new ExecutionInstaller().Install(installationContext);
             new TriggerInstaller().Install(installationContext);
             new InventoryInstaller().Install(installationContext);
+            new RewardInstaller().Install(installationContext);
             new ObjectiveInstaller().Install(installationContext);
             new MissionInstaller().Install(installationContext);
             new WorldStateInstaller().Install(installationContext);
@@ -120,7 +123,7 @@ namespace DeviGames.Playground.Bootstrap
             new TriggerContentIntegrationInstaller().Install(installationContext);
             new GameplayObjectiveContentIntegrationInstaller().Install(installationContext);
             new WorldStateContentIntegrationInstaller().Install(installationContext);
-
+            new InventoryRewardIntegrationInstaller().Install(installationContext);
             //new PlaygroundInstaller().Install(installationContext);
           
 

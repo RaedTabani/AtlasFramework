@@ -1,15 +1,12 @@
 {
-    "name": "DeviGames.Atlas.Gameplay.Inventory",
+    "name": "DeviGames.Atlas.Core.Rewards",
     "rootNamespace": "",
     "references": [
-        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:9378dde39a22b8d66b5d0055f3869254",
+        "GUID:6868988f9aa6b6986bb42474f4838c02",
         "GUID:c37819aeefe99d001a07a2588f570558",
-        "GUID:980ce3e615b81cdb2aa60fec5a32f3d5",
-        "GUID:0a8b033f4e611861cb787db97ad22003",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
         "GUID:1c82f38aa09917e0899894338837c616",
-        "GUID:c35fcc67ce0ecfa6496eef7641ab2ffe",
-        "GUID:c38aaed19419c21ceb1357190f93ff20"
+        "GUID:0a8b033f4e611861cb787db97ad22003"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
