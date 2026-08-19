@@ -27,14 +27,17 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Tests
 
             _rewardService = new RewardService(handlerRegistry);
 
+            _rewardService.Register(
+                new RewardDefinition(
+                    id: "reward.playground.golden-key",
+                    type: InventoryRewardHandler.RewardType,
+                    targetId: "golden_key",
+                    amount: 1));
+
             _rewardService.AddMissionReward(
                 new MissionRewardBinding(
                     "mission.playground.escape",
-                    new RewardDefinition(
-                        id: "reward.playground.golden-key",
-                        type: InventoryRewardHandler.RewardType,
-                        targetId: "golden_key",
-                        amount: 1)));
+                    "reward.playground.golden-key"));
 
             _rewardService.Initialize();
         }
@@ -76,14 +79,17 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Tests
         [Test]
         public void MissionCompleted_GrantsConfiguredAmount()
         {
+            _rewardService.Register(
+                new RewardDefinition(
+                    id: "reward.playground.keys",
+                    type: InventoryRewardHandler.RewardType,
+                    targetId: "key",
+                    amount: 3));
+
             _rewardService.AddMissionReward(
                 new MissionRewardBinding(
                     "mission.playground.bonus",
-                    new RewardDefinition(
-                        id: "reward.playground.keys",
-                        type: InventoryRewardHandler.RewardType,
-                        targetId: "key",
-                        amount: 3)));
+                    "reward.playground.keys"));
 
             EventBus.Publish(
                 new MissionCompletedEvent(

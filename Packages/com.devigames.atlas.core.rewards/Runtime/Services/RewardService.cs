@@ -14,12 +14,10 @@ namespace DeviGames.Atlas.Core.Rewards.Services
         IInitializable,
         IShutdownable
     {
-        private readonly RewardHandlerRegistry
-            _handlerRegistry;
+        private readonly RewardHandlerRegistry _handlerRegistry;
 
-        private readonly List<MissionRewardBinding>
-            _missionBindings =
-                new();
+        private readonly List<MissionRewardBinding> _missionBindings =  new();
+        private readonly Dictionary<string, RewardDefinition> _rewards = new(StringComparer.Ordinal);
 
         public RewardService(
             RewardHandlerRegistry handlerRegistry)
@@ -41,7 +39,19 @@ namespace DeviGames.Atlas.Core.Rewards.Services
             EventBus.Unsubscribe<MissionCompletedEvent>(
                 OnMissionCompleted);
         }
+        public void Register(RewardDefinition reward)
+        {
+            if (reward == null)
+            {
+                throw new ArgumentNullException(nameof(reward));
+            }
 
+            if (!_rewards.TryAdd(reward.Id, reward))
+            {
+                throw new InvalidOperationException(
+                    $"Reward '{reward.Id}' is already registered.");
+            }
+        }
         public void AddMissionReward(
             MissionRewardBinding binding)
         {
@@ -55,26 +65,24 @@ namespace DeviGames.Atlas.Core.Rewards.Services
                 binding);
         }
 
-        private void OnMissionCompleted(
-            MissionCompletedEvent eventData)
+        private void OnMissionCompleted(MissionCompletedEvent eventData)
         {
-            for (int index = 0;
-                 index < _missionBindings.Count;
-                 index++)
+            for (int index = 0; index < _missionBindings.Count; index++)
             {
-                MissionRewardBinding binding =
-                    _missionBindings[index];
+                MissionRewardBinding binding = _missionBindings[index];
 
-                if (!string.Equals(
-                        binding.MissionId,
-                        eventData.MissionId,
-                        StringComparison.Ordinal))
+                if (!string.Equals(binding.MissionId, eventData.MissionId, StringComparison.Ordinal))
                 {
                     continue;
                 }
 
-                Grant(
-                    binding.Reward);
+                if (!_rewards.TryGetValue(binding.RewardId, out RewardDefinition reward))
+                {
+                    throw new InvalidOperationException(
+                        $"Reward '{binding.RewardId}' is not registered.");
+                }
+
+                Grant(reward);
             }
         }
 

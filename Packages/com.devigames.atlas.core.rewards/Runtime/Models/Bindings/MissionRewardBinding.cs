@@ -5,12 +5,9 @@ namespace DeviGames.Atlas.Core.Rewards.Models
     public sealed class MissionRewardBinding
     {
         public string MissionId { get; }
+        public string RewardId { get; }
 
-        public RewardDefinition Reward { get; }
-
-        public MissionRewardBinding(
-            string missionId,
-            RewardDefinition reward)
+        public MissionRewardBinding(string missionId, string rewardId)
         {
             if (string.IsNullOrWhiteSpace(missionId))
             {
@@ -19,12 +16,15 @@ namespace DeviGames.Atlas.Core.Rewards.Models
                     nameof(missionId));
             }
 
-            MissionId = missionId;
+            if (string.IsNullOrWhiteSpace(rewardId))
+            {
+                throw new ArgumentException(
+                    "Reward ID cannot be empty.",
+                    nameof(rewardId));
+            }
 
-            Reward =
-                reward
-                ?? throw new ArgumentNullException(
-                    nameof(reward));
+            MissionId = missionId;
+            RewardId = rewardId;
         }
     }
 }
