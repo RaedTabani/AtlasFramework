@@ -41,6 +41,9 @@ using DeviGames.Atlas.Gameplay.Objectives.Models;
 using DeviGames.Atlas.Gameplay.Objectives.Content;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
 using DeviGames.Atlas.Gameplay.Inventory.Installation;
+using DeviGames.Atlas.Gameplay.WorldState.Installation;
+using DeviGames.Atlas.Gameplay.WorldState.Interfaces;
+using DeviGames.Atlas.Gameplay.WorldState.Services;
 using DeviGames.Atlas.Unity.Execution.Installation;
 
 using UnityEngine;
@@ -69,6 +72,7 @@ namespace DeviGames.Playground.Bootstrap
             new InventoryInstaller().Install(installationContext);
             new ObjectiveInstaller().Install(installationContext);
             new MissionInstaller().Install(installationContext);
+            new WorldStateInstaller().Install(installationContext);
             new ContentInstaller().Install(installationContext);
 
 
@@ -113,11 +117,9 @@ namespace DeviGames.Playground.Bootstrap
                 objectiveAdapter);
 
 
-            new TriggerContentIntegrationInstaller()
-                .Install(installationContext);
-            new GameplayObjectiveContentIntegrationInstaller()
-                .Install(installationContext);
-            
+            new TriggerContentIntegrationInstaller().Install(installationContext);
+            new GameplayObjectiveContentIntegrationInstaller().Install(installationContext);
+            new WorldStateContentIntegrationInstaller().Install(installationContext);
 
             //new PlaygroundInstaller().Install(installationContext);
           
@@ -186,6 +188,19 @@ namespace DeviGames.Playground.Bootstrap
 
             context.Services.Register(
                 loader);
+
+
+            IWorldStateService worldStateService =
+                context.Services.Resolve<IWorldStateService>();
+
+            
+            var worldStateSaveCoordinator =
+                new WorldStateSaveCoordinator(
+                    worldStateService,
+                    saveService);
+
+            context.Services.Register(
+                worldStateSaveCoordinator);
             return Task.CompletedTask;
         }
     }

@@ -1,12 +1,11 @@
 {
   "name": "com.devigames.atlas.gameplay.worldstate",
   "version": "1.0.0",
-  "displayName": "Atlas World State",
+  "displayName": "Atlas Gameplay WorldState",
   "description": "World state management for Atlas gameplay",
   "unity": "6000.0",
   "author": {
     "name": "DeviGames",
     "email": "support@devigames.com"
-  },
-  "dependencies": {}
+  }
 }

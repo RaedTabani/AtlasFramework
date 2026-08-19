@@ -1,0 +1,22 @@
+{
+    "name": "DeviGames.Atlas.Gameplay.Worldstate",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
+        "GUID:9378dde39a22b8d66b5d0055f3869254",
+        "GUID:c37819aeefe99d001a07a2588f570558",
+        "GUID:1c82f38aa09917e0899894338837c616",
+        "GUID:0a8b033f4e611861cb787db97ad22003",
+        "GUID:c35fcc67ce0ecfa6496eef7641ab2ffe",
+        "GUID:aac2f19c5490642e2bd3e005432299d4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -9,21 +9,17 @@ namespace DeviGames.Atlas.Core.Content.Models
 
         public string PackageId;
 
-        public ObjectiveContentData[] Objectives =
-            Array.Empty<ObjectiveContentData>();
+        public ObjectiveContentData[] Objectives = Array.Empty<ObjectiveContentData>();
 
-        public MissionContentData[] Missions =
-            Array.Empty<MissionContentData>();
-        public ItemCollectedObjectiveBindingData[] ItemCollectedObjectiveBindings =
-            Array.Empty<ItemCollectedObjectiveBindingData>();
+        public MissionContentData[] Missions = Array.Empty<MissionContentData>();
+        public ItemCollectedObjectiveBindingData[] ItemCollectedObjectiveBindings = Array.Empty<ItemCollectedObjectiveBindingData>();
 
-        public AreaEnteredObjectiveBindingData[] AreaEnteredObjectiveBindings =
-            Array.Empty<AreaEnteredObjectiveBindingData>();
+        public AreaEnteredObjectiveBindingData[] AreaEnteredObjectiveBindings = Array.Empty<AreaEnteredObjectiveBindingData>();
 
-        public DoorOpenedObjectiveBindingData[] DoorOpenedObjectiveBindings =
-            Array.Empty<DoorOpenedObjectiveBindingData>();
+        public DoorOpenedObjectiveBindingData[] DoorOpenedObjectiveBindings = Array.Empty<DoorOpenedObjectiveBindingData>();
 
-        public TriggerContentData[] Triggers =
-            Array.Empty<TriggerContentData>();
+        public TriggerContentData[] Triggers = Array.Empty<TriggerContentData>();
+
+        public DoorOpenedWorldStateBindingData[] DoorOpenedWorldStateBindings = Array.Empty<DoorOpenedWorldStateBindingData>();
     }
 }

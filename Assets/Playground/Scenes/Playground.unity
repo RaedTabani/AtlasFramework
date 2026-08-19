@@ -206,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 138720723}
   serializedVersion: 2
   m_LocalRotation: {x: -0.000007191477, y: 0.99126416, z: -0.13189153, w: -0.000053179996}
-  m_LocalPosition: {x: -1.9894035, y: 2.6970994, z: 6.0632305}
+  m_LocalPosition: {x: 1.173, y: 0.27, z: 1.757}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -678,7 +678,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1909732486}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0bda861a8809831cba2a9c7ad635573, type: 3}
   m_Name: 
@@ -691,7 +691,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1909732486}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7d960b5d3ff4b9dc085f11c014db8d02, type: 3}
   m_Name: 
@@ -710,6 +710,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Application.PlaygroundApplication
   _interactionController: {fileID: 1909732488}
   _triggerController: {fileID: 1909732491}
+  _playerInteractionController: {fileID: 1909732492}
 --- !u!114 &1909732491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -717,7 +718,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1909732486}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed2152d868ec4e590ac63b5629d2075b, type: 3}
   m_Name: 

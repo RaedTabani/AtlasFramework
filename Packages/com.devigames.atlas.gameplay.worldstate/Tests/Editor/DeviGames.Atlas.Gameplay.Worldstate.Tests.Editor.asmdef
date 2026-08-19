@@ -1,0 +1,20 @@
+{
+    "name": "DeviGames.Atlas.Gameplay.Worldstate.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:51e05ebc70787a28580106c41aaca9f3",
+        "GUID:9378dde39a22b8d66b5d0055f3869254",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

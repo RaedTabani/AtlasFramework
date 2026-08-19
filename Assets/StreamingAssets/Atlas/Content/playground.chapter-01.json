@@ -57,5 +57,12 @@
                 "RequiredQuantity": 3
             }
         }
+    ],
+    "DoorOpenedWorldStateBindings": [
+    {
+        "DoorId": "door.exit",
+        "StateKey": "world.exit.opened",
+        "Value": true
+    }
     ]
 }
