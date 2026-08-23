@@ -23,6 +23,7 @@ using DeviGames.Atlas.Core.Content.Loading;
 using DeviGames.Atlas.Core.Content.Serialization;
 using DeviGames.Atlas.Core.Content.Collections;
 using DeviGames.Atlas.Core.Content.Sources;
+using DeviGames.Atlas.Core.Rewards.Installation;
 using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Save.Storage;
 using DeviGames.Atlas.Core.Services;
@@ -71,8 +72,8 @@ namespace DeviGames.Playground.Bootstrap
 
             new ExecutionInstaller().Install(installationContext);
             new TriggerInstaller().Install(installationContext);
-            new InventoryInstaller().Install(installationContext);
             new RewardInstaller().Install(installationContext);
+            new InventoryInstaller().Install(installationContext);
             new ObjectiveInstaller().Install(installationContext);
             new MissionInstaller().Install(installationContext);
             new WorldStateInstaller().Install(installationContext);
@@ -124,7 +125,7 @@ namespace DeviGames.Playground.Bootstrap
             new GameplayObjectiveContentIntegrationInstaller().Install(installationContext);
             new WorldStateContentIntegrationInstaller().Install(installationContext);
             new InventoryRewardIntegrationInstaller().Install(installationContext);
-            //new PlaygroundInstaller().Install(installationContext);
+            new RewardContentIntegrationInstaller().Install(installationContext);
           
 
             var progressSaveCoordinator =

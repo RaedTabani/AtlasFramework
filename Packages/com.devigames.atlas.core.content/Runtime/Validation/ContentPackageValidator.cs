@@ -6,29 +6,21 @@ namespace DeviGames.Atlas.Core.Content.Validation
 {
     public sealed class ContentPackageValidator
     {
-        public ContentValidationResult Validate(
-            ContentPackageData package)
+        public ContentValidationResult Validate(ContentPackageData package)
         {
             if (package == null)
             {
-                throw new ArgumentNullException(
-                    nameof(package));
+                throw new ArgumentNullException(nameof(package));
             }
 
-            var result =
-                new ContentValidationResult();
+            var result = new ContentValidationResult();
 
-            ValidatePackage(
-                package,
-                result);
+            ValidatePackage(package, result);
+            ValidateObjectives(package, result);
+            ValidateMissions(package, result);
 
-            ValidateObjectives(
-                package,
-                result);
-
-            ValidateMissions(
-                package,
-                result);
+            ValidateRewards(package, result);
+            ValidateMissionRewardBindings(package, result);
 
             return result;
         }
@@ -314,6 +306,68 @@ namespace DeviGames.Atlas.Core.Content.Validation
             }
 
             return objectiveIds;
+        }
+
+        private static void ValidateRewards(
+            ContentPackageData package,
+            ContentValidationResult result)
+        {
+            var rewardIds = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (RewardContentData reward in package.Rewards)
+            {
+                if (string.IsNullOrWhiteSpace(reward.Id))
+                {
+                    result.AddError(
+                        "Reward ID cannot be empty.");
+
+                    continue;
+                }
+
+                if (!rewardIds.Add(reward.Id))
+                {
+                    result.AddError(
+                        $"Duplicate reward ID '{reward.Id}'.");
+                }
+
+                if (string.IsNullOrWhiteSpace(reward.Type))
+                {
+                    result.AddError(
+                        $"Reward '{reward.Id}' has an empty type.");
+                }
+
+                if (string.IsNullOrWhiteSpace(reward.TargetId))
+                {
+                    result.AddError(
+                        $"Reward '{reward.Id}' has an empty target ID.");
+                }
+
+                if (reward.Amount <= 0)
+                {
+                    result.AddError(
+                        $"Reward '{reward.Id}' must have an amount greater than zero.");
+                }
+            }
+        }
+
+        private static void ValidateMissionRewardBindings(
+            ContentPackageData package,
+            ContentValidationResult result)
+        {
+            foreach (MissionRewardBindingData binding in package.MissionRewardBindings)
+            {
+                if (string.IsNullOrWhiteSpace(binding.MissionId))
+                {
+                    result.AddError(
+                        "Mission reward binding has an empty mission ID.");
+                }
+
+                if (string.IsNullOrWhiteSpace(binding.RewardId))
+                {
+                    result.AddError(
+                        "Mission reward binding has an empty reward ID.");
+                }
+            }
         }
     }
 }

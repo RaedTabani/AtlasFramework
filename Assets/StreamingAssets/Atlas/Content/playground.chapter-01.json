@@ -7,12 +7,6 @@
             "Id": "objective.playground.collect-keys",
             "DisplayName": "Collect Three Keys",
             "Description": "Collect three keys.",
-            "TargetValue": 3
-        },
-        {
-            "Id": "objective.playground.open-exit",
-            "DisplayName": "Open the Exit Door",
-            "Description": "Open the exit door.",
             "TargetValue": 1
         }
     ],
@@ -23,8 +17,7 @@
             "DisplayName": "Escape the Playground",
             "Description": "Collect the keys and escape.",
             "ObjectiveIds": [
-                "objective.playground.collect-keys",
-                "objective.playground.open-exit"
+                "objective.playground.collect-keys"
             ]
         }
     ],
@@ -64,5 +57,20 @@
         "StateKey": "world.exit.opened",
         "Value": true
     }
+    ],
+    "Rewards": [
+    {
+        "Id": "reward.playground.golden-key",
+        "Type": "inventory.item",
+        "TargetId": "golden_key",
+        "Amount": 1
+    }
+    ],
+
+    "MissionRewardBindings": [
+        {
+            "MissionId": "mission.playground.escape",
+            "RewardId": "reward.playground.golden-key"
+        }
     ]
 }

@@ -393,5 +393,60 @@ namespace DeviGames.Atlas.Core.Content.Tests
                     }
             };
         }
+        [Test]
+        public void Validate_ValidReward_IsValid()
+        {
+            ContentPackageData package =
+                CreateValidPackage();
+
+            package.Rewards =
+                new[]
+                {
+                    new RewardContentData
+                    {
+                        Id = "reward.test",
+                        Type = "inventory.item",
+                        TargetId = "golden_key",
+                        Amount = 1
+                    }
+                };
+
+            ContentValidationResult result =
+                _validator.Validate(package);
+
+            Assert.That(result.IsValid, Is.True);
+        }
+        [Test]
+        public void Validate_DuplicateRewardIds_IsInvalid()
+        {
+            ContentPackageData package =
+                CreateValidPackage();
+
+            package.Rewards =
+                new[]
+                {
+                    new RewardContentData
+                    {
+                        Id = "reward.test",
+                        Type = "inventory.item",
+                        TargetId = "key",
+                        Amount = 1
+                    },
+                    new RewardContentData
+                    {
+                        Id = "reward.test",
+                        Type = "inventory.item",
+                        TargetId = "golden_key",
+                        Amount = 1
+                    }
+                };
+
+            ContentValidationResult result =
+                _validator.Validate(package);
+
+            Assert.That(result.IsValid, Is.False);
+        }
+
+
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using DeviGames.Atlas.Core.Content.Models;
 using DeviGames.Atlas.Core.Content.Validation;
@@ -48,6 +49,15 @@ namespace DeviGames.Atlas.Core.Content.Installation
 
             ValidateMissions(
                 package,
+                result);
+
+            HashSet<string> missionIds = BuildMissionIdSet(package);
+            HashSet<string> rewardIds = BuildRewardIdSet(package);
+
+            ValidateMissionRewardReferences(
+                package,
+                missionIds,
+                rewardIds,
                 result);
 
             return result;
@@ -109,6 +119,60 @@ namespace DeviGames.Atlas.Core.Content.Installation
                     result.AddError(
                         $"Mission '{mission.Id}' " +
                         "is already installed.");
+                }
+            }
+        }
+
+        private static HashSet<string> BuildRewardIdSet(
+            ContentPackageData package)
+        {
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (RewardContentData reward in package.Rewards)
+            {
+                if (!string.IsNullOrWhiteSpace(reward.Id))
+                {
+                    ids.Add(reward.Id);
+                }
+            }
+
+            return ids;
+        }
+
+        private static HashSet<string> BuildMissionIdSet(
+            ContentPackageData package)
+        {
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (MissionContentData mission in package.Missions)
+            {
+                if (!string.IsNullOrWhiteSpace(mission.Id))
+                {
+                    ids.Add(mission.Id);
+                }
+            }
+
+            return ids;
+        }
+
+        private static void ValidateMissionRewardReferences(
+            ContentPackageData package,
+            HashSet<string> missionIds,
+            HashSet<string> rewardIds,
+            ContentValidationResult result)
+        {
+            foreach (MissionRewardBindingData binding in package.MissionRewardBindings)
+            {
+                if (!missionIds.Contains(binding.MissionId))
+                {
+                    result.AddError(
+                        $"Mission reward binding references unknown mission '{binding.MissionId}'.");
+                }
+
+                if (!rewardIds.Contains(binding.RewardId))
+                {
+                    result.AddError(
+                        $"Mission reward binding references unknown reward '{binding.RewardId}'.");
                 }
             }
         }

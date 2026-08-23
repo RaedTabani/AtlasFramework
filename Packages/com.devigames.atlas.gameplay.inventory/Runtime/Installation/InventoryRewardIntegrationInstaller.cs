@@ -23,7 +23,7 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Installation
             IInventoryService inventoryService = services.Resolve<IInventoryService>();
             RewardHandlerRegistry rewardHandlers = services.Resolve<RewardHandlerRegistry>();
 
-            rewardHandlers.Register( new InventoryRewardHandler(inventoryService));
+            //rewardHandlers.Register( new InventoryRewardHandler(inventoryService));
         }
     }
 }
