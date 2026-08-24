@@ -23,5 +23,6 @@ namespace DeviGames.Atlas.Core.Content.Models
         public DoorOpenedWorldStateBindingData[] DoorOpenedWorldStateBindings = Array.Empty<DoorOpenedWorldStateBindingData>();
         public RewardContentData[] Rewards = Array.Empty<RewardContentData>();
         public MissionRewardBindingData[] MissionRewardBindings = Array.Empty<MissionRewardBindingData>();
+        public string[] InitialUnlocks = Array.Empty<string>();
     }
 }

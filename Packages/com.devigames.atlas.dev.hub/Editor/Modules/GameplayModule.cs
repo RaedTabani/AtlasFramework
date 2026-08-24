@@ -63,6 +63,9 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
 
             DrawProgress(
                 snapshot);
+            
+            DrawUnlocks(
+                snapshot);
 
             EditorGUILayout.EndScrollView();
         }
@@ -263,7 +266,35 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
 
             EditorGUILayout.EndVertical();
         }
+        private static void DrawUnlocks(
+            DevHubSnapshot snapshot)
+        {
+            DrawSectionHeader("Unlocks");
 
+            EditorGUILayout.BeginVertical("box");
+
+            EditorGUILayout.LabelField(
+                "Unlocked Count",
+                snapshot.UnlockedIds.Count.ToString());
+
+            if (snapshot.UnlockedIds.Count == 0)
+            {
+                EditorGUILayout.LabelField(
+                    "No unlocks.",
+                    EditorStyles.miniLabel);
+            }
+            else
+            {
+                foreach (string unlockId in snapshot.UnlockedIds)
+                {
+                    EditorGUILayout.LabelField(
+                        "✓ " + unlockId);
+                }
+            }
+
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(8f);
+        }
         private static void DrawSectionHeader(
             string title)
         {

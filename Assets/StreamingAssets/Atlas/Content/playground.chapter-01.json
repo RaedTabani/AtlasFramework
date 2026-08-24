@@ -92,5 +92,9 @@
             "MissionId": "mission.playground.escape",
             "RewardId": "reward.playground.unlock-chapter-02"
         }
+    ],
+
+    "InitialUnlocks": [
+        "mission.playground.escape"
     ]
 }

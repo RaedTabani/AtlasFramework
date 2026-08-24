@@ -12,6 +12,7 @@ namespace DeviGames.Atlas.Core.Unlocks.Services
         private readonly HashSet<string> _unlockedIds =
             new(StringComparer.Ordinal);
 
+        public IReadOnlyCollection<string> UnlockedIds => _unlockedIds;
         public bool IsUnlocked(string unlockId)
         {
             if (string.IsNullOrWhiteSpace(unlockId))

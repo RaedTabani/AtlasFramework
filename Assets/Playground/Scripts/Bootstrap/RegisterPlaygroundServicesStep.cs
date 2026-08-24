@@ -25,6 +25,7 @@ using DeviGames.Atlas.Core.Content.Collections;
 using DeviGames.Atlas.Core.Content.Sources;
 using DeviGames.Atlas.Core.Rewards.Installation;
 using DeviGames.Atlas.Core.Unlocks.Installation;
+using DeviGames.Atlas.Core.Unlocks.Interfaces;
 using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Save.Storage;
 using DeviGames.Atlas.Core.Services;
@@ -129,6 +130,7 @@ namespace DeviGames.Playground.Bootstrap
             new InventoryRewardIntegrationInstaller().Install(installationContext);
             new RewardContentIntegrationInstaller().Install(installationContext);
             new UnlockRewardIntegrationInstaller().Install(installationContext);
+            new UnlockContentIntegrationInstaller().Install(installationContext);
 
             var progressSaveCoordinator =
                 new ProgressSaveCoordinator(
@@ -146,12 +148,17 @@ namespace DeviGames.Playground.Bootstrap
             IInventoryService inventoryService =
                 context.Services.Resolve<
                     IInventoryService>();
+            IUnlockService unlockService =
+                context.Services.Resolve<
+                    IUnlockService>();
+
             var devHubSnapshotService =
             new DevHubSnapshotService(
                 missionCollection,
                 objectiveCollection,
                 progressService,
-                inventoryService);
+                inventoryService,
+                unlockService);
 
             context.Services.Register(
                 devHubSnapshotService);

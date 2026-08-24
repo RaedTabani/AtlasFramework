@@ -1,14 +1,16 @@
 {
-    "name": "DeviGames.Atlas.Core.Unlocks",
+    "name": "DeviGames.Atlas.Gameplay.Progression.Tests.Editor",
     "rootNamespace": "",
     "references": [
+        "GUID:81898e96d65242c9da4f742f69ad5fef",
+        "GUID:6aed33c95d68d98f6a933acb4416bc81",
+        "GUID:6868988f9aa6b6986bb42474f4838c02",
         "GUID:c8c9655e15b092598b064cbd4e7df6e0",
-        "GUID:c38aaed19419c21ceb1357190f93ff20",
-        "GUID:1c82f38aa09917e0899894338837c616",
-        "GUID:0a8b033f4e611861cb787db97ad22003",
-        "GUID:c35fcc67ce0ecfa6496eef7641ab2ffe"
+        "GUID:c38aaed19419c21ceb1357190f93ff20"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

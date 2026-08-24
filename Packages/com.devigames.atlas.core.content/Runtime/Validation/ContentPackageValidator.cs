@@ -369,5 +369,29 @@ namespace DeviGames.Atlas.Core.Content.Validation
                 }
             }
         }
+
+        private static void ValidateInitialUnlocks(
+            ContentPackageData package,
+            ContentValidationResult result)
+        {
+            var ids = new HashSet<string>(StringComparer.Ordinal);
+
+            foreach (string unlockId in package.InitialUnlocks)
+            {
+                if (string.IsNullOrWhiteSpace(unlockId))
+                {
+                    result.AddError(
+                        "Initial unlock ID cannot be empty.");
+
+                    continue;
+                }
+
+                if (!ids.Add(unlockId))
+                {
+                    result.AddError(
+                        $"Duplicate initial unlock ID '{unlockId}'.");
+                }
+            }
+        }
     }
 }

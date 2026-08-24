@@ -126,6 +126,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.gameplay.progression": {
+      "version": "file:com.devigames.atlas.gameplay.progression",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.gameplay.worldstate": {
       "version": "file:com.devigames.atlas.gameplay.worldstate",
       "depth": 0,

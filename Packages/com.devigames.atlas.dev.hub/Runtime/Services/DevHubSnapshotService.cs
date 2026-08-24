@@ -5,7 +5,10 @@ using DeviGames.Atlas.Core.Missions.Runtime;
 using DeviGames.Atlas.Core.Objectives.Interfaces;
 using DeviGames.Atlas.Core.Objectives.Runtime;
 using DeviGames.Atlas.Core.Progress.Services;
+using DeviGames.Atlas.Core.Unlocks.Interfaces;
+
 using DeviGames.Atlas.Dev.Hub.Models;
+
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 
 namespace DeviGames.Atlas.Dev.Hub.Services
@@ -24,11 +27,15 @@ namespace DeviGames.Atlas.Dev.Hub.Services
         private readonly IInventoryService
             _inventoryService;
 
+        private readonly IUnlockService
+            _unlockService;
+
         public DevHubSnapshotService(
             IMissionCollection missionCollection,
             IObjectiveCollection objectiveCollection,
             MissionProgressService progressService,
-            IInventoryService inventoryService)
+            IInventoryService inventoryService,
+            IUnlockService unlockService)
         {
             _missionCollection =
                 missionCollection
@@ -49,6 +56,11 @@ namespace DeviGames.Atlas.Dev.Hub.Services
                 inventoryService
                 ?? throw new ArgumentNullException(
                     nameof(inventoryService));
+
+            _unlockService =
+                unlockService
+                ?? throw new ArgumentNullException(
+                    nameof(unlockService));
         }
 
         public DevHubSnapshot CreateSnapshot()
@@ -66,6 +78,9 @@ namespace DeviGames.Atlas.Dev.Hub.Services
                 snapshot);
 
             AddMissionSnapshots(
+                snapshot);
+
+            AddUnlockedSnapshot(
                 snapshot);
 
             return snapshot;
@@ -151,6 +166,13 @@ namespace DeviGames.Atlas.Dev.Hub.Services
                             runtime.IsCompleted
                     });
             }
+        }
+
+        private void AddUnlockedSnapshot(
+            DevHubSnapshot snapshot)
+        {
+            snapshot.UnlockedIds.AddRange(
+                _unlockService.UnlockedIds);
         }
     }
 }

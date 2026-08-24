@@ -15,5 +15,7 @@ namespace DeviGames.Atlas.Dev.Hub.Models
 
         public List<MissionSnapshot> Missions { get; } =
             new();
+
+        public List<string> UnlockedIds { get; } = new ();
     }
 }
