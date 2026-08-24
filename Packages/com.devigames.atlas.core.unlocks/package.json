@@ -1,0 +1,12 @@
+{
+  "name": "com.devigames.atlas.core.unlocks",
+  "version": "1.0.0",
+  "displayName": "Atlas Core Unlocks",
+  "description": "Unlocks for the Atlas Core",
+  "unity": "6000.0",
+  "author": {
+    "name": "DeviGames",
+    "email": "support@devigames.com"
+  },
+  "dependencies": {}
+}

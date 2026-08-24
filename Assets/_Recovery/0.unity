@@ -649,7 +649,6 @@ GameObject:
   - component: {fileID: 1909732491}
   - component: {fileID: 1909732489}
   - component: {fileID: 1909732492}
-  - component: {fileID: 1909732493}
   m_Layer: 0
   m_Name: Playground Systems
   m_TagString: Untagged
@@ -679,7 +678,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1909732486}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f0bda861a8809831cba2a9c7ad635573, type: 3}
   m_Name: 
@@ -712,7 +711,6 @@ MonoBehaviour:
   _interactionController: {fileID: 1909732488}
   _triggerController: {fileID: 1909732491}
   _playerInteractionController: {fileID: 1909732492}
-  _debugger: {fileID: 1909732493}
 --- !u!114 &1909732491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -742,18 +740,6 @@ MonoBehaviour:
   _interactionMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &1909732493
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1909732486}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ba405c06099cb067da729b89072be398, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.Debugger.PlaygroundDebugger
 --- !u!1 &2115585246
 GameObject:
   m_ObjectHideFlags: 0

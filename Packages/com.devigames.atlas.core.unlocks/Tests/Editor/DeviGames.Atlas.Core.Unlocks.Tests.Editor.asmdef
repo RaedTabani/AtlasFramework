@@ -1,0 +1,21 @@
+{
+    "name": "DeviGames.Atlas.Core.Unlocks.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "DeviGames.Atlas.Core.Unlocks",
+        "DeviGames.Atlas.Core.Events",
+        "DeviGames.Atlas.Core.Rewards",
+        "DeviGames.Atlas.Core.Missions"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

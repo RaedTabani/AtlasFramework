@@ -19,6 +19,14 @@
             "ObjectiveIds": [
                 "objective.playground.collect-keys"
             ]
+        },
+        {
+            "Id": "mission.playground.chapter-02",
+            "DisplayName": "The Next Step",
+            "Description": "Continue to the next mission.",
+            "ObjectiveIds": [
+                "objective.playground.collect-keys"
+            ]
         }
     ],
 
@@ -51,26 +59,38 @@
             }
         }
     ],
+
     "DoorOpenedWorldStateBindings": [
-    {
-        "DoorId": "door.exit",
-        "StateKey": "world.exit.opened",
-        "Value": true
-    }
+        {
+            "DoorId": "door.exit",
+            "StateKey": "world.exit.opened",
+            "Value": true
+        }
     ],
+
     "Rewards": [
-    {
-        "Id": "reward.playground.golden-key",
-        "Type": "inventory.item",
-        "TargetId": "golden_key",
-        "Amount": 1
-    }
+        {
+            "Id": "reward.playground.golden-key",
+            "Type": "inventory.item",
+            "TargetId": "golden_key",
+            "Amount": 1
+        },
+        {
+            "Id": "reward.playground.unlock-chapter-02",
+            "Type": "unlock",
+            "TargetId": "mission.playground.chapter-02",
+            "Amount": 1
+        }
     ],
 
     "MissionRewardBindings": [
         {
             "MissionId": "mission.playground.escape",
             "RewardId": "reward.playground.golden-key"
+        },
+        {
+            "MissionId": "mission.playground.escape",
+            "RewardId": "reward.playground.unlock-chapter-02"
         }
     ]
 }

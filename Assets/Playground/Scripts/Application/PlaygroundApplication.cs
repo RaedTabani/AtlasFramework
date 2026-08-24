@@ -7,9 +7,11 @@ using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Progress.Bootstrap;
 using DeviGames.Atlas.Core.Services;
+using DeviGames.Atlas.Core.Unlocks.Interfaces;
 using DeviGames.Playground.Bootstrap;
 using DeviGames.Playground.Interaction;
 using DeviGames.Playground.Trigger;
+using DeviGames.Playground.Debugger;
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
@@ -30,6 +32,8 @@ namespace DeviGames.Playground.Application
         private TriggerPlaygroundController _triggerController;
         [SerializeField]
         private PlayerInteractionController _playerInteractionController;
+        [SerializeField]
+        private PlaygroundDebugger _debugger;
 
         private BootstrapService _bootstrapService;
         
@@ -72,11 +76,13 @@ namespace DeviGames.Playground.Application
 
             IInventoryService inventoryService =
                 Services.Resolve<IInventoryService>();
+            
+            IUnlockService unlockService = Services.Resolve<IUnlockService>();
 
             //_interactionController.Initialize(interactionService);
             //_triggerController.Initialize(inventoryService);
             _playerInteractionController.Initialize(interactionService);
-
+            _debugger.Initialize(unlockService);
 
             //missionService.StartMission(_mission);
         }

@@ -84,6 +84,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.unlocks": {
+      "version": "file:com.devigames.atlas.core.unlocks",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.utilities": {
       "version": "file:com.devigames.atlas.core.utilities",
       "depth": 0,
