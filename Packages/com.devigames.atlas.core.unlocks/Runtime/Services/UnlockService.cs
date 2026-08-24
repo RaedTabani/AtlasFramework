@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Unlocks.Events;
 using DeviGames.Atlas.Core.Unlocks.Interfaces;
+using DeviGames.Atlas.Core.Unlocks.Models;
 
 namespace DeviGames.Atlas.Core.Unlocks.Services
 {
@@ -41,6 +42,35 @@ namespace DeviGames.Atlas.Core.Unlocks.Services
                 new UnlockGrantedEvent(unlockId));
 
             return true;
+        }
+
+        public UnlockData CreateSnapshot()
+        {
+            return new UnlockData
+            {
+                UnlockedIds =
+                    new List<string>(_unlockedIds)
+            };
+        }
+
+        public void Load(UnlockData data)
+        {
+            _unlockedIds.Clear();
+
+            if (data?.UnlockedIds == null)
+            {
+                return;
+            }
+
+            foreach (string unlockId in data.UnlockedIds)
+            {
+                if (string.IsNullOrWhiteSpace(unlockId))
+                {
+                    continue;
+                }
+
+                _unlockedIds.Add(unlockId);
+            }
         }
     }
 }

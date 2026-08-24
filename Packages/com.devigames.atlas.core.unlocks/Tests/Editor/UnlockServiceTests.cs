@@ -1,8 +1,10 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Unlocks.Events;
 using DeviGames.Atlas.Core.Unlocks.Services;
+using DeviGames.Atlas.Core.Unlocks.Models;
 
 namespace DeviGames.Atlas.Core.Unlocks.Tests
 {
@@ -98,6 +100,97 @@ namespace DeviGames.Atlas.Core.Unlocks.Tests
             finally
             {
                 EventBus.Unsubscribe<UnlockGrantedEvent>(Handler);
+            }
+        }
+
+        [Test]
+        public void SnapshotAndLoad_RestoresUnlocks()
+        {
+            var source = new UnlockService();
+
+            source.Unlock("mission.chapter-01");
+            source.Unlock("mission.chapter-02");
+
+            UnlockData data =
+                source.CreateSnapshot();
+
+            var restored = new UnlockService();
+
+            restored.Load(data);
+
+            Assert.That(
+                restored.IsUnlocked("mission.chapter-01"),
+                Is.True);
+
+            Assert.That(
+                restored.IsUnlocked("mission.chapter-02"),
+                Is.True);
+        }
+
+        [Test]
+        public void Load_ReplacesExistingUnlocks()
+        {
+            var service = new UnlockService();
+
+            service.Unlock("mission.old");
+
+            var data =
+                new UnlockData
+                {
+                    UnlockedIds =
+                        new List<string>
+                        {
+                            "mission.new"
+                        }
+                };
+
+            service.Load(data);
+
+            Assert.That(
+                service.IsUnlocked("mission.old"),
+                Is.False);
+
+            Assert.That(
+                service.IsUnlocked("mission.new"),
+                Is.True);
+        }
+
+        [Test]
+        public void Load_DoesNotPublishUnlockGrantedEvent()
+        {
+            var service = new UnlockService();
+
+            int eventCount = 0;
+
+            void Handler(
+                UnlockGrantedEvent eventData)
+            {
+                eventCount++;
+            }
+
+            EventBus.Subscribe<UnlockGrantedEvent>(
+                Handler);
+
+            try
+            {
+                service.Load(
+                    new UnlockData
+                    {
+                        UnlockedIds =
+                            new List<string>
+                            {
+                                "mission.chapter-02"
+                            }
+                    });
+
+                Assert.That(
+                    eventCount,
+                    Is.EqualTo(0));
+            }
+            finally
+            {
+                EventBus.Unsubscribe<UnlockGrantedEvent>(
+                    Handler);
             }
         }
     }
