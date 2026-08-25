@@ -1,32 +1,21 @@
 using System;
 using System.Threading.Tasks;
 
-using DeviGames.Atlas.Core.Lifecycle.Interfaces;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Save.Services;
+using DeviGames.Atlas.Core.Save.Interfaces;
 using DeviGames.Atlas.Core.Unlocks.Interfaces;
 using DeviGames.Atlas.Core.Unlocks.Models;
 using DeviGames.Atlas.Core.Unlocks.Events;
 
 namespace DeviGames.Atlas.Core.Unlocks.Services
 {
-    public sealed class UnlockSaveCoordinator : IInitializable, IShutdownable
+    public sealed class UnlockSaveCoordinator : ISaveParticipant
     {
-        private const string SaveKey =
-            "unlocks";
-
+        public string Key => "unlocks";
         private readonly IUnlockService _unlockService;
         private readonly SaveService _saveService;
         
-        public void Initialize()
-        {
-            EventBus.Subscribe<UnlockGrantedEvent>(OnUnlockGranted);
-        }
-
-        public void Shutdown()
-        {
-            EventBus.Unsubscribe<UnlockGrantedEvent>(OnUnlockGranted);
-        }
         public UnlockSaveCoordinator(
             IUnlockService unlockService,
             SaveService saveService)
@@ -41,7 +30,7 @@ namespace DeviGames.Atlas.Core.Unlocks.Services
                 _unlockService.CreateSnapshot();
 
             await _saveService.SaveAsync(
-                SaveKey,
+                Key,
                 data);
         }
 
@@ -49,7 +38,7 @@ namespace DeviGames.Atlas.Core.Unlocks.Services
         {
             bool exists =
                 await _saveService.ExistsAsync(
-                    SaveKey);
+                    Key);
 
             if (!exists)
             {
@@ -58,15 +47,11 @@ namespace DeviGames.Atlas.Core.Unlocks.Services
 
             UnlockData data =
                 await _saveService.LoadAsync<UnlockData>(
-                    SaveKey);
+                    Key);
 
             _unlockService.Load(
                 data);
         }
 
-        private void OnUnlockGranted(UnlockGrantedEvent eventData)
-        {
-            _ = SaveAsync();
-        }
     }
 }

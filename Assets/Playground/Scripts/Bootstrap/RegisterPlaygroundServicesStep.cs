@@ -23,11 +23,14 @@ using DeviGames.Atlas.Core.Content.Loading;
 using DeviGames.Atlas.Core.Content.Serialization;
 using DeviGames.Atlas.Core.Content.Collections;
 using DeviGames.Atlas.Core.Content.Sources;
+using DeviGames.Atlas.Core.Progress.Installation;
+using DeviGames.Atlas.Core.Rewards.Installation;
 using DeviGames.Atlas.Core.Rewards.Installation;
 using DeviGames.Atlas.Core.Unlocks.Installation;
 using DeviGames.Atlas.Core.Unlocks.Interfaces;
 using DeviGames.Atlas.Core.Unlocks.Services;
 using DeviGames.Atlas.Core.Save.Services;
+using DeviGames.Atlas.Core.Save.Installation;
 using DeviGames.Atlas.Core.Save.Storage;
 using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Triggers.Registry;
@@ -37,8 +40,9 @@ using DeviGames.Atlas.Core.Triggers.Installation;
 using DeviGames.Atlas.Core.Triggers.Interfaces;
 using DeviGames.Atlas.Core.Triggers.Systems;
 using DeviGames.Atlas.Core.Triggers.Runtime;
-using DeviGames.Atlas.Core.Rewards.Installation;
+
 using DeviGames.Atlas.Dev.Hub.Services;
+
 using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
 using DeviGames.Atlas.Gameplay.Objectives.Services;
@@ -71,10 +75,19 @@ namespace DeviGames.Playground.Bootstrap
                     nameof(context));
             }
 
+            string savePath =
+                Path.Combine(
+                    UnityEngine.Application.persistentDataPath,
+                    "DeviGames",
+                    "Playground",
+                    "Saves");
+            var storage = new JsonFileSaveStorage(savePath);
+
             var installationContext = new AtlasInstallationContext(context.Services);
 
             new ExecutionInstaller().Install(installationContext);
             new TriggerInstaller().Install(installationContext);
+            new SaveInstaller(storage).Install(installationContext);
             new UnlockInstaller().Install(installationContext);
             new RewardInstaller().Install(installationContext);
             new InventoryInstaller().Install(installationContext);
@@ -84,14 +97,7 @@ namespace DeviGames.Playground.Bootstrap
             new ContentInstaller().Install(installationContext);
 
 
-            string savePath =
-                Path.Combine(
-                    UnityEngine.Application.persistentDataPath,
-                    "DeviGames",
-                    "Playground",
-                    "Saves");
 
-            
 
             var eventHistoryService =
                 new EventHistoryService(250);
@@ -102,6 +108,9 @@ namespace DeviGames.Playground.Bootstrap
 
             var progressService =
                 new MissionProgressService();
+            context.Services.Register(
+                progressService);
+
 
             var diagnostics =
                 new SaveDiagnosticsService(
@@ -112,10 +121,9 @@ namespace DeviGames.Playground.Bootstrap
                 context.Services.Resolve<
                     ObjectiveService>();
 
-            var saveService =
-                new SaveService(
-                    new JsonFileSaveStorage(
-                        savePath));
+
+
+
 
             var objectiveAdapter =
                 new GameplayObjectiveAdapter(
@@ -132,9 +140,10 @@ namespace DeviGames.Playground.Bootstrap
             new RewardContentIntegrationInstaller().Install(installationContext);
             new UnlockRewardIntegrationInstaller().Install(installationContext);
             new UnlockContentIntegrationInstaller().Install(installationContext);
-
-
-
+            new UnlockSaveIntegrationInstaller().Install(installationContext);
+            new ProgressSaveIntegrationInstaller().Install(installationContext);
+            new WorldStateSaveIntegrationInstaller().Install(installationContext);
+            
             
             IMissionCollection missionCollection =
             context.Services.Resolve<
@@ -150,7 +159,8 @@ namespace DeviGames.Playground.Bootstrap
             IUnlockService unlockService =
                 context.Services.Resolve<
                     IUnlockService>();
-            
+
+            SaveService saveService = context.Services.Resolve<SaveService>(); 
 
             var devHubSnapshotService =
             new DevHubSnapshotService(
@@ -159,19 +169,8 @@ namespace DeviGames.Playground.Bootstrap
                 progressService,
                 inventoryService,
                 unlockService);
-
-            var progressSaveCoordinator =
-                new ProgressSaveCoordinator(
-                    progressService,
-                    saveService);
             
-            var unlockSaveCoordinator =
-                new UnlockSaveCoordinator(
-                    unlockService,
-                    saveService);
 
-            context.Services.Register(
-                unlockSaveCoordinator);
 
             context.Services.Register(
                 devHubSnapshotService);
@@ -181,12 +180,8 @@ namespace DeviGames.Playground.Bootstrap
                 eventHistoryService);
             context.Services.Register(
                 interactionService);
-            context.Services.Register(
-                progressService);
-            context.Services.Register(
-                saveService);
-            context.Services.Register(
-                progressSaveCoordinator);
+
+
             context.Services.Register<ISaveDiagnosticsService>(
                 diagnostics);
 
@@ -216,17 +211,6 @@ namespace DeviGames.Playground.Bootstrap
                 loader);
 
 
-            IWorldStateService worldStateService =
-                context.Services.Resolve<IWorldStateService>();
-
-            
-            var worldStateSaveCoordinator =
-                new WorldStateSaveCoordinator(
-                    worldStateService,
-                    saveService);
-
-            context.Services.Register(
-                worldStateSaveCoordinator);
             return Task.CompletedTask;
         }
     }

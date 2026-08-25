@@ -7,6 +7,7 @@ using DeviGames.Atlas.Core.Missions.Services;
 using DeviGames.Atlas.Core.Progress.Services;
 using DeviGames.Atlas.Core.Progress.Bootstrap;
 using DeviGames.Atlas.Core.Services;
+using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Unlocks.Interfaces;
 using DeviGames.Playground.Bootstrap;
 using DeviGames.Playground.Interaction;
@@ -34,6 +35,8 @@ namespace DeviGames.Playground.Application
         private PlayerInteractionController _playerInteractionController;
         [SerializeField]
         private PlaygroundDebugger _debugger;
+        [SerializeField]
+        private PlaygroundSave _saveSystem;
 
         private BootstrapService _bootstrapService;
         
@@ -55,10 +58,8 @@ namespace DeviGames.Playground.Application
         {
             _bootstrapService = new BootstrapService();
 
-            _bootstrapService.AddStep(new RegisterPlaygroundServicesStep())
-            .AddStep(new LoadMissionProgressStep()) 
-            .AddStep(new LoadWorldStateStep())
-            .AddStep(new LoadUnlocksStep())
+            _bootstrapService.AddStep(new RegisterPlaygroundServicesStep()) 
+            .AddStep(new LoadGameStep())
             .AddStep(new LoadPlaygroundContentStep());
 
             await _bootstrapService.RunAsync();
@@ -80,11 +81,12 @@ namespace DeviGames.Playground.Application
             
             IUnlockService unlockService = Services.Resolve<IUnlockService>();
 
+            SaveGameCoordinator saveGameCoordinator = Services.Resolve<SaveGameCoordinator>();
             //_interactionController.Initialize(interactionService);
             //_triggerController.Initialize(inventoryService);
             _playerInteractionController.Initialize(interactionService);
             _debugger.Initialize(unlockService);
-
+            _saveSystem.Initialize(saveGameCoordinator);
             //missionService.StartMission(_mission);
         }
 

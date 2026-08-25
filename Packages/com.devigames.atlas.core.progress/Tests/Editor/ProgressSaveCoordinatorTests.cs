@@ -37,35 +37,5 @@ namespace DeviGames.Atlas.Core.Progress.Tests
                 Directory.Delete(_testPath, true);
         }
 
-        [Test]
-        public async Task MissionCompleted_Should_Update_Progress_And_Save_To_File()
-        {
-            var progressService = new MissionProgressService();
-            progressService.Initialize();
-
-            var saveService = new SaveService(new JsonFileSaveStorage(_testPath));
-
-            var coordinator = new ProgressSaveCoordinator(
-                progressService,
-                saveService);
-
-            coordinator.Initialize();
-
-            EventBus.Publish(new MissionCompletedEvent("mission_001"));
-
-            await Task.Delay(100);
-
-            bool exists = await saveService.ExistsAsync("missions");
-            Assert.IsTrue(exists);
-
-            MissionProgressData loaded =
-                await saveService.LoadAsync<MissionProgressData>("missions");
-
-            Assert.IsNotNull(loaded);
-            Assert.IsTrue(loaded.CompletedMissionIds.Contains("mission_001"));
-
-            coordinator.Shutdown();
-            progressService.Shutdown();
-        }
     }
 }

@@ -1,38 +1,27 @@
 using System;
 using System.Threading.Tasks;
 
+using DeviGames.Atlas.Core.Save.Interfaces;
 using DeviGames.Atlas.Core.Save.Services;
-
 using DeviGames.Atlas.Gameplay.WorldState.Interfaces;
 using DeviGames.Atlas.Gameplay.WorldState.Models;
-using DeviGames.Atlas.Core.Save.Services;
 
 namespace DeviGames.Atlas.Gameplay.WorldState.Services
 {
-    public sealed class WorldStateSaveCoordinator
+    public sealed class WorldStateSaveCoordinator :
+        ISaveParticipant
     {
-        private const string SaveKey =
-            "world-state";
+        private readonly IWorldStateService _worldStateService;
+        private readonly SaveService _saveService;
 
-        private readonly IWorldStateService
-            _worldStateService;
-
-        private readonly SaveService
-            _saveService;
+        public string Key => "world-state";
 
         public WorldStateSaveCoordinator(
             IWorldStateService worldStateService,
             SaveService saveService)
         {
-            _worldStateService =
-                worldStateService
-                ?? throw new ArgumentNullException(
-                    nameof(worldStateService));
-
-            _saveService =
-                saveService
-                ?? throw new ArgumentNullException(
-                    nameof(saveService));
+            _worldStateService = worldStateService ?? throw new ArgumentNullException(nameof(worldStateService));
+            _saveService = saveService ?? throw new ArgumentNullException(nameof(saveService));
         }
 
         public async Task SaveAsync()
@@ -40,16 +29,13 @@ namespace DeviGames.Atlas.Gameplay.WorldState.Services
             WorldStateData data =
                 _worldStateService.CreateSnapshot();
 
-            await _saveService.SaveAsync(
-                SaveKey,
-                data);
+            await _saveService.SaveAsync(Key, data);
         }
 
         public async Task LoadAsync()
         {
             bool exists =
-                await _saveService.ExistsAsync(
-                    SaveKey);
+                await _saveService.ExistsAsync(Key);
 
             if (!exists)
             {
@@ -57,12 +43,9 @@ namespace DeviGames.Atlas.Gameplay.WorldState.Services
             }
 
             WorldStateData data =
-                await _saveService.LoadAsync<
-                    WorldStateData>(
-                    SaveKey);
+                await _saveService.LoadAsync<WorldStateData>(Key);
 
-            _worldStateService.Load(
-                data);
+            _worldStateService.Load(data);
         }
     }
 }
