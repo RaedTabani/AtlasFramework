@@ -108,6 +108,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.gameplay.currency": {
+      "version": "file:com.devigames.atlas.gameplay.currency",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.gameplay.events": {
       "version": "file:com.devigames.atlas.gameplay.events",
       "depth": 0,

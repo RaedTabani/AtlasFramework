@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Core.Missions.Runtime;
@@ -10,32 +11,30 @@ using DeviGames.Atlas.Core.Unlocks.Interfaces;
 using DeviGames.Atlas.Dev.Hub.Models;
 
 using DeviGames.Atlas.Gameplay.Inventory.Interfaces;
+using DeviGames.Atlas.Gameplay.Currency.Interfaces;
 
 namespace DeviGames.Atlas.Dev.Hub.Services
 {
     public sealed class DevHubSnapshotService
     {
-        private readonly IMissionCollection
-            _missionCollection;
+        private readonly IMissionCollection _missionCollection;
 
-        private readonly IObjectiveCollection
-            _objectiveCollection;
+        private readonly IObjectiveCollection _objectiveCollection;
 
-        private readonly MissionProgressService
-            _progressService;
+        private readonly MissionProgressService _progressService;
 
-        private readonly IInventoryService
-            _inventoryService;
+        private readonly IInventoryService _inventoryService;
 
-        private readonly IUnlockService
-            _unlockService;
+        private readonly IUnlockService _unlockService;
+        private readonly ICurrencyService _currencyService;
 
         public DevHubSnapshotService(
             IMissionCollection missionCollection,
             IObjectiveCollection objectiveCollection,
             MissionProgressService progressService,
             IInventoryService inventoryService,
-            IUnlockService unlockService)
+            IUnlockService unlockService,
+            ICurrencyService currencyService)
         {
             _missionCollection =
                 missionCollection
@@ -61,6 +60,10 @@ namespace DeviGames.Atlas.Dev.Hub.Services
                 unlockService
                 ?? throw new ArgumentNullException(
                     nameof(unlockService));
+                
+            _currencyService =
+                currencyService
+                ?? throw new ArgumentNullException(nameof(currencyService));
         }
 
         public DevHubSnapshot CreateSnapshot()
@@ -82,6 +85,8 @@ namespace DeviGames.Atlas.Dev.Hub.Services
 
             AddUnlockedSnapshot(
                 snapshot);
+
+            AddCurrencySnapshot(snapshot);
 
             return snapshot;
         }
@@ -173,6 +178,25 @@ namespace DeviGames.Atlas.Dev.Hub.Services
         {
             snapshot.UnlockedIds.AddRange(
                 _unlockService.UnlockedIds);
+        }
+
+        private void AddCurrencySnapshot(
+            DevHubSnapshot snapshot)
+        {
+            foreach (KeyValuePair<string, int> pair in _currencyService.Balances)
+            {
+                snapshot.Currencies.Add(
+                    new CurrencySnapshot(
+                        pair.Key,
+                        pair.Value));
+            }
+
+            snapshot.Currencies.Sort(
+                (left, right) =>
+                    string.Compare(
+                        left.CurrencyId,
+                        right.CurrencyId,
+                        StringComparison.Ordinal));
         }
     }
 }

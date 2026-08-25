@@ -80,6 +80,12 @@
             "Type": "unlock",
             "TargetId": "mission.playground.chapter-02",
             "Amount": 1
+        },
+        {
+            "Id": "reward.playground.coins",
+            "Type": "currency",
+            "TargetId": "coins",
+            "Amount": 100
         }
     ],
 
@@ -91,6 +97,10 @@
         {
             "MissionId": "mission.playground.escape",
             "RewardId": "reward.playground.unlock-chapter-02"
+        },
+        {
+            "MissionId": "mission.playground.escape",
+            "RewardId": "reward.playground.coins"
         }
     ],
 

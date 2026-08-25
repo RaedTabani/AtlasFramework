@@ -54,6 +54,9 @@ using DeviGames.Atlas.Gameplay.Inventory.Installation;
 using DeviGames.Atlas.Gameplay.WorldState.Installation;
 using DeviGames.Atlas.Gameplay.WorldState.Interfaces;
 using DeviGames.Atlas.Gameplay.WorldState.Services;
+using DeviGames.Atlas.Gameplay.Currency.Installation;
+using DeviGames.Atlas.Gameplay.Currency.Interfaces;
+
 using DeviGames.Atlas.Unity.Execution.Installation;
 
 using UnityEngine;
@@ -94,9 +97,8 @@ namespace DeviGames.Playground.Bootstrap
             new ObjectiveInstaller().Install(installationContext);
             new MissionInstaller().Install(installationContext);
             new WorldStateInstaller().Install(installationContext);
+            new CurrencyInstaller().Install(installationContext);
             new ContentInstaller().Install(installationContext);
-
-
 
 
             var eventHistoryService =
@@ -143,6 +145,7 @@ namespace DeviGames.Playground.Bootstrap
             new UnlockSaveIntegrationInstaller().Install(installationContext);
             new ProgressSaveIntegrationInstaller().Install(installationContext);
             new WorldStateSaveIntegrationInstaller().Install(installationContext);
+            new CurrencyRewardIntegrationInstaller().Install(installationContext);
             
             
             IMissionCollection missionCollection =
@@ -159,6 +162,7 @@ namespace DeviGames.Playground.Bootstrap
             IUnlockService unlockService =
                 context.Services.Resolve<
                     IUnlockService>();
+            ICurrencyService currencyService = context.Services.Resolve<ICurrencyService>();
 
             SaveService saveService = context.Services.Resolve<SaveService>(); 
 
@@ -168,7 +172,8 @@ namespace DeviGames.Playground.Bootstrap
                 objectiveCollection,
                 progressService,
                 inventoryService,
-                unlockService);
+                unlockService,
+                currencyService);
             
 
 

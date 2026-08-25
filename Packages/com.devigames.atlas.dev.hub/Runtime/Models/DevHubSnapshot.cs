@@ -17,5 +17,7 @@ namespace DeviGames.Atlas.Dev.Hub.Models
             new();
 
         public List<string> UnlockedIds { get; } = new ();
+
+        public List<CurrencySnapshot> Currencies { get; } = new();
     }
 }

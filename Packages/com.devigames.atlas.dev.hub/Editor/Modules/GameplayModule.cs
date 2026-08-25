@@ -67,6 +67,8 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
             DrawUnlocks(
                 snapshot);
 
+            DrawCurrency(snapshot);
+
             EditorGUILayout.EndScrollView();
         }
 
@@ -289,6 +291,34 @@ namespace DeviGames.Atlas.Dev.Hub.Editor.Modules
                 {
                     EditorGUILayout.LabelField(
                         "✓ " + unlockId);
+                }
+            }
+
+            EditorGUILayout.EndVertical();
+            EditorGUILayout.Space(8f);
+        }
+
+        private static void DrawCurrency(
+            DevHubSnapshot snapshot)
+        {
+            DrawSectionHeader("Currency");
+
+            EditorGUILayout.BeginVertical("box");
+
+            if (snapshot.Currencies.Count == 0)
+            {
+                EditorGUILayout.LabelField(
+                    "No currencies.",
+                    EditorStyles.miniLabel);
+            }
+            else
+            {
+                foreach (CurrencySnapshot currency
+                        in snapshot.Currencies)
+                {
+                    EditorGUILayout.LabelField(
+                        currency.CurrencyId,
+                        currency.Balance.ToString());
                 }
             }
 

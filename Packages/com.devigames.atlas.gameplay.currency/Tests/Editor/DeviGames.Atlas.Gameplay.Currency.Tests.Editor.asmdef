@@ -1,0 +1,20 @@
+{
+    "name": "DeviGames.Atlas.Gameplay.Currency.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c22907bdfc197fe55b9779c06f298b9d",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0",
+        "GUID:c38aaed19419c21ceb1357190f93ff20"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
