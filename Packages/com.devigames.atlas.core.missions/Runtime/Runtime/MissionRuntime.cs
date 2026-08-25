@@ -129,5 +129,11 @@ namespace DeviGames.Atlas.Core.Missions.Runtime
             return _completedObjectiveIds.Contains(
                 objectiveId);
         }
+
+        public void Reset()
+        {
+            _completedObjectiveIds.Clear();
+            State = MissionState.Active;
+        }
     }
 }

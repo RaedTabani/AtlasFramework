@@ -15,7 +15,7 @@ namespace DeviGames.Atlas.Core.Objectives.Runtime
         public bool IsCompleted =>  State == ObjectiveState.Completed;
         public ObjectiveState State { get; private set; }
 
-        public float NormalizedProgress => (float)CurrentValue / TargetValue;
+        public float NormalizedProgress => TargetValue <= 0 ? 0f: (float)CurrentValue / TargetValue;
 
         public ObjectiveRuntime( ObjectiveDefinition definition)
         {
@@ -67,6 +67,12 @@ namespace DeviGames.Atlas.Core.Objectives.Runtime
             }
 
             return ObjectiveUpdateResult.Progressed;
+        }
+
+        public void Reset()
+        {
+            CurrentValue = 0;
+            State = ObjectiveState.Active;
         }
     }
 }

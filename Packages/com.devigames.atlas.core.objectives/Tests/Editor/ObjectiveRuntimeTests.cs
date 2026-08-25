@@ -159,6 +159,57 @@ public sealed class ObjectiveRuntimeTests
                 description: "",
                 targetValue: 0));
     }
+
+    [Test]
+    public void Reset_ProgressedObjective_ReturnsToInitialState()
+    {
+        ObjectiveRuntime runtime =
+            CreateRuntime(
+                targetValue: 3);
+
+        runtime.AddProgress(2);
+
+        runtime.Reset();
+
+        Assert.That(runtime.CurrentValue, Is.Zero);
+        Assert.That(runtime.State, Is.EqualTo(ObjectiveState.Active));
+        Assert.That(runtime.IsCompleted, Is.False);
+    }
+
+    [Test]
+    public void Reset_CompletedObjective_ReturnsToInitialState()
+    {
+        ObjectiveRuntime runtime =
+            CreateRuntime(
+                targetValue: 3);
+
+        runtime.AddProgress(3);
+
+        Assert.That(runtime.IsCompleted, Is.True);
+
+        runtime.Reset();
+
+        Assert.That(runtime.CurrentValue, Is.Zero);
+        Assert.That(runtime.State, Is.EqualTo(ObjectiveState.Active));
+        Assert.That(runtime.IsCompleted, Is.False);
+    }
+
+    [Test]
+    public void Reset_ObjectiveCanProgressAgain()
+    {
+        ObjectiveRuntime runtime =
+            CreateRuntime(
+                targetValue: 2);
+
+        runtime.AddProgress(2);
+        runtime.Reset();
+
+        ObjectiveUpdateResult result =
+            runtime.AddProgress(1);
+
+        Assert.That(result, Is.EqualTo(ObjectiveUpdateResult.Progressed));
+        Assert.That(runtime.CurrentValue, Is.EqualTo(1));
+    }
     private static ObjectiveRuntime CreateRuntime(
         int targetValue)
     {

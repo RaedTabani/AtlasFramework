@@ -121,6 +121,103 @@ namespace DeviGames.Atlas.Core.Missions.Tests.Editor
                 Is.EqualTo(2));
         }
 
+        [Test]
+        public void Reset_ProgressedMission_ReturnsToInitialState()
+        {
+            MissionRuntime runtime =
+                CreateMission();
+
+            runtime.NotifyObjectiveCompleted(
+                "objective.a");
+
+            runtime.Reset();
+
+            Assert.That(
+                runtime.CompletedObjectiveCount,
+                Is.Zero);
+
+            Assert.That(
+                runtime.IsObjectiveCompleted("objective.a"),
+                Is.False);
+
+            Assert.That(
+                runtime.State,
+                Is.EqualTo(MissionState.Active));
+
+            Assert.That(
+                runtime.IsCompleted,
+                Is.False);
+        }
+
+        [Test]
+        public void Reset_CompletedMission_ReturnsToInitialState()
+        {
+            MissionRuntime runtime =
+                CreateMission();
+
+            runtime.NotifyObjectiveCompleted(
+                "objective.a");
+
+            runtime.NotifyObjectiveCompleted(
+                "objective.b");
+
+            Assert.That(
+                runtime.IsCompleted,
+                Is.True);
+
+            runtime.Reset();
+
+            Assert.That(
+                runtime.CompletedObjectiveCount,
+                Is.Zero);
+
+            Assert.That(
+                runtime.State,
+                Is.EqualTo(MissionState.Active));
+
+            Assert.That(
+                runtime.IsCompleted,
+                Is.False);
+        }
+
+        [Test]
+        public void Reset_MissionCanCompleteAgain()
+        {
+            MissionRuntime runtime =
+                CreateMission();
+
+            runtime.NotifyObjectiveCompleted(
+                "objective.a");
+
+            runtime.NotifyObjectiveCompleted(
+                "objective.b");
+
+            runtime.Reset();
+
+            MissionUpdateResult firstResult =
+                runtime.NotifyObjectiveCompleted(
+                    "objective.a");
+
+            MissionUpdateResult secondResult =
+                runtime.NotifyObjectiveCompleted(
+                    "objective.b");
+
+            Assert.That(
+                firstResult,
+                Is.EqualTo(
+                    MissionUpdateResult.ObjectiveCompleted));
+
+            Assert.That(
+                secondResult,
+                Is.EqualTo(
+                    MissionUpdateResult.Completed));
+
+            Assert.That(
+                runtime.IsCompleted,
+                Is.True);
+        }
+
+
         private static MissionRuntime CreateMission()
         {
             return new MissionRuntime(
