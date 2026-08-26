@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Gameplay.Currency.Events;
 using DeviGames.Atlas.Gameplay.Currency.Interfaces;
+using DeviGames.Atlas.Gameplay.Currency.Models;
 
 namespace DeviGames.Atlas.Gameplay.Currency.Services
 {
@@ -98,6 +99,44 @@ namespace DeviGames.Atlas.Gameplay.Currency.Services
                 throw new ArgumentException(
                     "Currency ID cannot be empty.",
                     nameof(currencyId));
+            }
+        }
+
+        public CurrencyData CreateSnapshot()
+        {
+            var data = new CurrencyData();
+
+            foreach (KeyValuePair<string, int> pair in _balances)
+            {
+                data.Balances.Add( new CurrencyBalanceData(pair.Key,pair.Value));
+            }
+
+            return data;
+        }
+
+        public void Load(CurrencyData data)
+        {
+            _balances.Clear();
+
+            if (data?.Balances == null)
+            {
+                return;
+            }
+
+            foreach (CurrencyBalanceData balance in data.Balances)
+            {
+                if (string.IsNullOrWhiteSpace(balance.CurrencyId))
+                {
+                    continue;
+                }
+
+                if (balance.Balance < 0)
+                {
+                    continue;
+                }
+
+                _balances[balance.CurrencyId] =
+                    balance.Balance;
             }
         }
     }

@@ -146,7 +146,7 @@ namespace DeviGames.Playground.Bootstrap
             new ProgressSaveIntegrationInstaller().Install(installationContext);
             new WorldStateSaveIntegrationInstaller().Install(installationContext);
             new CurrencyRewardIntegrationInstaller().Install(installationContext);
-            
+            new CurrencySaveIntegrationInstaller().Install(installationContext);
             
             IMissionCollection missionCollection =
             context.Services.Resolve<
