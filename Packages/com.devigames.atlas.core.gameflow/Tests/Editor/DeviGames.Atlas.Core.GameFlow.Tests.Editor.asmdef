@@ -1,0 +1,19 @@
+{
+    "name": "DeviGame.Atlas.Core.GameFlow.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:56930c55bbcef15629afeb1d14f61d2e",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

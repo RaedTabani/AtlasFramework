@@ -30,6 +30,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.gameflow": {
+      "version": "file:com.devigames.atlas.core.gameflow",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.interactions": {
       "version": "file:com.devigames.atlas.core.interactions",
       "depth": 0,
