@@ -23,6 +23,7 @@ using DeviGames.Atlas.Core.Content.Loading;
 using DeviGames.Atlas.Core.Content.Serialization;
 using DeviGames.Atlas.Core.Content.Collections;
 using DeviGames.Atlas.Core.Content.Sources;
+using DeviGames.Atlas.Core.GameFlow.Installation;
 using DeviGames.Atlas.Core.Progress.Installation;
 using DeviGames.Atlas.Core.Rewards.Installation;
 using DeviGames.Atlas.Core.Rewards.Installation;
@@ -56,6 +57,7 @@ using DeviGames.Atlas.Gameplay.WorldState.Interfaces;
 using DeviGames.Atlas.Gameplay.WorldState.Services;
 using DeviGames.Atlas.Gameplay.Currency.Installation;
 using DeviGames.Atlas.Gameplay.Currency.Interfaces;
+using DeviGames.Atlas.Gameplay.Progression.Installation;
 
 using DeviGames.Atlas.Unity.Execution.Installation;
 
@@ -99,7 +101,8 @@ namespace DeviGames.Playground.Bootstrap
             new WorldStateInstaller().Install(installationContext);
             new CurrencyInstaller().Install(installationContext);
             new ContentInstaller().Install(installationContext);
-
+            new GameFlowInstaller().Install(installationContext);
+            new ProgressionInstaller().Install(installationContext);
 
             var eventHistoryService =
                 new EventHistoryService(250);
@@ -147,7 +150,8 @@ namespace DeviGames.Playground.Bootstrap
             new WorldStateSaveIntegrationInstaller().Install(installationContext);
             new CurrencyRewardIntegrationInstaller().Install(installationContext);
             new CurrencySaveIntegrationInstaller().Install(installationContext);
-            
+            new MissionFlowIntegrationInstaller().Install(installationContext);
+
             IMissionCollection missionCollection =
             context.Services.Resolve<
                 IMissionCollection>();
