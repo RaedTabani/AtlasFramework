@@ -1,0 +1,18 @@
+{
+    "name": "DeviGames.Atlas.Unity.Scenes.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:d1159ca765871a8b7bd3d532ddb8ef8c"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

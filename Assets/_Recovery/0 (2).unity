@@ -194,9 +194,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e728320bc220de93a4819927d535c4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Atlas.Unity.Application.AtlasApplication
-  _missionScenes:
-  - MissionId: mission.playground.escape
-    SceneName: Playground
 --- !u!1 &1881666727
 GameObject:
   m_ObjectHideFlags: 0

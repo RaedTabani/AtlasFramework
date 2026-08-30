@@ -1,0 +1,16 @@
+{
+    "name": "DeviGames.Atlas.Unity.Scenes",
+    "rootNamespace": "",
+    "references": [
+        "GUID:81898e96d65242c9da4f742f69ad5fef"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

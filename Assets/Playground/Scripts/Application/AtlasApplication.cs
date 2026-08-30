@@ -3,12 +3,15 @@ using System.Threading.Tasks;
 
 using DeviGames.Atlas.Core.Bootstrap.Services;
 using DeviGames.Atlas.Core.GameFlow.Interfaces;
-using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.Progress.Bootstrap;
+using DeviGames.Atlas.Core.Services;
+using DeviGames.Atlas.Gameplay.Progression.Services;
+using DeviGames.Atlas.Unity.Scenes.Interfaces;
+using DeviGames.Atlas.Unity.Scenes.Models;
+using DeviGames.Atlas.Unity.Scenes.Services;
 using DeviGames.Playground.Bootstrap;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace DeviGames.Atlas.Unity.Application
 {
@@ -18,9 +21,17 @@ namespace DeviGames.Atlas.Unity.Application
         private const string MainMenuSceneName =
             "MainMenu";
 
+        public MissionLaunchService MissionLaunchService { get; private set; }
+
         private static AtlasApplication _instance;
+        public static AtlasApplication Instance => _instance;
+
+        [Header("Mission Scenes")]
+        [SerializeField]
+        private MissionSceneDefinition[] _missionScenes;
 
         private BootstrapService _bootstrapService;
+        private ISceneService _sceneService;
 
         private async void Awake()
         {
@@ -41,11 +52,17 @@ namespace DeviGames.Atlas.Unity.Application
 
             try
             {
+                _sceneService =
+                    new UnitySceneService();
+
                 await BootstrapAsync();
+
+                CreateUnityServices();
 
                 EnterMainMenu();
 
-                await LoadMainMenuAsync();
+                await _sceneService.LoadAsync(
+                    MainMenuSceneName);
             }
             catch (Exception exception)
             {
@@ -70,6 +87,22 @@ namespace DeviGames.Atlas.Unity.Application
             await _bootstrapService.RunAsync();
         }
 
+        private void CreateUnityServices()
+        {
+            var missionSceneResolver =
+                new MissionSceneResolver(
+                    _missionScenes);
+
+            MissionFlowCoordinator missionFlowCoordinator =
+                Services.Resolve<MissionFlowCoordinator>();
+
+            MissionLaunchService =
+                new MissionLaunchService(
+                    missionFlowCoordinator,
+                    missionSceneResolver,
+                    _sceneService);
+        }
+
         private void EnterMainMenu()
         {
             IGameFlowService gameFlowService =
@@ -82,23 +115,10 @@ namespace DeviGames.Atlas.Unity.Application
             }
         }
 
-        private async Task LoadMainMenuAsync()
+        public async Task ReturnToMainMenuAsync()
         {
-            AsyncOperation operation =
-                SceneManager.LoadSceneAsync(
-                    MainMenuSceneName,
-                    LoadSceneMode.Single);
-
-            if (operation == null)
-            {
-                throw new InvalidOperationException(
-                    $"Failed to load scene '{MainMenuSceneName}'.");
-            }
-
-            while (!operation.isDone)
-            {
-                await Task.Yield();
-            }
+            await _sceneService.LoadAsync(
+                MainMenuSceneName);
         }
 
         private void OnApplicationQuit()
