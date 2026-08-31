@@ -129,6 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 21673747}
   - component: {fileID: 21673748}
+  - component: {fileID: 21673749}
   m_Layer: 0
   m_Name: GameplayGateController
   m_TagString: Untagged
@@ -158,12 +159,26 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 21673746}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f1202be48f345c5a99d9e15a0dc32ed0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: DeviGames.Playground::GamePlayGateController
   _gameplayRoot: {fileID: 1820344206}
+--- !u!114 &21673749
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 21673746}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8745755cbd811116b8226ebadb569e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DeviGames.Playground::DeviGames.Playground.MissionFlow.GameplayStateController
+  _controlledBehaviours:
+  - {fileID: 1909732490}
 --- !u!1 &138720723
 GameObject:
   m_ObjectHideFlags: 0
@@ -2167,7 +2182,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1820344207
 Transform:
   m_ObjectHideFlags: 0
