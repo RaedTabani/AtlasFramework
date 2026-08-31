@@ -78,6 +78,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.core.sequence": {
+      "version": "file:com.devigames.atlas.core.sequence",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.core.services": {
       "version": "file:com.devigames.atlas.core.services",
       "depth": 0,

@@ -1,0 +1,19 @@
+{
+    "name": "DeviGames.Atlas.Core.Sequence.Tests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "DeviGames.Atlas.Core.Sequence",
+        "DeviGames.Atlas.Core.Events"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
