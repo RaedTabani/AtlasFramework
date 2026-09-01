@@ -1,15 +1,24 @@
 using System;
 
 using DeviGames.Atlas.Core.Events;
+using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.GameFlow.Events;
 using DeviGames.Atlas.Core.GameFlow.Interfaces;
 using DeviGames.Atlas.Core.GameFlow.Models;
-using DeviGames.Atlas.Core.Services;
+using DeviGames.Atlas.Core.Sequence.Models;
+using DeviGames.Atlas.Core.Sequence.Events;
+using DeviGames.Atlas.Core.Sequence.Factories;
+using DeviGames.Atlas.Core.Sequence.Interfaces;
+using DeviGames.Atlas.Core.Sequence.Services;
 using DeviGames.Atlas.Gameplay.Progression.Services;
+using DeviGames.Playground.Sequence;
+
+using TMPro;
 
 using UnityEngine;
+using UnityEngine.UI;
 
-namespace DeviGames.Playground.MissionFlow
+namespace DeviGames.Playground
 {
     public sealed class MissionIntroController :
         MonoBehaviour
@@ -17,51 +26,68 @@ namespace DeviGames.Playground.MissionFlow
         [SerializeField]
         private GameObject _panel;
 
+        [SerializeField]
+        private TMP_Text _text;
+
+        [SerializeField]
+        private Button _continueButton;
+
         private MissionFlowCoordinator _missionFlowCoordinator;
         private IGameFlowService _gameFlowService;
 
-        private void Start()
+        private SequencePlayer _sequencePlayer;
+
+        private const string IntroSequenceId =
+            "sequence.mission-intro";
+
+        private void Awake()
         {
-            try
+            if (_panel == null)
             {
-                _missionFlowCoordinator =
-                    Services.Resolve<MissionFlowCoordinator>();
-
-                _gameFlowService =
-                    Services.Resolve<IGameFlowService>();
-
-                EventBus.Subscribe<GameFlowStateChangedEvent>(
-                    OnGameFlowStateChanged);
-
-                Refresh();
+                throw new InvalidOperationException(
+                    "Mission Intro panel is not assigned.");
             }
-            catch (Exception exception)
+
+            if (_text == null)
             {
-                Debug.LogException(
-                    exception);
+                throw new InvalidOperationException(
+                    "Mission Intro text is not assigned.");
             }
+
+            if (_continueButton == null)
+            {
+                throw new InvalidOperationException(
+                    "Mission Intro continue button is not assigned.");
+            }
+
+            _missionFlowCoordinator =
+                Services.Resolve<MissionFlowCoordinator>();
+
+            _gameFlowService =
+                Services.Resolve<IGameFlowService>();
+
+            _continueButton.onClick.AddListener(
+                ContinueSequence);
+
+            EventBus.Subscribe<GameFlowStateChangedEvent>(
+                OnGameFlowStateChanged);
+
+            EventBus.Subscribe<SequenceCompletedEvent>(
+                OnSequenceCompleted);
+
+            Refresh();
         }
 
         private void OnDestroy()
         {
+            _continueButton.onClick.RemoveListener(
+                ContinueSequence);
+
             EventBus.Unsubscribe<GameFlowStateChangedEvent>(
                 OnGameFlowStateChanged);
-        }
 
-        public void CompleteIntro()
-        {
-            if (_missionFlowCoordinator == null)
-            {
-                return;
-            }
-            
-            Debug.Log($"CompleteIntro called. Current GameFlow state: {_gameFlowService.State}");
-
-            if (!_missionFlowCoordinator.CompleteIntro())
-            {
-                Debug.LogWarning(
-                    "Mission intro could not be completed.");
-            }
+            EventBus.Unsubscribe<SequenceCompletedEvent>(
+                OnSequenceCompleted);
         }
 
         private void OnGameFlowStateChanged(
@@ -72,15 +98,87 @@ namespace DeviGames.Playground.MissionFlow
 
         private void Refresh()
         {
-            if (_gameFlowService == null ||
-                _panel == null)
+            bool isIntro =
+                _gameFlowService.State ==
+                GameFlowState.MissionIntro;
+
+            _panel.SetActive(
+                isIntro);
+
+            if (isIntro &&
+                (_sequencePlayer == null ||
+                 !_sequencePlayer.IsPlaying))
+            {
+                PlayIntroSequence();
+            }
+        }
+
+        private void PlayIntroSequence()
+        {
+            var presenter =
+                new UnitySequenceTextPresenter(
+                    _text);
+
+            var registry =
+                new SequenceStepFactoryRegistry();
+
+            registry.Register(
+                new ShowTextStepFactory(
+                    presenter));
+
+            registry.Register(
+                new WaitForContinueStepFactory());
+
+            var factory =
+                new SequenceFactory(
+                    registry);
+
+            var definition =
+                new SequenceDefinition(
+                    IntroSequenceId);
+
+            definition.Steps.Add(
+                new ShowTextStepDefinition(
+                    "You wake up inside the house..."));
+
+            definition.Steps.Add(
+                new WaitForContinueStepDefinition());
+
+            definition.Steps.Add(
+                new ShowTextStepDefinition(
+                    "Find a way out before the teacher returns."));
+
+            definition.Steps.Add(
+                new WaitForContinueStepDefinition());
+
+            SequenceRuntime sequence =
+                factory.Create(
+                    definition);
+
+            _sequencePlayer =
+                new SequencePlayer();
+
+            _sequencePlayer.Play(
+                sequence);
+        }
+
+        private void ContinueSequence()
+        {
+            _sequencePlayer?.Continue();
+        }
+
+        private void OnSequenceCompleted(
+            SequenceCompletedEvent eventData)
+        {
+            if (!string.Equals(
+                eventData.SequenceId,
+                IntroSequenceId,
+                StringComparison.Ordinal))
             {
                 return;
             }
 
-            _panel.SetActive(
-                _gameFlowService.State ==
-                GameFlowState.MissionIntro);
+            _missionFlowCoordinator.CompleteIntro();
         }
     }
 }

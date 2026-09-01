@@ -19,6 +19,8 @@ namespace DeviGames.Atlas.Core.Sequence.Services
 
         public int CurrentStepIndex { get; private set; }
 
+        public bool HasCurrentStepEntered { get; private set; }
+
         public ISequenceStep CurrentStep
         {
             get
@@ -56,6 +58,9 @@ namespace DeviGames.Atlas.Core.Sequence.Services
 
             CurrentStepIndex =
                 -1;
+
+            HasCurrentStepEntered =
+                false;
         }
 
         public SequenceRuntime(
@@ -81,6 +86,26 @@ namespace DeviGames.Atlas.Core.Sequence.Services
                     ? 0
                     : -1;
 
+            HasCurrentStepEntered =
+                false;
+
+            return true;
+        }
+
+        public bool EnterCurrentStep()
+        {
+            if (State != SequenceState.Playing ||
+                CurrentStep == null ||
+                HasCurrentStepEntered)
+            {
+                return false;
+            }
+
+            HasCurrentStepEntered =
+                true;
+
+            CurrentStep.Enter();
+
             return true;
         }
 
@@ -104,6 +129,9 @@ namespace DeviGames.Atlas.Core.Sequence.Services
                 CurrentStepIndex =
                     -1;
             }
+
+            HasCurrentStepEntered =
+                false;
 
             return true;
         }
@@ -133,6 +161,9 @@ namespace DeviGames.Atlas.Core.Sequence.Services
 
             CurrentStepIndex =
                 -1;
+
+            HasCurrentStepEntered =
+                false;
         }
     }
 }

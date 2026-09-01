@@ -76,9 +76,9 @@ namespace DeviGames.Atlas.Core.Sequence.Services
                     return;
                 }
 
-                if (!step.IsCompleted)
+                if (!ActiveSequence.HasCurrentStepEntered)
                 {
-                    step.Enter();
+                    ActiveSequence.EnterCurrentStep();
                 }
 
                 if (!step.IsCompleted)
@@ -90,6 +90,23 @@ namespace DeviGames.Atlas.Core.Sequence.Services
             }
         }
 
+        public bool Continue()
+        {
+            if (ActiveSequence?.CurrentStep is not IContinuableSequenceStep continuableStep)
+            {
+                return false;
+            }
+
+            if (!continuableStep.Continue())
+            {
+                return false;
+            }
+
+            Process();
+
+            return true;
+        }
+        
         private bool TryCompleteActiveSequence()
         {
             if (ActiveSequence == null ||

@@ -8,8 +8,8 @@ namespace DeviGames.Atlas.Core.Sequence.Interfaces
 
         bool IsPlaying { get; }
 
-        bool Play(
-            SequenceRuntime sequence);
+        bool Play(SequenceRuntime sequence);
+        bool Continue();
 
         bool Complete();
         bool Advance();
