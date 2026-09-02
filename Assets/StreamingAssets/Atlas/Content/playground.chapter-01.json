@@ -106,5 +106,26 @@
 
     "InitialUnlocks": [
         "mission.playground.escape"
+    ],
+    "Sequences": [
+        {
+            "Id": "sequence.mission.escape.intro",
+            "Steps": [
+                {
+                    "Type": "show-text",
+                    "Text": "You wake up inside the house..."
+                },
+                {
+                    "Type": "wait-for-continue"
+                },
+                {
+                    "Type": "show-text",
+                    "Text": "Find a way out before the teacher returns."
+                },
+                {
+                    "Type": "wait-for-continue"
+                }
+            ]
+        }
     ]
 }

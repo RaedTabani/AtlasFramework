@@ -5,7 +5,7 @@ using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Core.GameFlow.Events;
 using DeviGames.Atlas.Core.GameFlow.Interfaces;
 using DeviGames.Atlas.Core.GameFlow.Models;
-using DeviGames.Atlas.Core.Sequence.Models;
+using DeviGames.Atlas.Core.Sequence.Collections;
 using DeviGames.Atlas.Core.Sequence.Events;
 using DeviGames.Atlas.Core.Sequence.Factories;
 using DeviGames.Atlas.Core.Sequence.Interfaces;
@@ -34,11 +34,12 @@ namespace DeviGames.Playground
 
         private MissionFlowCoordinator _missionFlowCoordinator;
         private IGameFlowService _gameFlowService;
+        private SequenceDefinitionCollection _sequenceDefinitions;
 
         private SequencePlayer _sequencePlayer;
 
         private const string IntroSequenceId =
-            "sequence.mission-intro";
+            "sequence.mission.escape.intro";
 
         private void Awake()
         {
@@ -65,6 +66,9 @@ namespace DeviGames.Playground
 
             _gameFlowService =
                 Services.Resolve<IGameFlowService>();
+
+            _sequenceDefinitions =
+                Services.Resolve<SequenceDefinitionCollection>();
 
             _continueButton.onClick.AddListener(
                 ContinueSequence);
@@ -133,27 +137,10 @@ namespace DeviGames.Playground
                 new SequenceFactory(
                     registry);
 
-            var definition =
-                new SequenceDefinition(
-                    IntroSequenceId);
-
-            definition.Steps.Add(
-                new ShowTextStepDefinition(
-                    "You wake up inside the house..."));
-
-            definition.Steps.Add(
-                new WaitForContinueStepDefinition());
-
-            definition.Steps.Add(
-                new ShowTextStepDefinition(
-                    "Find a way out before the teacher returns."));
-
-            definition.Steps.Add(
-                new WaitForContinueStepDefinition());
-
             SequenceRuntime sequence =
                 factory.Create(
-                    definition);
+                    _sequenceDefinitions.Get(
+                        IntroSequenceId));
 
             _sequencePlayer =
                 new SequencePlayer();
@@ -171,9 +158,9 @@ namespace DeviGames.Playground
             SequenceCompletedEvent eventData)
         {
             if (!string.Equals(
-                eventData.SequenceId,
-                IntroSequenceId,
-                StringComparison.Ordinal))
+                    eventData.SequenceId,
+                    IntroSequenceId,
+                    StringComparison.Ordinal))
             {
                 return;
             }

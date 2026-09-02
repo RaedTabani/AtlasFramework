@@ -24,5 +24,7 @@ namespace DeviGames.Atlas.Core.Content.Models
         public RewardContentData[] Rewards = Array.Empty<RewardContentData>();
         public MissionRewardBindingData[] MissionRewardBindings = Array.Empty<MissionRewardBindingData>();
         public string[] InitialUnlocks = Array.Empty<string>();
+
+        public SequenceContentData[] Sequences = Array.Empty<SequenceContentData>();
     }
 }

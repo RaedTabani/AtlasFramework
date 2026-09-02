@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "DeviGames.Atlas.Core.Sequence",
-        "DeviGames.Atlas.Core.Events"
+        "DeviGames.Atlas.Core.Events",
+        "DeviGames.Atlas.Core.Content"
     ],
     "includePlatforms": [
         "Editor"
