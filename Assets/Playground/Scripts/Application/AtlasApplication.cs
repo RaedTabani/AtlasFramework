@@ -27,7 +27,8 @@ namespace DeviGames.Atlas.Unity.Application
         public static AtlasApplication Instance => _instance;
 
         private BootstrapService _bootstrapService;
-        private ISceneService _sceneService;
+        private ISceneService _applicationSceneService;
+        private ISceneService _missionSceneService;
 
         private async void Awake()
         {
@@ -48,8 +49,11 @@ namespace DeviGames.Atlas.Unity.Application
 
             try
             {
-                _sceneService =
+                _applicationSceneService =
                     new UnitySceneService();
+
+                _missionSceneService =
+                    new AddressableSceneService();
 
                 await BootstrapAsync();
 
@@ -57,7 +61,7 @@ namespace DeviGames.Atlas.Unity.Application
 
                 EnterMainMenu();
 
-                await _sceneService.LoadAsync(
+                await _applicationSceneService.LoadAsync(
                     MainMenuSceneName);
             }
             catch (Exception exception)
@@ -95,7 +99,7 @@ namespace DeviGames.Atlas.Unity.Application
                 new MissionLaunchService(
                     missionFlowCoordinator,
                     missionCollection,
-                    _sceneService);
+                    _missionSceneService);
         }
         private void EnterMainMenu()
         {
@@ -111,7 +115,7 @@ namespace DeviGames.Atlas.Unity.Application
 
         public async Task ReturnToMainMenuAsync()
         {
-            await _sceneService.LoadAsync(
+            await _applicationSceneService.LoadAsync(
                 MainMenuSceneName);
         }
 
