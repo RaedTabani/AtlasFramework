@@ -38,6 +38,11 @@ namespace DeviGames.Atlas.Core.Missions.Runtime
                 : (float)CompletedObjectiveCount /
                   ObjectiveCount;
 
+        public string IntroSequenceId =>
+            Definition.IntroSequenceId;
+
+        public string OutroSequenceId =>
+            Definition.OutroSequenceId;
         public MissionRuntime(
             MissionDefinition definition)
         {

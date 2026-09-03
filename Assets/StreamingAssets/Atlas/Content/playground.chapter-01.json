@@ -18,7 +18,9 @@
             "Description": "Collect the keys and escape.",
             "ObjectiveIds": [
                 "objective.playground.collect-keys"
-            ]
+            ],
+            "IntroSequenceId": "sequence.mission.escape.intro",
+            "OutroSequenceId": "sequence.mission.escape.outro"
         },
         {
             "Id": "mission.playground.chapter-02",
@@ -26,7 +28,9 @@
             "Description": "Continue to the next mission.",
             "ObjectiveIds": [
                 "objective.playground.collect-keys"
-            ]
+            ],
+            "IntroSequenceId": "sequence.mission.escape.intro",
+            "OutroSequenceId": "sequence.mission.chapter-02.outro"
         }
     ],
 
@@ -121,6 +125,25 @@
                 {
                     "Type": "show-text",
                     "Text": "Find a way out before the teacher returns."
+                },
+                {
+                    "Type": "wait-for-continue"
+                }
+            ]
+        },
+        {
+            "Id": "sequence.mission.escape.outro",
+            "Steps": [
+                {
+                    "Type": "show-text",
+                    "Text": "You made it out."
+                },
+                {
+                    "Type": "wait-for-continue"
+                },
+                {
+                    "Type": "show-text",
+                    "Text": "But the teacher may already know where you went..."
                 },
                 {
                     "Type": "wait-for-continue"

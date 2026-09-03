@@ -13,6 +13,10 @@ namespace DeviGames.Atlas.Core.Missions.Models
 
         public string Description { get; }
 
+        public string IntroSequenceId { get; }
+
+        public string OutroSequenceId { get; }
+
         public IReadOnlyList<string> ObjectiveIds =>
             _objectiveIds;
 
@@ -23,7 +27,9 @@ namespace DeviGames.Atlas.Core.Missions.Models
             string id,
             string displayName,
             string description,
-            IEnumerable<string> objectiveIds)
+            IEnumerable<string> objectiveIds,
+            string introSequenceId = null,
+            string outroSequenceId = null)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -53,6 +59,12 @@ namespace DeviGames.Atlas.Core.Missions.Models
             DisplayName = displayName;
             Description =
                 description ?? string.Empty;
+
+            IntroSequenceId =
+                introSequenceId ?? string.Empty;
+
+            OutroSequenceId =
+                outroSequenceId ?? string.Empty;
         }
 
         private static string[] ValidateAndCopyObjectiveIds(

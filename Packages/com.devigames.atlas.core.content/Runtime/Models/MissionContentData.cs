@@ -13,5 +13,8 @@ namespace DeviGames.Atlas.Core.Content.Models
 
         public string[] ObjectiveIds =
             Array.Empty<string>();
+
+        public string IntroSequenceId;
+        public string OutroSequenceId;
     }
 }

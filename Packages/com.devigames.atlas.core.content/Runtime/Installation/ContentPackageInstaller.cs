@@ -118,7 +118,7 @@ namespace DeviGames.Atlas.Core.Content.Installation
             ContentPackageData package)
         {
             foreach (MissionContentData data
-                     in package.Missions)
+                    in package.Missions)
             {
                 var definition =
                     new MissionDefinition(
@@ -129,7 +129,11 @@ namespace DeviGames.Atlas.Core.Content.Installation
                         description:
                             data.Description,
                         objectiveIds:
-                            data.ObjectiveIds);
+                            data.ObjectiveIds,
+                        introSequenceId:
+                            data.IntroSequenceId,
+                        outroSequenceId:
+                            data.OutroSequenceId);
 
                 _missionService.Register(
                     definition);

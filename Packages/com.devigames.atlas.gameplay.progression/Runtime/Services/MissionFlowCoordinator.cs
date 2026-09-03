@@ -16,30 +16,45 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
         private readonly IMissionSessionService _sessionService;
         private readonly IGameFlowService _gameFlowService;
 
+        public string MissionId { get; private set; }
+
+        public bool HasMission =>
+            !string.IsNullOrWhiteSpace(MissionId);
+
         public MissionFlowCoordinator(
             IMissionSessionService sessionService,
             IGameFlowService gameFlowService)
         {
             _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
             _gameFlowService = gameFlowService ?? throw new ArgumentNullException(nameof(gameFlowService));
+
+            MissionId =
+                string.Empty;
         }
 
         public void Initialize()
         {
-            EventBus.Subscribe<MissionCompletedEvent>(OnMissionCompleted);
+            EventBus.Subscribe<MissionCompletedEvent>(
+                OnMissionCompleted);
         }
 
         public void Shutdown()
         {
-            EventBus.Unsubscribe<MissionCompletedEvent>(OnMissionCompleted);
+            EventBus.Unsubscribe<MissionCompletedEvent>(
+                OnMissionCompleted);
         }
 
-        public bool StartMission(string missionId)
+        public bool StartMission(
+            string missionId)
         {
-            if (!_sessionService.Start(missionId))
+            if (!_sessionService.Start(
+                    missionId))
             {
                 return false;
             }
+
+            MissionId =
+                missionId;
 
             if (_gameFlowService.BeginMissionIntro())
             {
@@ -47,6 +62,9 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
             }
 
             _sessionService.Exit();
+
+            MissionId =
+                string.Empty;
 
             return false;
         }
@@ -63,13 +81,29 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
         public bool CompleteResults()
         {
-            return _gameFlowService.EnterMainMenu();
+            if (!_gameFlowService.EnterMainMenu())
+            {
+                return false;
+            }
+
+            MissionId =
+                string.Empty;
+
+            return true;
         }
 
         private void OnMissionCompleted(
             MissionCompletedEvent eventData)
         {
             if (_gameFlowService.State != GameFlowState.Gameplay)
+            {
+                return;
+            }
+
+            if (!string.Equals(
+                    MissionId,
+                    eventData.MissionId,
+                    StringComparison.Ordinal))
             {
                 return;
             }

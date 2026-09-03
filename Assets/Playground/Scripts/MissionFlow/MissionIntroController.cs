@@ -10,6 +10,10 @@ using DeviGames.Atlas.Core.Sequence.Events;
 using DeviGames.Atlas.Core.Sequence.Factories;
 using DeviGames.Atlas.Core.Sequence.Interfaces;
 using DeviGames.Atlas.Core.Sequence.Services;
+using DeviGames.Atlas.Core.Missions.Interfaces;
+using DeviGames.Atlas.Core.Missions.Runtime;
+
+using DeviGames.Atlas.Gameplay.Progression.Interfaces;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 using DeviGames.Playground.Sequence;
 
@@ -37,6 +41,8 @@ namespace DeviGames.Playground
         private SequenceDefinitionCollection _sequenceDefinitions;
 
         private SequencePlayer _sequencePlayer;
+        private IMissionCollection _missionCollection;
+        private IMissionSessionService _missionSessionService;
 
         private const string IntroSequenceId =
             "sequence.mission.escape.intro";
@@ -69,6 +75,12 @@ namespace DeviGames.Playground
 
             _sequenceDefinitions =
                 Services.Resolve<SequenceDefinitionCollection>();
+
+            _missionCollection =
+                Services.Resolve<IMissionCollection>();
+
+            _missionSessionService =
+                Services.Resolve<IMissionSessionService>();
 
             _continueButton.onClick.AddListener(
                 ContinueSequence);
@@ -119,6 +131,27 @@ namespace DeviGames.Playground
 
         private void PlayIntroSequence()
         {
+            if (!_missionSessionService.HasActiveSession)
+            {
+                throw new InvalidOperationException(
+                    "No active mission session is available for the mission intro.");
+            }
+
+            if (!_missionCollection.TryGet(
+                    _missionFlowCoordinator.MissionId,
+                    out MissionRuntime mission))
+            {
+                throw new InvalidOperationException(
+                    $"Active mission '{_missionFlowCoordinator.MissionId}' could not be found.");
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    mission.IntroSequenceId))
+            {
+                throw new InvalidOperationException(
+                    $"Mission '{mission.Id}' does not define an intro sequence.");
+            }
+
             var presenter =
                 new UnitySequenceTextPresenter(
                     _text);
@@ -140,7 +173,7 @@ namespace DeviGames.Playground
             SequenceRuntime sequence =
                 factory.Create(
                     _sequenceDefinitions.Get(
-                        IntroSequenceId));
+                        mission.IntroSequenceId));
 
             _sequencePlayer =
                 new SequencePlayer();
@@ -148,7 +181,6 @@ namespace DeviGames.Playground
             _sequencePlayer.Play(
                 sequence);
         }
-
         private void ContinueSequence()
         {
             _sequencePlayer?.Continue();
@@ -157,9 +189,21 @@ namespace DeviGames.Playground
         private void OnSequenceCompleted(
             SequenceCompletedEvent eventData)
         {
+            if (!_missionSessionService.HasActiveSession)
+            {
+                return;
+            }
+
+            if (!_missionCollection.TryGet(
+                    _missionFlowCoordinator.MissionId,
+                    out MissionRuntime mission))
+            {
+                return;
+            }
+
             if (!string.Equals(
                     eventData.SequenceId,
-                    IntroSequenceId,
+                    mission.IntroSequenceId,
                     StringComparison.Ordinal))
             {
                 return;
