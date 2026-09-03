@@ -1,46 +1,58 @@
 using System;
 using System.Threading.Tasks;
-using UnityEngine;
 
+using DeviGames.Atlas.Core.Missions.Interfaces;
+using DeviGames.Atlas.Core.Missions.Runtime;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 using DeviGames.Atlas.Unity.Scenes.Interfaces;
+
+using UnityEngine;
 
 namespace DeviGames.Atlas.Unity.Scenes.Services
 {
     public sealed class MissionLaunchService
     {
         private readonly MissionFlowCoordinator _missionFlowCoordinator;
-        private readonly IMissionSceneResolver _missionSceneResolver;
+        private readonly IMissionCollection _missionCollection;
         private readonly ISceneService _sceneService;
 
         public MissionLaunchService(
             MissionFlowCoordinator missionFlowCoordinator,
-            IMissionSceneResolver missionSceneResolver,
+            IMissionCollection missionCollection,
             ISceneService sceneService)
         {
             _missionFlowCoordinator = missionFlowCoordinator ?? throw new ArgumentNullException(nameof(missionFlowCoordinator));
-            _missionSceneResolver = missionSceneResolver ?? throw new ArgumentNullException(nameof(missionSceneResolver));
+            _missionCollection = missionCollection ?? throw new ArgumentNullException(nameof(missionCollection));
             _sceneService = sceneService ?? throw new ArgumentNullException(nameof(sceneService));
         }
 
         public async Task<bool> LaunchAsync(
             string missionId)
         {
-            if (!_missionSceneResolver.TryGetSceneName(
-                missionId,
-                out string sceneName))
+            if (!_missionCollection.TryGet(
+                    missionId,
+                    out MissionRuntime mission))
             {
                 Debug.LogWarning(
-                    $"No scene found for mission '{missionId}'.");
+                    $"Mission '{missionId}' could not be found.");
+
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    mission.SceneName))
+            {
+                Debug.LogWarning(
+                    $"Mission '{missionId}' does not define a scene.");
 
                 return false;
             }
 
             Debug.Log(
-                $"Launching mission '{missionId}' using scene '{sceneName}'.");
+                $"Launching mission '{missionId}' using scene '{mission.SceneName}'.");
 
             if (!_missionFlowCoordinator.StartMission(
-                missionId))
+                    missionId))
             {
                 Debug.LogWarning(
                     $"MissionFlowCoordinator failed to start mission '{missionId}'.");
@@ -52,7 +64,7 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 "Mission flow started successfully.");
 
             await _sceneService.LoadAsync(
-                sceneName);
+                mission.SceneName);
 
             return true;
         }

@@ -19,6 +19,7 @@
             "ObjectiveIds": [
                 "objective.playground.collect-keys"
             ],
+            "SceneName": "Playground",
             "IntroSequenceId": "sequence.mission.escape.intro",
             "OutroSequenceId": "sequence.mission.escape.outro"
         },
@@ -29,6 +30,7 @@
             "ObjectiveIds": [
                 "objective.playground.collect-keys"
             ],
+            "SceneName": "Playground",
             "IntroSequenceId": "sequence.mission.escape.intro",
             "OutroSequenceId": "sequence.mission.chapter-02.outro"
         }

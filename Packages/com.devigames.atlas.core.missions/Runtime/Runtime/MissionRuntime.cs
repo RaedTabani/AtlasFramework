@@ -20,6 +20,9 @@ namespace DeviGames.Atlas.Core.Missions.Runtime
 
         public string Description =>
             Definition.Description;
+        
+        public string SceneName =>
+            Definition.SceneName;
 
         public MissionState State { get; private set; }
 

@@ -5,9 +5,9 @@ using DeviGames.Atlas.Core.Bootstrap.Services;
 using DeviGames.Atlas.Core.GameFlow.Interfaces;
 using DeviGames.Atlas.Core.Progress.Bootstrap;
 using DeviGames.Atlas.Core.Services;
+using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 using DeviGames.Atlas.Unity.Scenes.Interfaces;
-using DeviGames.Atlas.Unity.Scenes.Models;
 using DeviGames.Atlas.Unity.Scenes.Services;
 using DeviGames.Playground.Bootstrap;
 
@@ -25,10 +25,6 @@ namespace DeviGames.Atlas.Unity.Application
 
         private static AtlasApplication _instance;
         public static AtlasApplication Instance => _instance;
-
-        [Header("Mission Scenes")]
-        [SerializeField]
-        private MissionSceneDefinition[] _missionScenes;
 
         private BootstrapService _bootstrapService;
         private ISceneService _sceneService;
@@ -89,20 +85,18 @@ namespace DeviGames.Atlas.Unity.Application
 
         private void CreateUnityServices()
         {
-            var missionSceneResolver =
-                new MissionSceneResolver(
-                    _missionScenes);
-
             MissionFlowCoordinator missionFlowCoordinator =
                 Services.Resolve<MissionFlowCoordinator>();
+
+            IMissionCollection missionCollection =
+                Services.Resolve<IMissionCollection>();
 
             MissionLaunchService =
                 new MissionLaunchService(
                     missionFlowCoordinator,
-                    missionSceneResolver,
+                    missionCollection,
                     _sceneService);
         }
-
         private void EnterMainMenu()
         {
             IGameFlowService gameFlowService =
