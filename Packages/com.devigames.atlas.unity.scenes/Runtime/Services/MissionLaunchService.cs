@@ -14,20 +14,24 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
     {
         private readonly MissionFlowCoordinator _missionFlowCoordinator;
         private readonly IMissionCollection _missionCollection;
+        private readonly IContentDownloadService _contentDownloadService;
         private readonly ISceneService _sceneService;
 
         public MissionLaunchService(
             MissionFlowCoordinator missionFlowCoordinator,
             IMissionCollection missionCollection,
+            IContentDownloadService contentDownloadService,
             ISceneService sceneService)
         {
             _missionFlowCoordinator = missionFlowCoordinator ?? throw new ArgumentNullException(nameof(missionFlowCoordinator));
             _missionCollection = missionCollection ?? throw new ArgumentNullException(nameof(missionCollection));
+            _contentDownloadService = contentDownloadService ?? throw new ArgumentNullException(nameof(contentDownloadService));
             _sceneService = sceneService ?? throw new ArgumentNullException(nameof(sceneService));
         }
 
         public async Task<bool> LaunchAsync(
-            string missionId)
+            string missionId,
+            IProgress<float> downloadProgress = null)
         {
             if (!_missionCollection.TryGet(
                     missionId,
@@ -40,16 +44,47 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
             }
 
             if (string.IsNullOrWhiteSpace(
-                    mission.SceneName))
+                    mission.SceneKey))
             {
                 Debug.LogWarning(
-                    $"Mission '{missionId}' does not define a scene.");
+                    $"Mission '{missionId}' does not define a scene key.");
+
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    mission.ContentKey))
+            {
+                Debug.LogWarning(
+                    $"Mission '{missionId}' does not define a content key.");
 
                 return false;
             }
 
             Debug.Log(
-                $"Launching mission '{missionId}' using scene '{mission.SceneName}'.");
+                $"Preparing mission '{missionId}' using content '{mission.ContentKey}'.");
+
+            long downloadSize =
+                await _contentDownloadService.GetDownloadSizeAsync(
+                    mission.ContentKey);
+
+            Debug.Log(
+                $"Mission '{missionId}' requires {downloadSize} bytes to download.");
+
+            if (downloadSize > 0)
+            {
+                Debug.Log(
+                    $"Downloading content '{mission.ContentKey}'.");
+
+                await _contentDownloadService.DownloadAsync(
+                    mission.ContentKey,downloadProgress);
+
+                Debug.Log(
+                    $"Content '{mission.ContentKey}' downloaded successfully.");
+            }
+
+            Debug.Log(
+                $"Launching mission '{missionId}' using scene key '{mission.SceneKey}'.");
 
             if (!_missionFlowCoordinator.StartMission(
                     missionId))
@@ -60,11 +95,8 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 return false;
             }
 
-            Debug.Log(
-                "Mission flow started successfully.");
-
             await _sceneService.LoadAsync(
-                mission.SceneName);
+                mission.SceneKey);
 
             return true;
         }

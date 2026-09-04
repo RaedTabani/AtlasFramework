@@ -10,6 +10,8 @@ using DeviGames.Atlas.Unity.Application;
 using DeviGames.Atlas.Unity.Scenes.Services;
 
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 namespace DeviGames.Playground.MainMenu
 {
@@ -18,6 +20,15 @@ namespace DeviGames.Playground.MainMenu
     {
         [SerializeField]
         private MissionSelectionView _view;
+
+        [SerializeField]
+        private GameObject _downloadPanel;
+
+        [SerializeField]
+        private TMP_Text _downloadText;
+
+        [SerializeField]
+        private Slider _downloadSlider;
 
         private IMissionCollection _missionCollection;
         private IMissionAvailabilityService _availabilityService;
@@ -83,15 +94,25 @@ namespace DeviGames.Playground.MainMenu
         {
             try
             {
+                _downloadPanel.SetActive(
+                    false);
+
+                _downloadSlider.value =
+                    0f;
+                IProgress<float> progress =
+                    new Progress<float>(
+                        OnDownloadProgress);
                 bool launched =
                     await _missionLaunchService
                         .LaunchAsync(
-                            missionId);
+                            missionId, progress);
 
                 if (!launched)
                 {
                     Debug.LogWarning(
                         $"Mission '{missionId}' could not be launched.");
+                    _downloadPanel.SetActive(
+                        false);
                 }
             }
             catch (Exception exception)
@@ -99,6 +120,22 @@ namespace DeviGames.Playground.MainMenu
                 Debug.LogException(
                     exception);
             }
+        }
+
+        private void OnDownloadProgress(
+            float progress)
+        {
+            if (!_downloadPanel.activeSelf)
+            {
+                _downloadPanel.SetActive(
+                    true);
+            }
+
+            _downloadSlider.value =
+                progress;
+
+            _downloadText.text =
+                $"Downloading... {progress:P0}";
         }
     }
 }

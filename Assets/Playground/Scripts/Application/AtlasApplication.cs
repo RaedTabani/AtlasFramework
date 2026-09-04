@@ -29,6 +29,7 @@ namespace DeviGames.Atlas.Unity.Application
         private BootstrapService _bootstrapService;
         private ISceneService _applicationSceneService;
         private ISceneService _missionSceneService;
+        private IContentDownloadService _contentDownloadService;
 
         private async void Awake()
         {
@@ -54,6 +55,8 @@ namespace DeviGames.Atlas.Unity.Application
 
                 _missionSceneService =
                     new AddressableSceneService();
+
+                _contentDownloadService = new AddressableContentDownloadService();
 
                 await BootstrapAsync();
 
@@ -99,7 +102,10 @@ namespace DeviGames.Atlas.Unity.Application
                 new MissionLaunchService(
                     missionFlowCoordinator,
                     missionCollection,
+                    _contentDownloadService,
                     _missionSceneService);
+
+            
         }
         private void EnterMainMenu()
         {

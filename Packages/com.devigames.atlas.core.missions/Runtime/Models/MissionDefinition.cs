@@ -13,7 +13,8 @@ namespace DeviGames.Atlas.Core.Missions.Models
 
         public string Description { get; }
 
-        public string SceneName { get; }
+        public string SceneKey { get; }
+        public string ContentKey { get; }
 
         public string IntroSequenceId { get; }
 
@@ -30,7 +31,8 @@ namespace DeviGames.Atlas.Core.Missions.Models
             string displayName,
             string description,
             IEnumerable<string> objectiveIds,
-            string sceneName = null,
+            string sceneKey = null,
+            string contentKey = null,
             string introSequenceId = null,
             string outroSequenceId = null)
         {
@@ -62,8 +64,10 @@ namespace DeviGames.Atlas.Core.Missions.Models
             DisplayName = displayName;
             Description =
                 description ?? string.Empty;
-            SceneName =
-                sceneName ?? string.Empty;
+            SceneKey =
+                sceneKey ?? string.Empty;
+            ContentKey =
+                contentKey ?? string.Empty;
 
             IntroSequenceId =
                 introSequenceId ?? string.Empty;

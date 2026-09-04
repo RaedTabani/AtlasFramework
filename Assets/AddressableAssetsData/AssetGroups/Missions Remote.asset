@@ -15,10 +15,17 @@ MonoBehaviour:
   m_GroupName: Missions Remote
   m_GUID: acc23c74c28bb5b738afb3de4e2b6d71
   m_SerializeEntries:
-  - m_GUID: c63248b51c031b4e981e13e9a37d494c
-    m_Address: mission.playground.escape
+  - m_GUID: 0b8b915eae3bc063da43c70db4b27327
+    m_Address: test.download.asset
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - content.download.test
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c63248b51c031b4e981e13e9a37d494c
+    m_Address: scene.playground
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - content.playground
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 76cafec619ba62ad29743064dae9264a, type: 2}

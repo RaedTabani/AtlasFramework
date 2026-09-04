@@ -130,8 +130,10 @@ namespace DeviGames.Atlas.Core.Content.Installation
                             data.Description,
                         objectiveIds:
                             data.ObjectiveIds,
-                        sceneName:
-                            data.SceneName,    
+                        sceneKey:
+                            data.SceneKey,
+                        contentKey:
+                            data.ContentKey,
                         introSequenceId:
                             data.IntroSequenceId,
                         outroSequenceId:
