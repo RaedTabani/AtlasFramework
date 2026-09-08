@@ -27,14 +27,15 @@ namespace DeviGames.Atlas.Gameplay.Progression.Installation
             IUnlockService unlockService = services.Resolve<IUnlockService>();
 
             var availabilityService = new MissionAvailabilityService(missionCollection, unlockService);
-
-            var sessionService = new MissionSessionService(
-                missionCollection,
-                objectiveCollection,
-                availabilityService);
+            var sessionService = new MissionSessionService(missionCollection,objectiveCollection,availabilityService);
+            var resultService = new MissionResultService();
+            var objectiveProgressionService = new MissionObjectiveProgressionService(sessionService,missionCollection);
 
             services.Register<IMissionAvailabilityService>(availabilityService);
             services.Register<IMissionSessionService>(sessionService);
+            services.Register<IMissionResultService>(resultService);
+            services.Register<IMissionObjectiveProgressionService>(objectiveProgressionService);
+
 
         }
     }

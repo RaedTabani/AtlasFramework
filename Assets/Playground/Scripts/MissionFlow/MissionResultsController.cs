@@ -1,5 +1,9 @@
 using System;
 using System.Threading.Tasks;
+using System.Text;
+
+using TMPro;
+
 using UnityEngine;
 
 using DeviGames.Atlas.Core.Events;
@@ -8,7 +12,11 @@ using DeviGames.Atlas.Core.GameFlow.Interfaces;
 using DeviGames.Atlas.Core.GameFlow.Models;
 using DeviGames.Atlas.Core.Save.Services;
 using DeviGames.Atlas.Core.Services;
+using DeviGames.Atlas.Core.Missions.Interfaces;
+using DeviGames.Atlas.Core.Missions.Runtime;
 
+using DeviGames.Atlas.Gameplay.Progression.Interfaces;
+using DeviGames.Atlas.Gameplay.Progression.Models;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 
 using DeviGames.Atlas.Unity.Application;
@@ -21,8 +29,17 @@ namespace DeviGames.Playground.MissionFlow
         [SerializeField]
         private GameObject _panel;
 
+        [SerializeField]
+        private TMP_Text _missionText;
+
+        [SerializeField]
+        private TMP_Text _statusText;
+        [SerializeField]
+        private TMP_Text _rewardsText;
         private MissionFlowCoordinator _missionFlowCoordinator;
+        private IMissionResultService _missionResultService;
         private IGameFlowService _gameFlowService;
+        private IMissionCollection _missionCollection;
         private SaveGameCoordinator _saveGameCoordinator;
 
         private bool _isContinuing;
@@ -34,8 +51,14 @@ namespace DeviGames.Playground.MissionFlow
                 _missionFlowCoordinator =
                     Services.Resolve<MissionFlowCoordinator>();
 
+                _missionResultService =
+                    Services.Resolve<IMissionResultService>();
+
                 _gameFlowService =
                     Services.Resolve<IGameFlowService>();
+                
+                _missionCollection =
+                    Services.Resolve<IMissionCollection>();
 
                 _saveGameCoordinator =
                     Services.Resolve<SaveGameCoordinator>();
@@ -65,7 +88,8 @@ namespace DeviGames.Playground.MissionFlow
                 return;
             }
 
-            _isContinuing = true;
+            _isContinuing =
+                true;
 
             try
             {
@@ -78,7 +102,8 @@ namespace DeviGames.Playground.MissionFlow
             }
             finally
             {
-                _isContinuing = false;
+                _isContinuing =
+                    false;
             }
         }
 
@@ -111,9 +136,115 @@ namespace DeviGames.Playground.MissionFlow
                 return;
             }
 
-            _panel.SetActive(
+            bool isResults =
                 _gameFlowService.State ==
-                GameFlowState.MissionResults);
+                GameFlowState.MissionResults;
+
+            _panel.SetActive(
+                isResults);
+
+            if (!isResults)
+            {
+                return;
+            }
+
+            RefreshResult();
+        }
+
+        private void RefreshResult()
+        {
+            if (_missionText == null ||
+                _statusText == null ||
+                _rewardsText == null)
+            {
+                return;
+            }
+
+            if (!_missionResultService.TryGetResult(
+                    out MissionResult result))
+            {
+                _missionText.text =
+                    "Mission";
+
+                _statusText.text =
+                    "No mission result available.";
+
+                _rewardsText.text =
+                    string.Empty;
+
+                Debug.LogWarning(
+                    "Mission Results opened without a MissionResult.");
+
+                return;
+            }
+
+            if (_missionCollection.TryGet(
+                    result.MissionId,
+                    out MissionRuntime mission))
+            {
+                _missionText.text =
+                    mission.DisplayName;
+            }
+            else
+            {
+                _missionText.text =
+                    result.MissionId;
+
+                Debug.LogWarning(
+                    $"Mission '{result.MissionId}' from MissionResult could not be found.");
+            }
+
+            _statusText.text =
+                result.Completed
+                    ? "Mission Complete"
+                    : "Mission Failed";
+
+            RefreshRewards(
+                result);
+        }
+
+        private void RefreshRewards(
+            MissionResult result)
+        {
+            if (result.RewardCount == 0)
+            {
+                _rewardsText.text =
+                    "No rewards";
+
+                return;
+            }
+
+            var builder =
+                new System.Text.StringBuilder();
+
+            builder.AppendLine(
+                "Rewards");
+
+            for (int index = 0;
+                index < result.Rewards.Count;
+                index++)
+            {
+                MissionRewardResult reward =
+                    result.Rewards[index];
+
+                builder.Append(
+                    reward.Amount);
+
+                builder.Append(
+                    " × ");
+
+                builder.Append(
+                    reward.TargetId);
+
+                if (index <
+                    result.Rewards.Count - 1)
+                {
+                    builder.AppendLine();
+                }
+            }
+
+            _rewardsText.text =
+                builder.ToString();
         }
     }
 }

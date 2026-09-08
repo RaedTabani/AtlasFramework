@@ -7,12 +7,14 @@ using DeviGames.Atlas.Core.GameFlow.Services;
 using DeviGames.Atlas.Core.Missions.Events;
 using DeviGames.Atlas.Gameplay.Progression.Interfaces;
 using DeviGames.Atlas.Gameplay.Progression.Services;
+using DeviGames.Atlas.Gameplay.Progression.Models;
 
 namespace DeviGames.Atlas.Gameplay.Progression.Tests
 {
     public sealed class MissionFlowCoordinatorTests
     {
         private FakeMissionSessionService _sessionService;
+        private FakeMissionResultService _resultService;
         private IGameFlowService _gameFlowService;
         private MissionFlowCoordinator _coordinator;
 
@@ -22,13 +24,20 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
             _sessionService =
                 new FakeMissionSessionService();
 
+            _resultService =
+                new FakeMissionResultService();
+
+            _resultService =
+                new FakeMissionResultService();
+
             _gameFlowService =
                 new GameFlowService();
 
             _coordinator =
                 new MissionFlowCoordinator(
                     _sessionService,
-                    _gameFlowService);
+                    _gameFlowService,
+                    _resultService);
 
             _coordinator.Initialize();
 
@@ -592,7 +601,78 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
 
             _coordinator.Initialize();
         }
+        [Test]
+        public void StartMission_ClearsPreviousResult()
+        {
+            _resultService.SetResult(
+                "mission.previous");
 
+            bool result =
+                _coordinator.StartMission(
+                    "mission.test");
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _resultService.HasResult,
+                Is.False);
+
+            Assert.That(
+                _resultService.ClearCallCount,
+                Is.EqualTo(
+                    1));
+        }
+
+        [Test]
+        public void StartMission_WhenSessionFails_StillClearsPreviousResult()
+        {
+            _resultService.SetResult(
+                "mission.previous");
+
+            _sessionService.AllowStart =
+                false;
+
+            bool result =
+                _coordinator.StartMission(
+                    "mission.test");
+
+            Assert.That(
+                result,
+                Is.False);
+
+            Assert.That(
+                _resultService.HasResult,
+                Is.False);
+
+            Assert.That(
+                _resultService.ClearCallCount,
+                Is.EqualTo(
+                    1));
+        }
+
+        [Test]
+        public void CancelMissionLaunch_DoesNotClearResultAgain()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            int clearCallCount =
+                _resultService.ClearCallCount;
+
+            bool result =
+                _coordinator.CancelMissionLaunch();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _resultService.ClearCallCount,
+                Is.EqualTo(
+                    clearCallCount));
+        }
         private void MoveToMissionOutro()
         {
             _coordinator.StartMission(
@@ -603,6 +683,34 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
             EventBus.Publish(
                 new MissionCompletedEvent(
                     "mission.test"));
+        }
+
+        [Test]
+        public void CompleteResults_DoesNotClearResult()
+        {
+            MoveToMissionResults();
+
+            _resultService.SetResult(
+                "mission.test");
+
+            int clearCallCount =
+                _resultService.ClearCallCount;
+
+            bool result =
+                _coordinator.CompleteResults();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _resultService.HasResult,
+                Is.True);
+
+            Assert.That(
+                _resultService.ClearCallCount,
+                Is.EqualTo(
+                    clearCallCount));
         }
 
         private void MoveToMissionResults()
@@ -664,6 +772,43 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                     string.Empty;
 
                 return true;
+            }
+        }
+
+        private sealed class FakeMissionResultService :
+            IMissionResultService
+        {
+            public MissionResult CurrentResult { get; private set; }
+
+            public bool HasResult =>
+                CurrentResult != null;
+
+            public int ClearCallCount { get; private set; }
+
+            public bool TryGetResult(
+                out MissionResult result)
+            {
+                result =
+                    CurrentResult;
+
+                return result != null;
+            }
+
+            public void Clear()
+            {
+                ClearCallCount++;
+
+                CurrentResult =
+                    null;
+            }
+
+            public void SetResult(
+                string missionId)
+            {
+                CurrentResult =
+                    new MissionResult(
+                        missionId,
+                        true);
             }
         }
     }

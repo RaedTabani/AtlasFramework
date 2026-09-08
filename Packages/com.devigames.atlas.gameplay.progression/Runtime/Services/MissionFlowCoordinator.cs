@@ -15,6 +15,7 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
     {
         private readonly IMissionSessionService _sessionService;
         private readonly IGameFlowService _gameFlowService;
+        private readonly IMissionResultService _resultService;
 
         public string MissionId { get; private set; }
 
@@ -23,10 +24,12 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
         public MissionFlowCoordinator(
             IMissionSessionService sessionService,
-            IGameFlowService gameFlowService)
+            IGameFlowService gameFlowService,
+            IMissionResultService resultService)
         {
             _sessionService = sessionService ?? throw new ArgumentNullException(nameof(sessionService));
             _gameFlowService = gameFlowService ?? throw new ArgumentNullException(nameof(gameFlowService));
+            _resultService = resultService ?? throw new ArgumentNullException(nameof(resultService));
 
             MissionId =
                 string.Empty;
@@ -47,6 +50,8 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
         public bool StartMission(
             string missionId)
         {
+            _resultService.Clear();
+
             if (!_sessionService.Start(
                     missionId))
             {
@@ -69,28 +74,6 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
             return false;
         }
 
-        public bool CompleteIntro()
-        {
-            return _gameFlowService.BeginGameplay();
-        }
-
-        public bool CompleteOutro()
-        {
-            return _gameFlowService.BeginMissionResults();
-        }
-
-        public bool CompleteResults()
-        {
-            if (!_gameFlowService.EnterMainMenu())
-            {
-                return false;
-            }
-
-            MissionId =
-                string.Empty;
-
-            return true;
-        }
         public bool CancelMissionLaunch()
         {
             if (!HasMission)
@@ -116,10 +99,35 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
             return true;
         }
+
+        public bool CompleteIntro()
+        {
+            return _gameFlowService.BeginGameplay();
+        }
+
+        public bool CompleteOutro()
+        {
+            return _gameFlowService.BeginMissionResults();
+        }
+
+        public bool CompleteResults()
+        {
+            if (!_gameFlowService.EnterMainMenu())
+            {
+                return false;
+            }
+
+            MissionId =
+                string.Empty;
+
+            return true;
+        }
+
         private void OnMissionCompleted(
             MissionCompletedEvent eventData)
         {
-            if (_gameFlowService.State != GameFlowState.Gameplay)
+            if (_gameFlowService.State !=
+                GameFlowState.Gameplay)
             {
                 return;
             }

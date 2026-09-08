@@ -6,6 +6,7 @@ using DeviGames.Atlas.Core.Lifecycle.Interfaces;
 using DeviGames.Atlas.Core.Missions.Events;
 using DeviGames.Atlas.Core.Rewards.Interfaces;
 using DeviGames.Atlas.Core.Rewards.Models;
+using DeviGames.Atlas.Core.Rewards.Events;
 using DeviGames.Atlas.Core.Rewards.Registry;
 
 namespace DeviGames.Atlas.Core.Rewards.Services
@@ -82,19 +83,34 @@ namespace DeviGames.Atlas.Core.Rewards.Services
                         $"Reward '{binding.RewardId}' is not registered.");
                 }
 
-                Grant(reward);
+                Grant(eventData.MissionId,reward);
             }
         }
 
         private void Grant(
+            string missionId,
             RewardDefinition reward)
         {
             IRewardHandler handler =
                 _handlerRegistry.Resolve(
                     reward.Type);
 
-            handler.Grant(
-                reward);
+            bool granted =
+                handler.Grant(
+                    reward);
+
+            if (!granted)
+            {
+                return;
+            }
+
+            EventBus.Publish(
+                new MissionRewardGrantedEvent(
+                    missionId,
+                    reward.Id,
+                    reward.Type,
+                    reward.TargetId,
+                    reward.Amount));
         }
     }
 }

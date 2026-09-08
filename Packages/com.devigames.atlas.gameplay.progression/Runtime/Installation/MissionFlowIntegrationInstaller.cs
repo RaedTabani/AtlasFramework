@@ -33,10 +33,14 @@ namespace DeviGames.Atlas.Gameplay.Progression.Installation
             IGameFlowService gameFlowService =
                 services.Resolve<IGameFlowService>();
 
+            IMissionResultService resultService =
+                services.Resolve<IMissionResultService>();
+
             var coordinator =
                 new MissionFlowCoordinator(
                     sessionService,
-                    gameFlowService);
+                    gameFlowService,
+                    resultService);
 
             services.Register(
                 coordinator);
@@ -46,7 +50,7 @@ namespace DeviGames.Atlas.Gameplay.Progression.Installation
             ServiceRegistry services)
         {
             if (services.TryResolve<MissionFlowCoordinator>(
-                out _))
+                    out _))
             {
                 throw new InvalidOperationException(
                     "Atlas Mission Flow integration is already installed.");
