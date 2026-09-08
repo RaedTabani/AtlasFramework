@@ -8,6 +8,7 @@ using DeviGames.Atlas.Core.Services;
 using DeviGames.Atlas.Gameplay.Progression.Interfaces;
 using DeviGames.Atlas.Unity.Application;
 using DeviGames.Atlas.Unity.Scenes.Services;
+using DeviGames.Atlas.Unity.Scenes.Models;
 
 using TMPro;
 
@@ -189,13 +190,14 @@ namespace DeviGames.Playground.MainMenu
 
             try
             {
-                bool launched =
+                MissionLaunchResult result =
                     await _missionLaunchService
                         .LaunchAsync(
                             missionId,
                             progress);
 
-                if (launched)
+                if (result ==
+                    MissionLaunchResult.Success)
                 {
                     _pendingMissionId =
                         string.Empty;
@@ -204,16 +206,17 @@ namespace DeviGames.Playground.MainMenu
                 }
 
                 Debug.LogWarning(
-                    $"Mission '{missionId}' could not be launched.");
+                    $"Mission '{missionId}' could not be launched. Result: {result}.");
 
-                ShowLaunchFailure();
+                ShowLaunchFailure(
+                    result);
             }
             catch (Exception exception)
             {
                 Debug.LogException(
                     exception);
 
-                ShowLaunchFailure();
+                ShowUnexpectedFailure();
             }
             finally
             {
@@ -244,7 +247,8 @@ namespace DeviGames.Playground.MainMenu
                 $"Downloading... {progress:P0}";
         }
 
-        private void ShowLaunchFailure()
+        private void ShowLaunchFailure(
+            MissionLaunchResult result)
         {
             _downloadPanel.SetActive(
                 true);
@@ -253,10 +257,32 @@ namespace DeviGames.Playground.MainMenu
                 false);
 
             _downloadText.text =
-                "Download failed.";
+                GetFailureMessage(
+                    result);
+
+            bool canRetry =
+                result ==
+                    MissionLaunchResult.ContentDownloadFailed ||
+                result ==
+                    MissionLaunchResult.SceneLoadFailed;
 
             _retryButton.gameObject.SetActive(
+                canRetry);
+        }
+
+        private void ShowUnexpectedFailure()
+        {
+            _downloadPanel.SetActive(
                 true);
+
+            _downloadSlider.gameObject.SetActive(
+                false);
+
+            _downloadText.text =
+                "An unexpected error occurred.";
+
+            _retryButton.gameObject.SetActive(
+                false);
         }
 
         private void RetryLaunch()
@@ -292,6 +318,34 @@ namespace DeviGames.Playground.MainMenu
 
             _retryButton.gameObject.SetActive(
                 false);
+        }
+
+        private static string GetFailureMessage(
+            MissionLaunchResult result)
+        {
+            switch (result)
+            {
+                case MissionLaunchResult.MissionNotFound:
+                    return "Mission could not be found.";
+
+                case MissionLaunchResult.MissingSceneKey:
+                    return "Mission scene is not configured.";
+
+                case MissionLaunchResult.MissingContentKey:
+                    return "Mission content is not configured.";
+
+                case MissionLaunchResult.ContentDownloadFailed:
+                    return "Download failed.";
+
+                case MissionLaunchResult.MissionStartRejected:
+                    return "Mission could not be started.";
+
+                case MissionLaunchResult.SceneLoadFailed:
+                    return "Mission scene failed to load.";
+
+                default:
+                    return "Mission could not be launched.";
+            }
         }
     }
 }

@@ -15,5 +15,6 @@ namespace DeviGames.Atlas.Core.GameFlow.Interfaces
         bool BeginMissionOutro();
 
         bool BeginMissionResults();
+        bool CancelMissionIntro();
     }
 }

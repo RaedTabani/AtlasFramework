@@ -91,7 +91,31 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
             return true;
         }
+        public bool CancelMissionLaunch()
+        {
+            if (!HasMission)
+            {
+                return false;
+            }
 
+            if (_gameFlowService.State !=
+                GameFlowState.MissionIntro)
+            {
+                return false;
+            }
+
+            if (!_gameFlowService.CancelMissionIntro())
+            {
+                return false;
+            }
+
+            _sessionService.Exit();
+
+            MissionId =
+                string.Empty;
+
+            return true;
+        }
         private void OnMissionCompleted(
             MissionCompletedEvent eventData)
         {

@@ -196,6 +196,171 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
         }
 
         [Test]
+        public void CancelMissionLaunch_WhenMissionIsInIntro_ReturnsToMainMenu()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            bool result =
+                _coordinator.CancelMissionLaunch();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.MainMenu));
+        }
+
+        [Test]
+        public void CancelMissionLaunch_WhenMissionIsInIntro_ExitsSession()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            bool result =
+                _coordinator.CancelMissionLaunch();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _sessionService.ExitCallCount,
+                Is.EqualTo(
+                    1));
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.False);
+
+            Assert.That(
+                _sessionService.ActiveMissionId,
+                Is.Empty);
+        }
+
+        [Test]
+        public void CancelMissionLaunch_WhenMissionIsInIntro_ClearsMissionId()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            bool result =
+                _coordinator.CancelMissionLaunch();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _coordinator.HasMission,
+                Is.False);
+
+            Assert.That(
+                _coordinator.MissionId,
+                Is.Empty);
+        }
+
+        [Test]
+        public void CancelMissionLaunch_WhenNoMissionExists_Fails()
+        {
+            bool result =
+                _coordinator.CancelMissionLaunch();
+
+            Assert.That(
+                result,
+                Is.False);
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.MainMenu));
+
+            Assert.That(
+                _sessionService.ExitCallCount,
+                Is.EqualTo(
+                    0));
+        }
+
+        [Test]
+        public void CancelMissionLaunch_OutsideMissionIntro_Fails()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            bool result =
+                _coordinator.CancelMissionLaunch();
+
+            Assert.That(
+                result,
+                Is.False);
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.Gameplay));
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.True);
+
+            Assert.That(
+                _coordinator.MissionId,
+                Is.EqualTo(
+                    "mission.test"));
+
+            Assert.That(
+                _sessionService.ExitCallCount,
+                Is.EqualTo(
+                    0));
+        }
+
+        [Test]
+        public void CancelMissionLaunch_AfterSuccessfulRollback_CanStartMissionAgain()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            bool cancelled =
+                _coordinator.CancelMissionLaunch();
+
+            bool restarted =
+                _coordinator.StartMission(
+                    "mission.test");
+
+            Assert.That(
+                cancelled,
+                Is.True);
+
+            Assert.That(
+                restarted,
+                Is.True);
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.True);
+
+            Assert.That(
+                _sessionService.ActiveMissionId,
+                Is.EqualTo(
+                    "mission.test"));
+
+            Assert.That(
+                _coordinator.MissionId,
+                Is.EqualTo(
+                    "mission.test"));
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.MissionIntro));
+        }
+
+        [Test]
         public void CompleteIntro_FromMissionIntro_EntersGameplay()
         {
             _coordinator.StartMission(

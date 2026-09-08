@@ -12,7 +12,8 @@ namespace DeviGames.Atlas.Core.GameFlow.Services
 
         public GameFlowService()
         {
-            State = GameFlowState.Boot;
+            State =
+                GameFlowState.Boot;
         }
 
         public bool EnterMainMenu()
@@ -69,6 +70,17 @@ namespace DeviGames.Atlas.Core.GameFlow.Services
 
             return TransitionTo(
                 GameFlowState.MissionResults);
+        }
+
+        public bool CancelMissionIntro()
+        {
+            if (State != GameFlowState.MissionIntro)
+            {
+                return false;
+            }
+
+            return TransitionTo(
+                GameFlowState.MainMenu);
         }
 
         private bool TransitionTo(

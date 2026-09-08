@@ -5,6 +5,7 @@ using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Core.Missions.Runtime;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 using DeviGames.Atlas.Unity.Scenes.Interfaces;
+using DeviGames.Atlas.Unity.Scenes.Models;
 
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
             _sceneService = sceneService ?? throw new ArgumentNullException(nameof(sceneService));
         }
 
-        public async Task<bool> LaunchAsync(
+        public async Task<MissionLaunchResult> LaunchAsync(
             string missionId,
             IProgress<float> downloadProgress = null)
         {
@@ -40,7 +41,7 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 Debug.LogWarning(
                     $"Mission '{missionId}' could not be found.");
 
-                return false;
+                return MissionLaunchResult.MissionNotFound;
             }
 
             if (string.IsNullOrWhiteSpace(
@@ -49,7 +50,7 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 Debug.LogWarning(
                     $"Mission '{missionId}' does not define a scene key.");
 
-                return false;
+                return MissionLaunchResult.MissingSceneKey;
             }
 
             if (string.IsNullOrWhiteSpace(
@@ -58,7 +59,7 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 Debug.LogWarning(
                     $"Mission '{missionId}' does not define a content key.");
 
-                return false;
+                return MissionLaunchResult.MissingContentKey;
             }
 
             try
@@ -92,11 +93,16 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                     exception);
 
                 Debug.LogWarning(
-                    $"Failed to prepare content for mission '{missionId}'.");
+                    $"Failed to load scene '{mission.SceneKey}' for mission '{missionId}'.");
 
-                return false;
+                if (!_missionFlowCoordinator.CancelMissionLaunch())
+                {
+                    Debug.LogError(
+                        $"Failed to roll back mission '{missionId}' after scene loading failed.");
+                }
+
+                return MissionLaunchResult.SceneLoadFailed;
             }
-
             Debug.Log(
                 $"Launching mission '{missionId}' using scene key '{mission.SceneKey}'.");
 
@@ -106,13 +112,26 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 Debug.LogWarning(
                     $"MissionFlowCoordinator failed to start mission '{missionId}'.");
 
-                return false;
+                return MissionLaunchResult.MissionStartRejected;
             }
 
-            await _sceneService.LoadAsync(
-                mission.SceneKey);
+            try
+            {
+                await _sceneService.LoadAsync(
+                    mission.SceneKey);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(
+                    exception);
 
-            return true;
+                Debug.LogWarning(
+                    $"Failed to load scene '{mission.SceneKey}' for mission '{missionId}'.");
+
+                return MissionLaunchResult.SceneLoadFailed;
+            }
+
+            return MissionLaunchResult.Success;
         }
     }
 }
