@@ -20,7 +20,7 @@
                 "objective.playground.collect-keys"
             ],
             "SceneKey": "scene.playground",
-            "ContentKey": "content.download.test",
+            "ContentKey": "content.playground",
             "IntroSequenceId": "sequence.mission.escape.intro",
             "OutroSequenceId": "sequence.mission.escape.outro"
         },

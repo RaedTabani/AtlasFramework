@@ -15,6 +15,12 @@ MonoBehaviour:
   m_GroupName: Missions Remote
   m_GUID: acc23c74c28bb5b738afb3de4e2b6d71
   m_SerializeEntries:
+  - m_GUID: 00735cd7a4de4054c960c1e508755f64
+    m_Address: Scavenger Variant
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - content.download.test
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0b8b915eae3bc063da43c70db4b27327
     m_Address: test.download.asset
     m_ReadOnly: 0

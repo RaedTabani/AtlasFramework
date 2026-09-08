@@ -9,8 +9,9 @@ using DeviGames.Atlas.Gameplay.Progression.Interfaces;
 using DeviGames.Atlas.Unity.Application;
 using DeviGames.Atlas.Unity.Scenes.Services;
 
-using UnityEngine;
 using TMPro;
+
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace DeviGames.Playground.MainMenu
@@ -30,10 +31,65 @@ namespace DeviGames.Playground.MainMenu
         [SerializeField]
         private Slider _downloadSlider;
 
+        [SerializeField]
+        private Button _retryButton;
+
         private IMissionCollection _missionCollection;
         private IMissionAvailabilityService _availabilityService;
         private MissionProgressService _progressService;
         private MissionLaunchService _missionLaunchService;
+
+        private string _pendingMissionId =
+            string.Empty;
+
+        private bool _isLaunching;
+
+        private void Awake()
+        {
+            if (_view == null)
+            {
+                throw new InvalidOperationException(
+                    "Mission selection view is not assigned.");
+            }
+
+            if (_downloadPanel == null)
+            {
+                throw new InvalidOperationException(
+                    "Download panel is not assigned.");
+            }
+
+            if (_downloadText == null)
+            {
+                throw new InvalidOperationException(
+                    "Download text is not assigned.");
+            }
+
+            if (_downloadSlider == null)
+            {
+                throw new InvalidOperationException(
+                    "Download slider is not assigned.");
+            }
+
+            if (_retryButton == null)
+            {
+                throw new InvalidOperationException(
+                    "Retry button is not assigned.");
+            }
+
+            _retryButton.onClick.AddListener(
+                RetryLaunch);
+
+            ResetDownloadUI();
+        }
+
+        private void OnDestroy()
+        {
+            if (_retryButton != null)
+            {
+                _retryButton.onClick.RemoveListener(
+                    RetryLaunch);
+            }
+        }
 
         private void Start()
         {
@@ -67,7 +123,8 @@ namespace DeviGames.Playground.MainMenu
                 new List<MissionSelectionItem>();
 
             foreach (MissionRuntime mission in
-                _missionCollection.Missions){
+                _missionCollection.Missions)
+            {
                 bool unlocked =
                     _availabilityService.IsAvailable(
                         mission.Id);
@@ -89,36 +146,79 @@ namespace DeviGames.Playground.MainMenu
                 PlayMission);
         }
 
-        private async void PlayMission(
+        private void PlayMission(
             string missionId)
         {
+            if (_isLaunching)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    missionId))
+            {
+                Debug.LogWarning(
+                    "Cannot launch a mission with an empty ID.");
+
+                return;
+            }
+
+            LaunchMissionAsync(
+                missionId);
+        }
+
+        private async void LaunchMissionAsync(
+            string missionId)
+        {
+            if (_isLaunching)
+            {
+                return;
+            }
+
+            _isLaunching =
+                true;
+
+            _pendingMissionId =
+                missionId;
+
+            ResetDownloadUI();
+
+            IProgress<float> progress =
+                new Progress<float>(
+                    OnDownloadProgress);
+
             try
             {
-                _downloadPanel.SetActive(
-                    false);
-
-                _downloadSlider.value =
-                    0f;
-                IProgress<float> progress =
-                    new Progress<float>(
-                        OnDownloadProgress);
                 bool launched =
                     await _missionLaunchService
                         .LaunchAsync(
-                            missionId, progress);
+                            missionId,
+                            progress);
 
-                if (!launched)
+                if (launched)
                 {
-                    Debug.LogWarning(
-                        $"Mission '{missionId}' could not be launched.");
-                    _downloadPanel.SetActive(
-                        false);
+                    _pendingMissionId =
+                        string.Empty;
+
+                    return;
                 }
+
+                Debug.LogWarning(
+                    $"Mission '{missionId}' could not be launched.");
+
+                ShowLaunchFailure();
             }
             catch (Exception exception)
             {
                 Debug.LogException(
                     exception);
+
+                ShowLaunchFailure();
+            }
+            finally
+            {
+                _isLaunching =
+                    false;
             }
         }
 
@@ -131,11 +231,67 @@ namespace DeviGames.Playground.MainMenu
                     true);
             }
 
+            _retryButton.gameObject.SetActive(
+                false);
+
+            _downloadSlider.gameObject.SetActive(
+                true);
+
             _downloadSlider.value =
                 progress;
 
             _downloadText.text =
                 $"Downloading... {progress:P0}";
+        }
+
+        private void ShowLaunchFailure()
+        {
+            _downloadPanel.SetActive(
+                true);
+
+            _downloadSlider.gameObject.SetActive(
+                false);
+
+            _downloadText.text =
+                "Download failed.";
+
+            _retryButton.gameObject.SetActive(
+                true);
+        }
+
+        private void RetryLaunch()
+        {
+            if (_isLaunching)
+            {
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(
+                    _pendingMissionId))
+            {
+                return;
+            }
+
+            PlayMission(
+                _pendingMissionId);
+        }
+
+        private void ResetDownloadUI()
+        {
+            _downloadPanel.SetActive(
+                false);
+
+            _downloadSlider.gameObject.SetActive(
+                true);
+
+            _downloadSlider.value =
+                0f;
+
+            _downloadText.text =
+                string.Empty;
+
+            _retryButton.gameObject.SetActive(
+                false);
         }
     }
 }

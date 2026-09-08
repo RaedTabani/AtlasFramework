@@ -11,5 +11,6 @@ namespace DeviGames.Atlas.Unity.Scenes.Interfaces
         Task DownloadAsync(
             string contentKey,
             IProgress<float> progress = null);
+
     }
 }

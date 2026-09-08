@@ -61,26 +61,40 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 return false;
             }
 
-            Debug.Log(
-                $"Preparing mission '{missionId}' using content '{mission.ContentKey}'.");
-
-            long downloadSize =
-                await _contentDownloadService.GetDownloadSizeAsync(
-                    mission.ContentKey);
-
-            Debug.Log(
-                $"Mission '{missionId}' requires {downloadSize} bytes to download.");
-
-            if (downloadSize > 0)
+            try
             {
                 Debug.Log(
-                    $"Downloading content '{mission.ContentKey}'.");
+                    $"Preparing mission '{missionId}' using content '{mission.ContentKey}'.");
 
-                await _contentDownloadService.DownloadAsync(
-                    mission.ContentKey,downloadProgress);
+                long downloadSize =
+                    await _contentDownloadService.GetDownloadSizeAsync(
+                        mission.ContentKey);
 
                 Debug.Log(
-                    $"Content '{mission.ContentKey}' downloaded successfully.");
+                    $"Mission '{missionId}' requires {downloadSize} bytes to download.");
+
+                if (downloadSize > 0)
+                {
+                    Debug.Log(
+                        $"Downloading content '{mission.ContentKey}'.");
+
+                    await _contentDownloadService.DownloadAsync(
+                        mission.ContentKey,
+                        downloadProgress);
+
+                    Debug.Log(
+                        $"Content '{mission.ContentKey}' downloaded successfully.");
+                }
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(
+                    exception);
+
+                Debug.LogWarning(
+                    $"Failed to prepare content for mission '{missionId}'.");
+
+                return false;
             }
 
             Debug.Log(
