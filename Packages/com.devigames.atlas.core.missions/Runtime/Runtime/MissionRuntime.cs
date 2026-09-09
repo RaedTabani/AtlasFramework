@@ -32,6 +32,13 @@ namespace DeviGames.Atlas.Core.Missions.Runtime
         public bool IsCompleted =>
             State == MissionState.Completed;
 
+        public bool IsFailed =>
+            State == MissionState.Failed;
+        
+        public bool IsEnded =>
+            State == MissionState.Completed ||
+            State == MissionState.Failed;
+
         public int ObjectiveCount =>
             Definition.ObjectiveCount;
 
@@ -71,7 +78,7 @@ namespace DeviGames.Atlas.Core.Missions.Runtime
                 return MissionUpdateResult.None;
             }
 
-            if (IsCompleted)
+            if (IsEnded)
             {
                 return MissionUpdateResult.None;
             }
@@ -137,10 +144,20 @@ namespace DeviGames.Atlas.Core.Missions.Runtime
                 return false;
             }
 
-            return _completedObjectiveIds.Contains(
-                objectiveId);
+            return _completedObjectiveIds.Contains(objectiveId);
         }
 
+        public bool Fail()
+        {
+            if (IsEnded)
+            {
+                return false;
+            }
+
+            State = MissionState.Failed;
+
+            return true;
+        }
         public void Reset()
         {
             _completedObjectiveIds.Clear();

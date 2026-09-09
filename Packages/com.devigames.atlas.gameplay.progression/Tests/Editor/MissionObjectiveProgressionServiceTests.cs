@@ -544,6 +544,11 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 return HasActiveSession;
             }
 
+            public bool Fail()
+            {
+                return HasActiveSession;
+            }
+
             public bool Exit()
             {
                 if (!HasActiveSession)

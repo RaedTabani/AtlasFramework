@@ -28,6 +28,9 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
         {
             EventBus.Subscribe<MissionCompletedEvent>(
                 OnMissionCompleted);
+            
+            EventBus.Subscribe<MissionFailedEvent>(
+                OnMissionFailed);
 
             EventBus.Subscribe<MissionRewardGrantedEvent>(
                 OnMissionRewardGranted);
@@ -37,6 +40,9 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
         {
             EventBus.Unsubscribe<MissionCompletedEvent>(
                 OnMissionCompleted);
+
+            EventBus.Unsubscribe<MissionFailedEvent>(
+                OnMissionFailed);
 
             EventBus.Unsubscribe<MissionRewardGrantedEvent>(
                 OnMissionRewardGranted);
@@ -150,6 +156,23 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
             _pendingRewards.Remove(
                 result.MissionId);
+        }
+
+        private void OnMissionFailed(
+            MissionFailedEvent eventData)
+        {
+            if (string.IsNullOrWhiteSpace(eventData.MissionId))
+            {
+                return;
+            }
+
+            CurrentResult =
+                new MissionResult(
+                    eventData.MissionId,
+                    false);
+
+            ApplyPendingRewards(
+                CurrentResult);
         }
     }
 }

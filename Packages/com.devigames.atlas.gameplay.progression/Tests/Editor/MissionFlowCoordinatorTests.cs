@@ -26,10 +26,7 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
 
             _resultService =
                 new FakeMissionResultService();
-
-            _resultService =
-                new FakeMissionResultService();
-
+                
             _gameFlowService =
                 new GameFlowService();
 
@@ -712,7 +709,111 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 Is.EqualTo(
                     clearCallCount));
         }
+        [Test]
+        public void MissionFailed_DuringGameplay_EntersMissionOutro()
+        {
+            _coordinator.StartMission(
+                "mission.test");
 
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.MissionOutro));
+        }
+
+        [Test]
+        public void MissionFailed_DuringGameplay_PreservesMissionId()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _coordinator.HasMission,
+                Is.True);
+
+            Assert.That(
+                _coordinator.MissionId,
+                Is.EqualTo(
+                    "mission.test"));
+        }
+
+        [Test]
+        public void MissionFailed_ForDifferentMission_DoesNotEnterMissionOutro()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.other"));
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.Gameplay));
+
+            Assert.That(
+                _coordinator.MissionId,
+                Is.EqualTo(
+                    "mission.test"));
+        }
+
+        [Test]
+        public void MissionFailed_OutsideGameplay_DoesNotChangeState()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.MissionIntro));
+
+            Assert.That(
+                _coordinator.MissionId,
+                Is.EqualTo(
+                    "mission.test"));
+        }
+
+        [Test]
+        public void Shutdown_UnsubscribesFromMissionFailedEvent()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            _coordinator.Shutdown();
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _gameFlowService.State,
+                Is.EqualTo(
+                    GameFlowState.Gameplay));
+
+            _coordinator.Initialize();
+        }
         private void MoveToMissionResults()
         {
             MoveToMissionOutro();
@@ -757,6 +858,19 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
             public bool Restart()
             {
                 return HasActiveSession;
+            }
+
+            public bool Fail()
+            {
+                if (!HasActiveSession)
+                {
+                    return false;
+                }
+
+                ActiveMissionId =
+                    string.Empty;
+
+                return true;
             }
 
             public bool Exit()

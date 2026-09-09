@@ -3,6 +3,7 @@ namespace DeviGames.Atlas.Core.Missions.Models
     public enum MissionState
     {
         Active,
-        Completed
+        Completed,
+        Failed
     }
 }

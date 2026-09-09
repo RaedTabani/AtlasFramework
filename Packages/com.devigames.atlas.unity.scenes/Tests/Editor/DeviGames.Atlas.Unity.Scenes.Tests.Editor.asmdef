@@ -2,7 +2,11 @@
     "name": "DeviGames.Atlas.Unity.Scenes.Tests.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:d1159ca765871a8b7bd3d532ddb8ef8c"
+        "GUID:d1159ca765871a8b7bd3d532ddb8ef8c",
+        "GUID:81898e96d65242c9da4f742f69ad5fef",
+        "GUID:56930c55bbcef15629afeb1d14f61d2e",
+        "GUID:6868988f9aa6b6986bb42474f4838c02",
+        "GUID:c8c9655e15b092598b064cbd4e7df6e0"
     ],
     "includePlatforms": [
         "Editor"

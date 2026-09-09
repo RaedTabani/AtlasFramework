@@ -10,6 +10,8 @@ namespace DeviGames.Atlas.Gameplay.Progression.Interfaces
 
         bool Restart();
 
+        bool Fail();
+
         bool Exit();
     }
 }

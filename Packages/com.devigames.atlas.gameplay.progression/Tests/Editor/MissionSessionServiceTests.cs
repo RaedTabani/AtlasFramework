@@ -1,14 +1,13 @@
-using UnityEngine;
 using NUnit.Framework;
 
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.Missions.Collections;
-using DeviGames.Atlas.Core.Missions.Runtime;
-using DeviGames.Atlas.Core.Missions.Models;
 using DeviGames.Atlas.Core.Missions.Events;
+using DeviGames.Atlas.Core.Missions.Models;
+using DeviGames.Atlas.Core.Missions.Runtime;
 using DeviGames.Atlas.Core.Objectives.Collections;
-using DeviGames.Atlas.Core.Objectives.Runtime;
 using DeviGames.Atlas.Core.Objectives.Models;
+using DeviGames.Atlas.Core.Objectives.Runtime;
 using DeviGames.Atlas.Core.Unlocks.Interfaces;
 using DeviGames.Atlas.Core.Unlocks.Services;
 
@@ -17,7 +16,7 @@ using DeviGames.Atlas.Gameplay.Progression.Services;
 
 namespace DeviGames.Atlas.Gameplay.Progression.Tests
 {
-    public class MissionSessionServiceTests 
+    public class MissionSessionServiceTests
     {
         private MissionCollection _missionCollection;
         private ObjectiveCollection _objectiveCollection;
@@ -28,9 +27,14 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
         [SetUp]
         public void SetUp()
         {
-            _missionCollection = new MissionCollection();
-            _objectiveCollection = new ObjectiveCollection();
-            _unlockService = new UnlockService();
+            _missionCollection =
+                new MissionCollection();
+
+            _objectiveCollection =
+                new ObjectiveCollection();
+
+            _unlockService =
+                new UnlockService();
 
             RegisterMission(
                 "mission.chapter-01",
@@ -40,7 +44,8 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 "mission.chapter-02",
                 "objective.chapter-02");
 
-            _unlockService.Unlock("mission.chapter-01");
+            _unlockService.Unlock(
+                "mission.chapter-01");
 
             _availabilityService =
                 new MissionAvailabilityService(
@@ -61,12 +66,18 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 _sessionService.Start(
                     "mission.chapter-01");
 
-            Assert.That(result, Is.True);
-            Assert.That(_sessionService.HasActiveSession, Is.True);
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.True);
 
             Assert.That(
                 _sessionService.ActiveMissionId,
-                Is.EqualTo("mission.chapter-01"));
+                Is.EqualTo(
+                    "mission.chapter-01"));
         }
 
         [Test]
@@ -76,8 +87,13 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 _sessionService.Start(
                     "mission.chapter-02");
 
-            Assert.That(result, Is.False);
-            Assert.That(_sessionService.HasActiveSession, Is.False);
+            Assert.That(
+                result,
+                Is.False);
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.False);
         }
 
         [Test]
@@ -87,8 +103,13 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 _sessionService.Start(
                     "mission.unknown");
 
-            Assert.That(result, Is.False);
-            Assert.That(_sessionService.HasActiveSession, Is.False);
+            Assert.That(
+                result,
+                Is.False);
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.False);
         }
 
         [Test]
@@ -104,11 +125,14 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 _sessionService.Start(
                     "mission.chapter-02");
 
-            Assert.That(result, Is.False);
+            Assert.That(
+                result,
+                Is.False);
 
             Assert.That(
                 _sessionService.ActiveMissionId,
-                Is.EqualTo("mission.chapter-01"));
+                Is.EqualTo(
+                    "mission.chapter-01"));
         }
 
         [Test]
@@ -125,28 +149,253 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 "mission.chapter-01",
                 out MissionRuntime mission);
 
-            objective.AddProgress(3);
+            objective.AddProgress(
+                3);
 
             mission.NotifyObjectiveCompleted(
                 "objective.chapter-01");
 
-            Assert.That(objective.IsCompleted, Is.True);
-            Assert.That(mission.IsCompleted, Is.True);
+            Assert.That(
+                objective.IsCompleted,
+                Is.True);
+
+            Assert.That(
+                mission.IsCompleted,
+                Is.True);
 
             bool result =
                 _sessionService.Restart();
 
-            Assert.That(result, Is.True);
+            Assert.That(
+                result,
+                Is.True);
 
-            Assert.That(objective.CurrentValue, Is.Zero);
-            Assert.That(objective.IsCompleted, Is.False);
+            Assert.That(
+                objective.CurrentValue,
+                Is.Zero);
 
-            Assert.That(mission.CompletedObjectiveCount, Is.Zero);
-            Assert.That(mission.IsCompleted, Is.False);
+            Assert.That(
+                objective.IsCompleted,
+                Is.False);
+
+            Assert.That(
+                mission.CompletedObjectiveCount,
+                Is.Zero);
+
+            Assert.That(
+                mission.IsCompleted,
+                Is.False);
 
             Assert.That(
                 _sessionService.ActiveMissionId,
-                Is.EqualTo("mission.chapter-01"));
+                Is.EqualTo(
+                    "mission.chapter-01"));
+        }
+
+        [Test]
+        public void Fail_ActiveMission_MarksMissionFailed()
+        {
+            _sessionService.Start(
+                "mission.chapter-01");
+
+            _missionCollection.TryGet(
+                "mission.chapter-01",
+                out MissionRuntime mission);
+
+            bool result =
+                _sessionService.Fail();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                mission.IsFailed,
+                Is.True);
+
+            Assert.That(
+                mission.IsEnded,
+                Is.True);
+
+            Assert.That(
+                mission.State,
+                Is.EqualTo(
+                    MissionState.Failed));
+        }
+
+        [Test]
+        public void Fail_ActiveMission_EndsSession()
+        {
+            _sessionService.Start(
+                "mission.chapter-01");
+
+            bool result =
+                _sessionService.Fail();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.False);
+
+            Assert.That(
+                _sessionService.ActiveMissionId,
+                Is.Empty);
+        }
+
+        [Test]
+        public void Fail_ActiveMission_PublishesMissionFailedEvent()
+        {
+            int eventCount =
+                0;
+
+            MissionFailedEvent receivedEvent =
+                default;
+
+            void OnMissionFailed(
+                MissionFailedEvent eventData)
+            {
+                eventCount++;
+                receivedEvent =
+                    eventData;
+            }
+
+            EventBus.Subscribe<MissionFailedEvent>(
+                OnMissionFailed);
+
+            try
+            {
+                _sessionService.Start(
+                    "mission.chapter-01");
+
+                bool result =
+                    _sessionService.Fail();
+
+                Assert.That(
+                    result,
+                    Is.True);
+
+                Assert.That(
+                    eventCount,
+                    Is.EqualTo(
+                        1));
+
+                Assert.That(
+                    receivedEvent.MissionId,
+                    Is.EqualTo(
+                        "mission.chapter-01"));
+            }
+            finally
+            {
+                EventBus.Unsubscribe<MissionFailedEvent>(
+                    OnMissionFailed);
+            }
+        }
+
+        [Test]
+        public void Fail_WithoutActiveSession_ReturnsFalse()
+        {
+            bool result =
+                _sessionService.Fail();
+
+            Assert.That(
+                result,
+                Is.False);
+        }
+
+        [Test]
+        public void Fail_PreservesObjectiveProgress()
+        {
+            _sessionService.Start(
+                "mission.chapter-01");
+
+            _objectiveCollection.TryGet(
+                "objective.chapter-01",
+                out ObjectiveRuntime objective);
+
+            objective.AddProgress(
+                2);
+
+            bool result =
+                _sessionService.Fail();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                objective.CurrentValue,
+                Is.EqualTo(
+                    2));
+        }
+
+        [Test]
+        public void Start_AfterFailure_ResetsMissionAndObjectives()
+        {
+            _sessionService.Start(
+                "mission.chapter-01");
+
+            _objectiveCollection.TryGet(
+                "objective.chapter-01",
+                out ObjectiveRuntime objective);
+
+            _missionCollection.TryGet(
+                "mission.chapter-01",
+                out MissionRuntime mission);
+
+            objective.AddProgress(
+                2);
+
+            _sessionService.Fail();
+
+            Assert.That(
+                mission.IsFailed,
+                Is.True);
+
+            Assert.That(
+                objective.CurrentValue,
+                Is.EqualTo(
+                    2));
+
+            bool result =
+                _sessionService.Start(
+                    "mission.chapter-01");
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                mission.State,
+                Is.EqualTo(
+                    MissionState.Active));
+
+            Assert.That(
+                mission.IsFailed,
+                Is.False);
+
+            Assert.That(
+                mission.CompletedObjectiveCount,
+                Is.Zero);
+
+            Assert.That(
+                objective.CurrentValue,
+                Is.Zero);
+
+            Assert.That(
+                objective.IsCompleted,
+                Is.False);
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.True);
+
+            Assert.That(
+                _sessionService.ActiveMissionId,
+                Is.EqualTo(
+                    "mission.chapter-01"));
         }
 
         [Test]
@@ -159,24 +408,38 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
                 "objective.chapter-01",
                 out ObjectiveRuntime objective);
 
-            objective.AddProgress(2);
+            objective.AddProgress(
+                2);
 
             bool result =
                 _sessionService.Exit();
 
-            Assert.That(result, Is.True);
+            Assert.That(
+                result,
+                Is.True);
 
-            Assert.That(objective.CurrentValue, Is.Zero);
-            Assert.That(_sessionService.HasActiveSession, Is.False);
-            Assert.That(_sessionService.ActiveMissionId, Is.Empty);
+            Assert.That(
+                objective.CurrentValue,
+                Is.Zero);
+
+            Assert.That(
+                _sessionService.HasActiveSession,
+                Is.False);
+
+            Assert.That(
+                _sessionService.ActiveMissionId,
+                Is.Empty);
         }
+
         [Test]
         public void Exit_WithoutActiveSession_ReturnsFalse()
         {
             bool result =
                 _sessionService.Exit();
 
-            Assert.That(result, Is.False);
+            Assert.That(
+                result,
+                Is.False);
         }
 
         [Test]
@@ -186,13 +449,20 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
 
             try
             {
-                _sessionService.Start("mission.chapter-01");
+                _sessionService.Start(
+                    "mission.chapter-01");
 
                 EventBus.Publish(
-                    new MissionCompletedEvent("mission.chapter-01"));
+                    new MissionCompletedEvent(
+                        "mission.chapter-01"));
 
-                Assert.That(_sessionService.HasActiveSession, Is.False);
-                Assert.That(_sessionService.ActiveMissionId, Is.Empty);
+                Assert.That(
+                    _sessionService.HasActiveSession,
+                    Is.False);
+
+                Assert.That(
+                    _sessionService.ActiveMissionId,
+                    Is.Empty);
             }
             finally
             {
@@ -207,21 +477,28 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
 
             try
             {
-                _sessionService.Start("mission.chapter-01");
+                _sessionService.Start(
+                    "mission.chapter-01");
 
                 EventBus.Publish(
-                    new MissionCompletedEvent("mission.chapter-02"));
+                    new MissionCompletedEvent(
+                        "mission.chapter-02"));
 
-                Assert.That(_sessionService.HasActiveSession, Is.True);
+                Assert.That(
+                    _sessionService.HasActiveSession,
+                    Is.True);
+
                 Assert.That(
                     _sessionService.ActiveMissionId,
-                    Is.EqualTo("mission.chapter-01"));
+                    Is.EqualTo(
+                        "mission.chapter-01"));
             }
             finally
             {
                 _sessionService.Shutdown();
             }
         }
+
         private void RegisterMission(
             string missionId,
             string objectiveId)

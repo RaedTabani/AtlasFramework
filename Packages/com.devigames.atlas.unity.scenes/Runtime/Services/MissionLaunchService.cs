@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace DeviGames.Atlas.Unity.Scenes.Services
 {
-    public sealed class MissionLaunchService
+    public sealed class MissionLaunchService : IMissionLaunchService
     {
         private readonly MissionFlowCoordinator _missionFlowCoordinator;
         private readonly IMissionCollection _missionCollection;
@@ -93,16 +93,11 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                     exception);
 
                 Debug.LogWarning(
-                    $"Failed to load scene '{mission.SceneKey}' for mission '{missionId}'.");
+                    $"Failed to prepare content '{mission.ContentKey}' for mission '{missionId}'.");
 
-                if (!_missionFlowCoordinator.CancelMissionLaunch())
-                {
-                    Debug.LogError(
-                        $"Failed to roll back mission '{missionId}' after scene loading failed.");
-                }
-
-                return MissionLaunchResult.SceneLoadFailed;
+                return MissionLaunchResult.ContentDownloadFailed;
             }
+
             Debug.Log(
                 $"Launching mission '{missionId}' using scene key '{mission.SceneKey}'.");
 
@@ -127,6 +122,12 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
 
                 Debug.LogWarning(
                     $"Failed to load scene '{mission.SceneKey}' for mission '{missionId}'.");
+
+                if (!_missionFlowCoordinator.CancelMissionLaunch())
+                {
+                    Debug.LogError(
+                        $"Failed to roll back mission '{missionId}' after scene loading failed.");
+                }
 
                 return MissionLaunchResult.SceneLoadFailed;
             }

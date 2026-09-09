@@ -39,12 +39,18 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
         {
             EventBus.Subscribe<MissionCompletedEvent>(
                 OnMissionCompleted);
+            
+            EventBus.Subscribe<MissionFailedEvent>(
+                OnMissionFailed);
         }
 
         public void Shutdown()
         {
             EventBus.Unsubscribe<MissionCompletedEvent>(
                 OnMissionCompleted);
+
+            EventBus.Unsubscribe<MissionFailedEvent>(
+                OnMissionFailed);
         }
 
         public bool StartMission(
@@ -125,6 +131,26 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
         private void OnMissionCompleted(
             MissionCompletedEvent eventData)
+        {
+            if (_gameFlowService.State !=
+                GameFlowState.Gameplay)
+            {
+                return;
+            }
+
+            if (!string.Equals(
+                    MissionId,
+                    eventData.MissionId,
+                    StringComparison.Ordinal))
+            {
+                return;
+            }
+
+            _gameFlowService.BeginMissionOutro();
+        }
+
+        private void OnMissionFailed(
+            MissionFailedEvent eventData)
         {
             if (_gameFlowService.State !=
                 GameFlowState.Gameplay)

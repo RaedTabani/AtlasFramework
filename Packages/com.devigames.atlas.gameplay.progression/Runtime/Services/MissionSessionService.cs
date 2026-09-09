@@ -125,6 +125,38 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
             ActiveMissionId = string.Empty;
         }
 
+        public bool Fail()
+        {
+            if (!HasActiveSession)
+            {
+                return false;
+            }
+
+            string missionId =
+                ActiveMissionId;
+
+            if (!_missionCollection.TryGet(
+                    missionId,
+                    out MissionRuntime mission))
+            {
+                return false;
+            }
+
+            if (!mission.Fail())
+            {
+                return false;
+            }
+
+            ActiveMissionId =
+                string.Empty;
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    missionId));
+
+            return true;
+        }
+
         private void ResetMissionRuntime(MissionRuntime mission)
         {
             mission.Reset();
