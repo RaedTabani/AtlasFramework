@@ -1,10 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using System.Text;
-
 using TMPro;
-
 using UnityEngine;
+using UnityEngine.UI;
 
 using DeviGames.Atlas.Core.Events;
 using DeviGames.Atlas.Core.GameFlow.Events;
@@ -20,6 +19,9 @@ using DeviGames.Atlas.Gameplay.Progression.Models;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 
 using DeviGames.Atlas.Unity.Application;
+using DeviGames.Atlas.Unity.Scenes.Interfaces;
+using DeviGames.Atlas.Unity.Scenes.Models;
+
 
 namespace DeviGames.Playground.MissionFlow
 {
@@ -36,18 +38,29 @@ namespace DeviGames.Playground.MissionFlow
         private TMP_Text _statusText;
         [SerializeField]
         private TMP_Text _rewardsText;
+        [SerializeField]
+        private Button _retryButton;
+
+        private IMissionLaunchService _missionLaunchService;
         private MissionFlowCoordinator _missionFlowCoordinator;
         private IMissionResultService _missionResultService;
         private IGameFlowService _gameFlowService;
         private IMissionCollection _missionCollection;
         private SaveGameCoordinator _saveGameCoordinator;
 
+        private IMissionSessionService _missionSessionService;
+
+
         private bool _isContinuing;
+        private bool _isRetrying;
 
         private void Start()
         {
             try
             {
+                _missionLaunchService =
+                    AtlasApplication.Instance.MissionLaunchService;
+
                 _missionFlowCoordinator =
                     Services.Resolve<MissionFlowCoordinator>();
 
@@ -62,6 +75,10 @@ namespace DeviGames.Playground.MissionFlow
 
                 _saveGameCoordinator =
                     Services.Resolve<SaveGameCoordinator>();
+
+
+                _missionSessionService = 
+                    Services.Resolve<IMissionSessionService>();
 
                 EventBus.Subscribe<GameFlowStateChangedEvent>(
                     OnGameFlowStateChanged);
@@ -83,7 +100,8 @@ namespace DeviGames.Playground.MissionFlow
 
         public async void Continue()
         {
-            if (_isContinuing)
+            if (_isContinuing || 
+                _isRetrying)
             {
                 return;
             }
@@ -127,7 +145,82 @@ namespace DeviGames.Playground.MissionFlow
         {
             Refresh();
         }
+        public async void Retry()
+        {
+            if (_isRetrying ||
+                _isContinuing)
+            {
+                return;
+            }
 
+            if (!_missionResultService.TryGetResult(
+                    out MissionResult result))
+            {
+                Debug.LogWarning(
+                    "Mission retry requested without a MissionResult.");
+
+                return;
+            }
+
+            if (result.Completed)
+            {
+                Debug.LogWarning(
+                    $"Mission '{result.MissionId}' cannot be retried because it was completed.");
+
+                return;
+            }
+
+            string missionId =
+                result.MissionId;
+
+            _isRetrying =
+                true;
+
+            try
+            {
+                await RetryAsync(
+                    missionId);
+            }
+            catch (Exception exception)
+            {
+                Debug.LogException(
+                    exception);
+            }
+            finally
+            {
+                _isRetrying =
+                    false;
+            }
+        }
+
+        private async Task RetryAsync(
+            string missionId)
+        {
+            await _saveGameCoordinator.SaveAsync();
+
+            if (!_missionFlowCoordinator.CompleteResults())
+            {
+                Debug.LogWarning(
+                    $"Mission '{missionId}' could not leave the results state for retry.");
+
+                return;
+            }
+
+            MissionLaunchResult launchResult =
+                await _missionLaunchService.LaunchAsync(
+                    missionId);
+
+            if (launchResult ==
+                MissionLaunchResult.Success)
+            {
+                return;
+            }
+
+            Debug.LogWarning(
+                $"Retry launch for mission '{missionId}' failed with result '{launchResult}'.");
+
+            await AtlasApplication.Instance.ReturnToMainMenuAsync();
+        }
         private void Refresh()
         {
             if (_gameFlowService == null ||
@@ -172,6 +265,12 @@ namespace DeviGames.Playground.MissionFlow
                 _rewardsText.text =
                     string.Empty;
 
+                if (_retryButton != null)
+                {
+                    _retryButton.gameObject.SetActive(
+                        false);
+                }
+
                 Debug.LogWarning(
                     "Mission Results opened without a MissionResult.");
 
@@ -198,6 +297,12 @@ namespace DeviGames.Playground.MissionFlow
                 result.Completed
                     ? "Mission Complete"
                     : "Mission Failed";
+
+            if (_retryButton != null)
+            {
+                _retryButton.gameObject.SetActive(
+                    !result.Completed);
+            }
 
             RefreshRewards(
                 result);
@@ -246,5 +351,23 @@ namespace DeviGames.Playground.MissionFlow
             _rewardsText.text =
                 builder.ToString();
         }
+
+        #region FailTest
+        
+            void Update()
+            {
+                if (Input.GetKeyDown(
+                        KeyCode.F))
+                {
+                        bool failed =
+                            _missionSessionService.Fail();
+
+                        Debug.Log(
+                            failed
+                                ? "Mission failed manually."
+                                : "Could not fail mission.");
+                }
+            }
+        #endregion
     }
 }

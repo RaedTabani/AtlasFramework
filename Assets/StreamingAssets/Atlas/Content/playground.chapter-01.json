@@ -22,7 +22,8 @@
             "SceneKey": "scene.playground",
             "ContentKey": "content.playground",
             "IntroSequenceId": "sequence.mission.escape.intro",
-            "OutroSequenceId": "sequence.mission.escape.outro"
+            "OutroSequenceId": "sequence.mission.escape.outro",
+            "FailureOutroSequenceId": "sequence.mission.escape.failure"
         },
         {
             "Id": "mission.playground.chapter-02",
@@ -33,8 +34,9 @@
             ],
             "SceneKey": "scene.playground",
             "ContentKey": "content.playground",
-            "IntroSequenceId": "sequence.mission.escape.intro",
-            "OutroSequenceId": "sequence.mission.chapter-02.outro"
+            "IntroSequenceId": "sequence.mission.chapter-02.intro",
+            "OutroSequenceId": "sequence.mission.chapter-02.outro",
+            "FailureOutroSequenceId": "sequence.mission.chapter-02.failure"
         }
     ],
 
@@ -148,6 +150,18 @@
                 {
                     "Type": "show-text",
                     "Text": "But the teacher may already know where you went..."
+                },
+                {
+                    "Type": "wait-for-continue"
+                }
+            ]
+        },
+        {
+            "Id": "sequence.mission.escape.failure",
+            "Steps": [
+                {
+                    "Type": "show-text",
+                    "Text": "You Just Lost.."
                 },
                 {
                     "Type": "wait-for-continue"

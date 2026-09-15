@@ -56,6 +56,8 @@ namespace DeviGames.Atlas.Core.Missions.Runtime
 
         public string OutroSequenceId =>
             Definition.OutroSequenceId;
+        public string FailureOutroSequenceId =>
+            Definition.FailureOutroSequenceId;
         public MissionRuntime(
             MissionDefinition definition)
         {

@@ -137,7 +137,9 @@ namespace DeviGames.Atlas.Core.Content.Installation
                         introSequenceId:
                             data.IntroSequenceId,
                         outroSequenceId:
-                            data.OutroSequenceId);
+                            data.OutroSequenceId,
+                        failureOutroSequenceId:
+                            data.FailureOutroSequenceId);
 
                 _missionService.Register(
                     definition);

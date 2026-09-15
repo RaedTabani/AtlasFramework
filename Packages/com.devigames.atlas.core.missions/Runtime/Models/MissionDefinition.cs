@@ -19,6 +19,7 @@ namespace DeviGames.Atlas.Core.Missions.Models
         public string IntroSequenceId { get; }
 
         public string OutroSequenceId { get; }
+        public string FailureOutroSequenceId { get; }
 
         public IReadOnlyList<string> ObjectiveIds =>
             _objectiveIds;
@@ -34,7 +35,8 @@ namespace DeviGames.Atlas.Core.Missions.Models
             string sceneKey = null,
             string contentKey = null,
             string introSequenceId = null,
-            string outroSequenceId = null)
+            string outroSequenceId = null,
+            string failureOutroSequenceId = null)
         {
             if (string.IsNullOrWhiteSpace(id))
             {
@@ -74,6 +76,8 @@ namespace DeviGames.Atlas.Core.Missions.Models
 
             OutroSequenceId =
                 outroSequenceId ?? string.Empty;
+            FailureOutroSequenceId =
+                failureOutroSequenceId ?? string.Empty;
         }
 
         private static string[] ValidateAndCopyObjectiveIds(

@@ -5,6 +5,7 @@ using DeviGames.Atlas.Core.GameFlow.Interfaces;
 using DeviGames.Atlas.Core.GameFlow.Models;
 using DeviGames.Atlas.Core.GameFlow.Services;
 using DeviGames.Atlas.Core.Missions.Events;
+using DeviGames.Atlas.Core.Missions.Models;
 using DeviGames.Atlas.Gameplay.Progression.Interfaces;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 using DeviGames.Atlas.Gameplay.Progression.Models;
@@ -819,6 +820,238 @@ namespace DeviGames.Atlas.Gameplay.Progression.Tests
             MoveToMissionOutro();
 
             _coordinator.CompleteOutro();
+        }
+        [Test]
+        public void NewCoordinator_HasNoOutcome()
+        {
+            Assert.That(
+                _coordinator.HasOutcome,
+                Is.False);
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void StartMission_HasNoOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            Assert.That(
+                _coordinator.HasOutcome,
+                Is.False);
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void MissionCompleted_DuringGameplay_SetsCompletedOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionCompletedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _coordinator.HasOutcome,
+                Is.True);
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.Completed));
+        }
+
+        [Test]
+        public void MissionFailed_DuringGameplay_SetsFailedOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _coordinator.HasOutcome,
+                Is.True);
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.Failed));
+        }
+
+        [Test]
+        public void MissionCompleted_ForDifferentMission_DoesNotSetOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionCompletedEvent(
+                    "mission.other"));
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void MissionFailed_ForDifferentMission_DoesNotSetOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.other"));
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void MissionCompleted_OutsideGameplay_DoesNotSetOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            EventBus.Publish(
+                new MissionCompletedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void MissionFailed_OutsideGameplay_DoesNotSetOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.test"));
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void CompleteOutro_PreservesOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            EventBus.Publish(
+                new MissionCompletedEvent(
+                    "mission.test"));
+
+            _coordinator.CompleteOutro();
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.Completed));
+        }
+
+        [Test]
+        public void CompleteResults_ClearsOutcome()
+        {
+            MoveToMissionResults();
+
+            bool result =
+                _coordinator.CompleteResults();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _coordinator.HasOutcome,
+                Is.False);
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void CancelMissionLaunch_ClearsOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            bool result =
+                _coordinator.CancelMissionLaunch();
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
+        }
+
+        [Test]
+        public void StartMission_AfterPreviousResult_HasNoOutcome()
+        {
+            _coordinator.StartMission(
+                "mission.test");
+
+            _coordinator.CompleteIntro();
+
+            _sessionService.Fail();
+
+            EventBus.Publish(
+                new MissionFailedEvent(
+                    "mission.test"));
+
+            _coordinator.CompleteOutro();
+            _coordinator.CompleteResults();
+
+            bool result =
+                _coordinator.StartMission(
+                    "mission.test");
+
+            Assert.That(
+                result,
+                Is.True);
+
+            Assert.That(
+                _coordinator.Outcome,
+                Is.EqualTo(
+                    MissionOutcome.None));
         }
 
         private sealed class FakeMissionSessionService :

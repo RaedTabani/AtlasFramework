@@ -5,6 +5,7 @@ using DeviGames.Atlas.Core.GameFlow.Interfaces;
 using DeviGames.Atlas.Core.GameFlow.Models;
 using DeviGames.Atlas.Core.Lifecycle.Interfaces;
 using DeviGames.Atlas.Core.Missions.Events;
+using DeviGames.Atlas.Core.Missions.Models;
 using DeviGames.Atlas.Gameplay.Progression.Interfaces;
 
 namespace DeviGames.Atlas.Gameplay.Progression.Services
@@ -18,7 +19,10 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
         private readonly IMissionResultService _resultService;
 
         public string MissionId { get; private set; }
+        public MissionOutcome Outcome { get; private set; }
 
+        public bool HasOutcome =>
+            Outcome != MissionOutcome.None;
         public bool HasMission =>
             !string.IsNullOrWhiteSpace(MissionId);
 
@@ -66,6 +70,8 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
             MissionId =
                 missionId;
+            Outcome =
+                MissionOutcome.None;
 
             if (_gameFlowService.BeginMissionIntro())
             {
@@ -102,6 +108,8 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
             MissionId =
                 string.Empty;
+            Outcome =
+                MissionOutcome.None;
 
             return true;
         }
@@ -125,6 +133,8 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
 
             MissionId =
                 string.Empty;
+            Outcome =
+                MissionOutcome.None;
 
             return true;
         }
@@ -146,6 +156,7 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
                 return;
             }
 
+            Outcome = MissionOutcome.Completed;
             _gameFlowService.BeginMissionOutro();
         }
 
@@ -166,6 +177,7 @@ namespace DeviGames.Atlas.Gameplay.Progression.Services
                 return;
             }
 
+            Outcome = MissionOutcome.Failed;
             _gameFlowService.BeginMissionOutro();
         }
     }

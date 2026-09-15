@@ -6,6 +6,7 @@ using DeviGames.Atlas.Core.GameFlow.Interfaces;
 using DeviGames.Atlas.Core.GameFlow.Models;
 using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Core.Missions.Runtime;
+using DeviGames.Atlas.Core.Missions.Models;
 using DeviGames.Atlas.Core.Sequence.Events;
 using DeviGames.Atlas.Core.Sequence.Factories;
 using DeviGames.Atlas.Core.Sequence.Collections;
@@ -138,15 +139,16 @@ namespace DeviGames.Playground.MissionFlow
                     $"Mission '{_missionFlowCoordinator.MissionId}' could not be found.");
             }
 
-            if (string.IsNullOrWhiteSpace(
-                    mission.OutroSequenceId))
-            {
-                throw new InvalidOperationException(
-                    $"Mission '{mission.Id}' does not define an outro sequence.");
-            }
+                _activeOutroSequenceId =
+                    GetOutroSequenceId(
+                        mission);
 
-            _activeOutroSequenceId =
-                mission.OutroSequenceId;
+                if (string.IsNullOrWhiteSpace(
+                        _activeOutroSequenceId))
+                {
+                    throw new InvalidOperationException(
+                        $"Mission '{mission.Id}' does not define an outro sequence for outcome '{_missionFlowCoordinator.Outcome}'.");
+                }
 
             var presenter =
                 new UnitySequenceTextPresenter(
@@ -176,6 +178,24 @@ namespace DeviGames.Playground.MissionFlow
 
             _sequencePlayer.Play(
                 sequence);
+        }
+
+        private string GetOutroSequenceId(
+            MissionRuntime mission)
+        {
+            switch (_missionFlowCoordinator.Outcome)
+            {
+                case MissionOutcome.Completed:
+                    return mission.OutroSequenceId;
+
+                case MissionOutcome.Failed:
+                    return mission.FailureOutroSequenceId;
+
+                case MissionOutcome.None:
+                    default:
+                        throw new InvalidOperationException(
+                            $"Mission '{mission.Id}' entered Mission Outro without an outcome.");
+            }
         }
 
         private void ContinueSequence()
