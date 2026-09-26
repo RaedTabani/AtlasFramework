@@ -9,6 +9,7 @@ using DeviGames.Atlas.Gameplay.Progression.Interfaces;
 using DeviGames.Atlas.Unity.Application;
 using DeviGames.Atlas.Unity.Scenes.Services;
 using DeviGames.Atlas.Unity.Scenes.Models;
+using DeviGames.Atlas.Unity.Application.UI;
 
 using TMPro;
 
@@ -39,6 +40,7 @@ namespace DeviGames.Playground.MainMenu
         private IMissionAvailabilityService _availabilityService;
         private MissionProgressService _progressService;
         private MissionLaunchService _missionLaunchService;
+        private LoadingTransitionController _loadingTransition;
 
         private string _pendingMissionId =
             string.Empty;
@@ -96,25 +98,22 @@ namespace DeviGames.Playground.MainMenu
         {
             try
             {
-                _missionCollection =
-                    Services.Resolve<IMissionCollection>();
+                _missionCollection = Services.Resolve<IMissionCollection>();
 
-                _availabilityService =
-                    Services.Resolve<IMissionAvailabilityService>();
+                _availabilityService = Services.Resolve<IMissionAvailabilityService>();
 
-                _progressService =
-                    Services.Resolve<MissionProgressService>();
+                _progressService = Services.Resolve<MissionProgressService>();
 
-                _missionLaunchService =
-                    AtlasApplication.Instance
-                        .MissionLaunchService;
+                _missionLaunchService = AtlasApplication.Instance.MissionLaunchService;
+                
+                _loadingTransition = AtlasApplication.Instance.LoadingTransition;
 
                 Refresh();
+
             }
             catch (Exception exception)
             {
-                Debug.LogException(
-                    exception);
+                Debug.LogException(exception);
             }
         }
 
@@ -183,10 +182,11 @@ namespace DeviGames.Playground.MainMenu
                 missionId;
 
             ResetDownloadUI();
+            _loadingTransition.Show("Preparing mission...");
 
-            IProgress<float> progress =
-                new Progress<float>(
-                    OnDownloadProgress);
+            IProgress<MissionLaunchProgress> progress =
+                new Progress<MissionLaunchProgress>(
+                    OnLaunchProgress);
 
             try
             {
@@ -202,9 +202,12 @@ namespace DeviGames.Playground.MainMenu
                     _pendingMissionId =
                         string.Empty;
 
+                    _loadingTransition.Hide();
+
                     return;
                 }
-
+                
+                _loadingTransition.Hide();
                 Debug.LogWarning(
                     $"Mission '{missionId}' could not be launched. Result: {result}.");
 
@@ -213,6 +216,7 @@ namespace DeviGames.Playground.MainMenu
             }
             catch (Exception exception)
             {
+                _loadingTransition.Hide();
                 Debug.LogException(
                     exception);
 
@@ -225,26 +229,35 @@ namespace DeviGames.Playground.MainMenu
             }
         }
 
-        private void OnDownloadProgress(
-            float progress)
+        private void OnLaunchProgress(MissionLaunchProgress progress)
         {
-            if (!_downloadPanel.activeSelf)
+            switch (progress.Phase)
             {
-                _downloadPanel.SetActive(
-                    true);
+                case MissionLaunchPhase.PreparingContent:
+
+                    _loadingTransition.Show(
+                        "Preparing mission...");
+
+                    break;
+
+                case MissionLaunchPhase.DownloadingContent:
+
+                    _loadingTransition.ShowProgress(
+                        "Downloading...",
+                        progress.Progress);
+
+                    break;
+
+                case MissionLaunchPhase.LoadingScene:
+
+                    _loadingTransition.Show(
+                        "Loading mission...");
+
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            _retryButton.gameObject.SetActive(
-                false);
-
-            _downloadSlider.gameObject.SetActive(
-                true);
-
-            _downloadSlider.value =
-                progress;
-
-            _downloadText.text =
-                $"Downloading... {progress:P0}";
         }
 
         private void ShowLaunchFailure(

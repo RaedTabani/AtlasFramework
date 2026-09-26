@@ -9,6 +9,6 @@ namespace DeviGames.Atlas.Unity.Scenes.Interfaces
     {
         Task<MissionLaunchResult> LaunchAsync(
             string missionId,
-            IProgress<float> downloadProgress = null);
+            IProgress<MissionLaunchProgress> progress = null);
     }
 }

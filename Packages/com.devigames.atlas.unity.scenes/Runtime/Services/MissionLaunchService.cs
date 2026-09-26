@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 
 using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Core.Missions.Runtime;
+
 using DeviGames.Atlas.Gameplay.Progression.Services;
+
 using DeviGames.Atlas.Unity.Scenes.Interfaces;
 using DeviGames.Atlas.Unity.Scenes.Models;
 
@@ -11,7 +13,8 @@ using UnityEngine;
 
 namespace DeviGames.Atlas.Unity.Scenes.Services
 {
-    public sealed class MissionLaunchService : IMissionLaunchService
+    public sealed class MissionLaunchService :
+        IMissionLaunchService
     {
         private readonly MissionFlowCoordinator _missionFlowCoordinator;
         private readonly IMissionCollection _missionCollection;
@@ -24,15 +27,30 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
             IContentDownloadService contentDownloadService,
             ISceneService sceneService)
         {
-            _missionFlowCoordinator = missionFlowCoordinator ?? throw new ArgumentNullException(nameof(missionFlowCoordinator));
-            _missionCollection = missionCollection ?? throw new ArgumentNullException(nameof(missionCollection));
-            _contentDownloadService = contentDownloadService ?? throw new ArgumentNullException(nameof(contentDownloadService));
-            _sceneService = sceneService ?? throw new ArgumentNullException(nameof(sceneService));
+            _missionFlowCoordinator =
+                missionFlowCoordinator
+                ?? throw new ArgumentNullException(
+                    nameof(missionFlowCoordinator));
+
+            _missionCollection =
+                missionCollection
+                ?? throw new ArgumentNullException(
+                    nameof(missionCollection));
+
+            _contentDownloadService =
+                contentDownloadService
+                ?? throw new ArgumentNullException(
+                    nameof(contentDownloadService));
+
+            _sceneService =
+                sceneService
+                ?? throw new ArgumentNullException(
+                    nameof(sceneService));
         }
 
         public async Task<MissionLaunchResult> LaunchAsync(
             string missionId,
-            IProgress<float> downloadProgress = null)
+            IProgress<MissionLaunchProgress> progress = null)
         {
             if (!_missionCollection.TryGet(
                     missionId,
@@ -62,6 +80,10 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 return MissionLaunchResult.MissingContentKey;
             }
 
+            progress?.Report(
+                new MissionLaunchProgress(
+                    MissionLaunchPhase.PreparingContent));
+
             try
             {
                 Debug.Log(
@@ -78,6 +100,17 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
                 {
                     Debug.Log(
                         $"Downloading content '{mission.ContentKey}'.");
+
+                    IProgress<float> downloadProgress =
+                        progress == null
+                            ? null
+                            : new Progress<float>(
+                                value =>
+                                    progress.Report(
+                                        new MissionLaunchProgress(
+                                            MissionLaunchPhase.DownloadingContent,
+                                            value,
+                                            true)));
 
                     await _contentDownloadService.DownloadAsync(
                         mission.ContentKey,
@@ -109,6 +142,10 @@ namespace DeviGames.Atlas.Unity.Scenes.Services
 
                 return MissionLaunchResult.MissionStartRejected;
             }
+
+            progress?.Report(
+                new MissionLaunchProgress(
+                    MissionLaunchPhase.LoadingScene));
 
             try
             {

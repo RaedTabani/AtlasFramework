@@ -9,6 +9,7 @@ using DeviGames.Atlas.Core.Missions.Interfaces;
 using DeviGames.Atlas.Gameplay.Progression.Services;
 using DeviGames.Atlas.Unity.Scenes.Interfaces;
 using DeviGames.Atlas.Unity.Scenes.Services;
+using DeviGames.Atlas.Unity.Application.UI;
 using DeviGames.Playground.Bootstrap;
 
 using UnityEngine;
@@ -22,14 +23,19 @@ namespace DeviGames.Atlas.Unity.Application
             "MainMenu";
 
         public MissionLaunchService MissionLaunchService { get; private set; }
+        public LoadingTransitionController LoadingTransition => _loadingTransition;
 
         private static AtlasApplication _instance;
         public static AtlasApplication Instance => _instance;
+
+        [SerializeField]
+        private LoadingTransitionController _loadingTransition;
 
         private BootstrapService _bootstrapService;
         private ISceneService _applicationSceneService;
         private ISceneService _missionSceneService;
         private IContentDownloadService _contentDownloadService;
+        
 
         private async void Awake()
         {
@@ -40,6 +46,12 @@ namespace DeviGames.Atlas.Unity.Application
                     gameObject);
 
                 return;
+            }
+
+            if (_loadingTransition == null)
+            {
+                throw new InvalidOperationException(
+                    "Loading transition controller is not assigned.");
             }
 
             _instance =
@@ -64,8 +76,18 @@ namespace DeviGames.Atlas.Unity.Application
 
                 EnterMainMenu();
 
-                await _applicationSceneService.LoadAsync(
-                    MainMenuSceneName);
+                _loadingTransition.Show("Loading...");
+
+                try
+                {
+                    await _applicationSceneService.LoadAsync(
+                        MainMenuSceneName);
+                }
+                finally
+                {
+                    _loadingTransition.Hide();
+                }
+
             }
             catch (Exception exception)
             {
@@ -121,8 +143,18 @@ namespace DeviGames.Atlas.Unity.Application
 
         public async Task ReturnToMainMenuAsync()
         {
-            await _applicationSceneService.LoadAsync(
-                MainMenuSceneName);
+            _loadingTransition.Show(
+                "Loading...");
+
+            try
+            {
+                await _applicationSceneService.LoadAsync(
+                    MainMenuSceneName);
+            }
+            finally
+            {
+                _loadingTransition.Hide();
+            }
         }
 
         private void OnApplicationQuit()
