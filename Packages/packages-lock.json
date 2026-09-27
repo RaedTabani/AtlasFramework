@@ -144,6 +144,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.devigames.atlas.gameplay.player": {
+      "version": "file:com.devigames.atlas.gameplay.player",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.devigames.atlas.gameplay.progression": {
       "version": "file:com.devigames.atlas.gameplay.progression",
       "depth": 0,
@@ -158,6 +164,12 @@
     },
     "com.devigames.atlas.unity.execution": {
       "version": "file:com.devigames.atlas.unity.execution",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "com.devigames.atlas.unity.player": {
+      "version": "file:com.devigames.atlas.unity.player",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}

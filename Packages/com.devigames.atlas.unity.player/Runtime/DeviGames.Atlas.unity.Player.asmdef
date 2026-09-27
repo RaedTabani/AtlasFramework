@@ -1,0 +1,17 @@
+{
+    "name": "DeviGames.Atlas.Unity.Player",
+    "rootNamespace": "",
+    "references": [
+        "GUID:de92b5da98ffd53f6ab1df15ba5c2032",
+        "GUID:75469ad4d38634e559750d17036d5f7c"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

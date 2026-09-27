@@ -265,13 +265,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 138720723}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000007191477, y: 0.99126416, z: -0.13189153, w: -0.000053179996}
-  m_LocalPosition: {x: 1.173, y: 0.27, z: 1.757}
+  m_LocalRotation: {x: 0.1318931, y: 0, z: 0, w: 0.991264}
+  m_LocalPosition: {x: 0, y: 0, z: -0.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 1870385929}
+  m_LocalEulerAnglesHint: {x: 15.158, y: 0, z: 0}
 --- !u!114 &138720727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2784,6 +2784,113 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1526062688}
   m_CullTransparentMesh: 1
+--- !u!1 &1675502050
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1675502051}
+  - component: {fileID: 1675502054}
+  - component: {fileID: 1675502053}
+  - component: {fileID: 1675502052}
+  - component: {fileID: 1675502055}
+  m_Layer: 0
+  m_Name: Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1675502051
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1675502050}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.99, z: -5.99}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1870385929}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1675502052
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1675502050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6aec7f05ea95b757099cbf026d795ee3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DeviGames.Atlas.Unity.Player::DeviGames.Atlas.Unity.Player.Input.UnityPlayerInput
+  _moveAction: {fileID: 3254402329077853464, guid: 098c2d5dab2d4479c9aa5f050805c6cb, type: 3}
+  _lookAction: {fileID: 4191852500655835005, guid: 098c2d5dab2d4479c9aa5f050805c6cb, type: 3}
+  _runAction: {fileID: -6848386430385132816, guid: 098c2d5dab2d4479c9aa5f050805c6cb, type: 3}
+  _interactAction: {fileID: -4903399393395124614, guid: 098c2d5dab2d4479c9aa5f050805c6cb, type: 3}
+--- !u!114 &1675502053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1675502050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8381b86f73ce700dabed08fa96f2ccd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DeviGames.Atlas.Gameplay.Player::DeviGames.Atlas.Gameplay.Player.Movement.PlayerMotor
+  _characterController: {fileID: 1675502054}
+  _playerInputSource: {fileID: 1675502052}
+  _settings: {fileID: 11400000, guid: 9c9232cb4ab45b9818833326ec248246, type: 2}
+--- !u!143 &1675502054
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1675502050}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1675502055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1675502050}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f0ed96eb13db13c19b71299f3f35d8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: DeviGames.Atlas.Gameplay.Player::DeviGames.Atlas.Gameplay.Player.Look.PlayerLook
+  _cameraRoot: {fileID: 1870385929}
+  _playerInputSource: {fileID: 1675502052}
+  _settings: {fileID: 11400000, guid: 9c9232cb4ab45b9818833326ec248246, type: 2}
 --- !u!1 &1688955800
 GameObject:
   m_ObjectHideFlags: 0
@@ -3053,6 +3160,38 @@ Transform:
   m_Children:
   - {fileID: 1909732487}
   m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1870385928
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1870385929}
+  m_Layer: 0
+  m_Name: CameraRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1870385929
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1870385928}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 138720726}
+  m_Father: {fileID: 1675502051}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1909732486
 GameObject:
@@ -3433,7 +3572,6 @@ Transform:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 138720726}
   - {fileID: 1688955803}
   - {fileID: 396704167}
   - {fileID: 722558669}
@@ -3442,3 +3580,4 @@ SceneRoots:
   - {fileID: 1798693597}
   - {fileID: 1794395235}
   - {fileID: 1820344207}
+  - {fileID: 1675502051}
