@@ -18,6 +18,7 @@ using DeviGames.Atlas.Gameplay.Inventory.Services;
 using DeviGames.Atlas.Gameplay.Inventory.Content;
 using DeviGames.Atlas.Gameplay.Inventory.Triggers;
 using DeviGames.Atlas.Gameplay.Inventory.Models;
+using DeviGames.Atlas.Gameplay.Inventory.Registry;
 
 namespace DeviGames.Atlas.Gameplay.Inventory.Installation
 {
@@ -40,6 +41,9 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Installation
 
             services.Register<IInventoryService>(inventoryService);
 
+            var itemDefinitionRegistry = new ItemDefinitionRegistry();
+            services.Register(itemDefinitionRegistry);
+
             var registry = services.Resolve<ITriggerConditionFactoryRegistry>();
 
             registry.Register(new InventoryQuantityConditionFactory(inventoryService));
@@ -61,6 +65,12 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Installation
             {
                 throw new InvalidOperationException(
                     "Atlas Inventory Service has already been installed.");
+            }
+            if (services.TryResolve<ItemDefinitionRegistry>(
+                    out _))
+            {
+                throw new InvalidOperationException(
+                    "Atlas Item Definition Registry has already been installed.");
             }
 
         }

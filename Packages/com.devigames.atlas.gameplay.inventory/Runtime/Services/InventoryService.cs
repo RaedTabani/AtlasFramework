@@ -57,7 +57,13 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Services
         {
             return new InventoryData
             {
-                ItemIds = new List<string>(_data.ItemIds)
+                ItemIds =
+                    new List<string>(
+                        _data.ItemIds),
+
+                Quantities =
+                    new List<int>(
+                        _data.Quantities)
             };
         }
 
@@ -66,12 +72,11 @@ namespace DeviGames.Atlas.Gameplay.Inventory.Services
             _data = data ?? new InventoryData();
         }
 
-        private void OnItemCollected(ItemCollectedEvent e)
+        private void OnItemCollected(
+            ItemCollectedEvent eventData)
         {
-            if (!_data.Add(e.ItemId))
-                return;
-
-            EventBus.Publish(new ItemAddedToInventoryEvent(e.ItemId));
-        }
+            Add(
+                eventData.ItemId);
+}
     }
 }

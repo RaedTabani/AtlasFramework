@@ -16,9 +16,6 @@ namespace DeviGames.Playground.Application
     {
         [Header("Scene Components")]
         [SerializeField]
-        private PlayerInteractionController _playerInteractionController;
-
-        [SerializeField]
         private PlaygroundDebugger _debugger;
 
         [SerializeField]
@@ -39,8 +36,6 @@ namespace DeviGames.Playground.Application
 
         private void StartPlayground()
         {
-            InteractionService interactionService =
-                Services.Resolve<InteractionService>();
 
             IUnlockService unlockService =
                 Services.Resolve<IUnlockService>();
@@ -48,8 +43,6 @@ namespace DeviGames.Playground.Application
             SaveGameCoordinator saveGameCoordinator =
                 Services.Resolve<SaveGameCoordinator>();
 
-            _playerInteractionController.Initialize(
-                interactionService);
 
             _debugger.Initialize(
                 unlockService);

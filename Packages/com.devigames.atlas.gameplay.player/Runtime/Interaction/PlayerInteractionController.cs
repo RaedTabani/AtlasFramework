@@ -1,10 +1,14 @@
+using System;
+
 using DeviGames.Atlas.Core.Interaction.Interfaces;
 using DeviGames.Atlas.Core.Interaction.Models;
 using DeviGames.Atlas.Core.Interaction.Services;
 
+using DeviGames.Atlas.Gameplay.Player.Input;
+
 using UnityEngine;
 
-namespace DeviGames.Playground.Interaction
+namespace DeviGames.Atlas.Gameplay.Player.Interaction
 {
     public sealed class PlayerInteractionController :
         MonoBehaviour
@@ -13,40 +17,78 @@ namespace DeviGames.Playground.Interaction
         [SerializeField]
         private Camera _camera;
 
+        [SerializeField]
+        private MonoBehaviour _playerInputSource;
+
         [Header("Interaction")]
         [SerializeField]
         private float _interactionDistance = 3f;
 
         [SerializeField]
         private LayerMask _interactionMask = ~0;
-        
 
         private InteractionService _interactionService;
+        private IPlayerInput _playerInput;
+
+        public IInteractable CurrentTarget { get; private set; }
+
+        public bool HasTarget =>
+            CurrentTarget != null;
 
         public void Initialize(
             InteractionService interactionService)
         {
             _interactionService =
-                interactionService;
+                interactionService
+                ?? throw new ArgumentNullException(
+                    nameof(interactionService));
+        }
+
+        private void OnDisable()
+        {
+            CurrentTarget =
+                null;
+        }
+
+        private void Awake()
+        {
+            if (_camera == null)
+            {
+                throw new InvalidOperationException(
+                    "Interaction Camera is not assigned.");
+            }
+
+            if (_playerInputSource == null)
+            {
+                throw new InvalidOperationException(
+                    "Player Input Source is not assigned.");
+            }
+
+            _playerInput =
+                _playerInputSource as IPlayerInput;
+
+            if (_playerInput == null)
+            {
+                throw new InvalidOperationException(
+                    "Player Input Source must implement IPlayerInput.");
+            }
         }
 
         private void Update()
         {
-            if (_interactionService == null)
+            RefreshTarget();
+
+            if (_interactionService == null ||
+                !_playerInput.InteractPressed ||
+                CurrentTarget == null)
             {
                 return;
             }
 
-            if (!Input.GetKeyDown(
-                    KeyCode.E))
-            {
-                return;
-            }
-
-            TryInteract();
+            InteractWithCurrentTarget();
         }
 
-        private void TryInteract()
+        private void RefreshTarget()
         {
             Ray ray =
                 new Ray(
@@ -59,25 +101,26 @@ namespace DeviGames.Playground.Interaction
                     _interactionDistance,
                     _interactionMask))
             {
+                CurrentTarget =
+                    null;
+
                 return;
             }
 
-            IInteractable interactable =
+            CurrentTarget =
                 FindInteractable(
                     hit.collider);
+        }
 
-            if (interactable == null)
-            {
-                return;
-            }
-
+        private void InteractWithCurrentTarget()
+        {
             var context =
                 new InteractionContext(
                     "player");
 
             var request =
                 new InteractionRequest(
-                    interactable,
+                    CurrentTarget,
                     context);
 
             InteractionResult result =
@@ -98,10 +141,12 @@ namespace DeviGames.Playground.Interaction
                 collider.GetComponentsInParent<
                     MonoBehaviour>();
 
-            foreach (MonoBehaviour behaviour
-                     in behaviours)
+            for (int index = 0;
+                 index < behaviours.Length;
+                 index++)
             {
-                if (behaviour is IInteractable interactable)
+                if (behaviours[index] is
+                    IInteractable interactable)
                 {
                     return interactable;
                 }
